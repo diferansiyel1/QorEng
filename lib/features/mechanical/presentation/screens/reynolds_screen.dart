@@ -8,6 +8,7 @@ import 'package:engicore/features/history/domain/repositories/history_repository
 import 'package:engicore/features/mechanical/domain/usecases/reynolds_logic.dart';
 import 'package:engicore/shared/widgets/app_button.dart';
 import 'package:engicore/shared/widgets/engineering_input_field.dart';
+import 'package:engicore/shared/widgets/export_pdf_button.dart';
 
 /// Reynolds Number Calculator screen.
 class ReynoldsScreen extends ConsumerStatefulWidget {
@@ -183,9 +184,24 @@ class _ReynoldsScreenState extends ConsumerState<ReynoldsScreen> {
               ),
               const SizedBox(height: Dimens.spacingMd),
 
-              if (result != null)
-                _ReynoldsResultCard(result: result)
-              else
+              if (result != null) ...[
+                _ReynoldsResultCard(result: result),
+                const SizedBox(height: Dimens.spacingMd),
+                ExportPdfButton(
+                  title: 'Reynolds Number Calculation',
+                  inputs: {
+                    'Fluid Density (ρ)': '${_densityController.text} kg/m³',
+                    'Flow Velocity (V)': '${_velocityController.text} m/s',
+                    'Pipe Diameter (D)': '${_diameterController.text} mm',
+                    'Dynamic Viscosity (μ)': '${_viscosityController.text} Pa·s',
+                  },
+                  results: {
+                    'Reynolds Number': result.reynoldsNumber.toStringAsFixed(0),
+                    'Flow Regime': result.regime.label,
+                  },
+                  color: AppColors.mechanicalAccent,
+                ),
+              ] else
                 Center(
                   child: Text(
                     'Enter flow parameters to calculate Reynolds number',

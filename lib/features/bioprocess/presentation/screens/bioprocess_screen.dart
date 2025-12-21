@@ -1,21 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:engicore/core/constants/app_colors.dart';
 import 'package:engicore/core/constants/dimens.dart';
+import 'package:engicore/core/localization/localization_service.dart';
 import 'package:engicore/features/bioprocess/domain/entities/bioprocess_calculation.dart';
 
 /// Main screen for Bioprocess engineering calculations.
 ///
 /// Displays a list of available bioprocess calculators.
-class BioprocessScreen extends StatelessWidget {
+class BioprocessScreen extends ConsumerWidget {
   const BioprocessScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final strings = ref.strings;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Bioprocess'),
+        title: Text(strings.bioprocess),
         centerTitle: true,
       ),
       body: ListView.separated(

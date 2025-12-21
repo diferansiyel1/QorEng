@@ -25,6 +25,7 @@ import 'package:engicore/features/mechanical/presentation/screens/mechanical_scr
 import 'package:engicore/features/mechanical/presentation/screens/pressure_drop_screen.dart';
 import 'package:engicore/features/mechanical/presentation/screens/reynolds_screen.dart';
 import 'package:engicore/features/mechanical/presentation/screens/viscosity_screen.dart';
+import 'package:engicore/features/connect/presentation/screens/pikolab_connect_screen.dart';
 import 'package:engicore/shared/widgets/app_shell.dart';
 
 /// Route paths for the application.
@@ -68,6 +69,9 @@ abstract final class AppRoutes {
 
   // Bioprocess calculators
   static const String tipSpeed = '/bioprocess/tip-speed';
+
+  // Pikolab Connect
+  static const String connect = '/connect';
 }
 
 /// Global navigation key for the router.
@@ -234,6 +238,11 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: AppRoutes.history,
       builder: (context, state) => const HistoryScreen(),
+    ),
+    // Pikolab Connect route
+    GoRoute(
+      path: AppRoutes.connect,
+      builder: (context, state) => const PikolabConnectScreen(),
     ),
   ],
 );

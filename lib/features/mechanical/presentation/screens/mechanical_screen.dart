@@ -1,35 +1,40 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:engicore/core/constants/app_colors.dart';
 import 'package:engicore/core/constants/dimens.dart';
+import 'package:engicore/core/localization/localization_service.dart';
 import 'package:engicore/features/mechanical/domain/entities/mechanical_calculation.dart';
 
 /// Main screen for Mechanical engineering calculations.
 ///
 /// Uses tabs to separate Solids/Hydraulics and Fluid/Flow calculators.
-class MechanicalScreen extends StatelessWidget {
+class MechanicalScreen extends ConsumerWidget {
   const MechanicalScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final strings = ref.strings;
+    final locale = ref.watch(localeProvider);
+
     return DefaultTabController(
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Mechanical'),
+          title: Text(strings.mechanical),
           centerTitle: true,
-          bottom: const TabBar(
+          bottom: TabBar(
             indicatorColor: AppColors.mechanicalAccent,
             labelColor: AppColors.mechanicalAccent,
             tabs: [
               Tab(
-                icon: Icon(Icons.construction),
-                text: 'Solids & Hydraulics',
+                icon: const Icon(Icons.construction),
+                text: locale == AppLocale.tr ? 'Katı & Hidrolik' : 'Solids & Hydraulics',
               ),
               Tab(
-                icon: Icon(Icons.water_drop),
-                text: 'Fluid & Flow',
+                icon: const Icon(Icons.water_drop),
+                text: locale == AppLocale.tr ? 'Akışkan & Debi' : 'Fluid & Flow',
               ),
             ],
           ),

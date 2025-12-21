@@ -6,6 +6,7 @@ import 'package:engicore/features/electrical/domain/usecases/ohms_law_calculator
 import 'package:engicore/shared/widgets/app_button.dart';
 import 'package:engicore/shared/widgets/calculation_page.dart';
 import 'package:engicore/shared/widgets/engineering_input_field.dart';
+import 'package:engicore/shared/widgets/export_pdf_button.dart';
 import 'package:engicore/shared/widgets/result_card.dart';
 
 /// Ohm's Law calculator screen.
@@ -20,6 +21,7 @@ class OhmsLawScreen extends StatefulWidget {
 }
 
 class _OhmsLawScreenState extends State<OhmsLawScreen> {
+  final _formKey = GlobalKey<FormState>();
   final _voltageController = TextEditingController();
   final _currentController = TextEditingController();
   final _resistanceController = TextEditingController();
@@ -192,6 +194,14 @@ class _OhmsLawScreenState extends State<OhmsLawScreen> {
               formula: 'P = V × I',
             ),
           ],
+          // Export PDF button
+          const SizedBox(height: 16),
+          ExportPdfButton(
+            title: "Ohm's Law Calculation",
+            inputs: _buildInputsMap(),
+            results: _buildResultsMap(),
+            color: AppColors.electricalAccent,
+          ),
         ] else
           const Center(
             child: Text(
@@ -201,6 +211,35 @@ class _OhmsLawScreenState extends State<OhmsLawScreen> {
           ),
       ],
     );
+  }
+
+  Map<String, String> _buildInputsMap() {
+    final inputs = <String, String>{};
+    if (_mode != OhmsLawMode.voltage && _voltageController.text.isNotEmpty) {
+      inputs['Voltage'] = '${_voltageController.text} ${_voltageUnit.symbol}';
+    }
+    if (_mode != OhmsLawMode.current && _currentController.text.isNotEmpty) {
+      inputs['Current'] = '${_currentController.text} ${_currentUnit.symbol}';
+    }
+    if (_mode != OhmsLawMode.resistance && _resistanceController.text.isNotEmpty) {
+      inputs['Resistance'] = '${_resistanceController.text} ${_resistanceUnit.symbol}';
+    }
+    return inputs;
+  }
+
+  Map<String, String> _buildResultsMap() {
+    if (_result == null) return {};
+    final results = <String, String>{};
+    switch (_mode) {
+      case OhmsLawMode.voltage:
+        results['Voltage'] = '${_result!.voltage.toStringAsFixed(4)} V';
+      case OhmsLawMode.current:
+        results['Current'] = '${_result!.current.toStringAsFixed(4)} A';
+      case OhmsLawMode.resistance:
+        results['Resistance'] = '${_result!.resistance.toStringAsFixed(4)} Ohm';
+    }
+    results['Power'] = '${(_result!.voltage * _result!.current).toStringAsFixed(4)} W';
+    return results;
   }
 }
 

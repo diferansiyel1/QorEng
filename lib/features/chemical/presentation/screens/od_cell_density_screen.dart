@@ -8,6 +8,7 @@ import 'package:engicore/features/history/domain/entities/calculation_record.dar
 import 'package:engicore/features/history/domain/repositories/history_repository.dart';
 import 'package:engicore/shared/widgets/app_button.dart';
 import 'package:engicore/shared/widgets/engineering_input_field.dart';
+import 'package:engicore/shared/widgets/export_pdf_button.dart';
 import 'package:engicore/shared/widgets/result_card.dart';
 
 /// OD / Cell Density Calculator screen.
@@ -241,6 +242,20 @@ class _OdCellDensityScreenState extends ConsumerState<OdCellDensityScreen> {
                   value: result.totalCells,
                   unit: 'cells/mL',
                   accentColor: AppColors.success,
+                ),
+                const SizedBox(height: Dimens.spacingMd),
+                ExportPdfButton(
+                  title: 'OD / Cell Density Calculation',
+                  inputs: {
+                    'Measured OD600': _measuredOdController.text,
+                    'Dilution Factor': '${_dilutionController.text}×',
+                    'Cells per OD': _factorController.text,
+                  },
+                  results: {
+                    'Real OD': result.realOd.toStringAsFixed(3),
+                    'Cell Density': '${_formatScientific(result.totalCells)} cells/mL',
+                  },
+                  color: AppColors.chemicalAccent,
                 ),
               ] else
                 Center(

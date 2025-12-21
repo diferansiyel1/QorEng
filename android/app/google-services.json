@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "950214626540",
+    "project_id": "qoreng---engineering-superapp",
+    "storage_bucket": "qoreng---engineering-superapp.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:950214626540:android:1182db50da3a2dffec29c9",
+        "android_client_info": {
+          "package_name": "com.engicore.engicore"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBlp5FjuDjQ9UzlyWARpOoduwO6JJ6yoCA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

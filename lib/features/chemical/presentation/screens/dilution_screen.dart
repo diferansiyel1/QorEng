@@ -8,6 +8,7 @@ import 'package:engicore/features/history/domain/entities/calculation_record.dar
 import 'package:engicore/features/history/domain/repositories/history_repository.dart';
 import 'package:engicore/shared/widgets/app_button.dart';
 import 'package:engicore/shared/widgets/engineering_input_field.dart';
+import 'package:engicore/shared/widgets/export_pdf_button.dart';
 import 'package:engicore/shared/widgets/result_card.dart';
 
 /// Dilution Calculator screen (C1V1 = C2V2).
@@ -186,6 +187,20 @@ class _DilutionScreenState extends ConsumerState<DilutionScreen> {
                     value: result.waterVolume,
                     unit: 'mL',
                     accentColor: AppColors.info,
+                  ),
+                  const SizedBox(height: Dimens.spacingMd),
+                  ExportPdfButton(
+                    title: 'Dilution Calculation (C₁V₁ = C₂V₂)',
+                    inputs: {
+                      'Stock Concentration (C₁)': '${_stockConcController.text} %',
+                      'Target Concentration (C₂)': '${_targetConcController.text} %',
+                      'Target Volume (V₂)': '${_targetVolController.text} mL',
+                    },
+                    results: {
+                      'Stock Volume (V₁)': '${result.stockVolume.toStringAsFixed(2)} mL',
+                      'Water/Diluent Volume': '${result.waterVolume.toStringAsFixed(2)} mL',
+                    },
+                    color: AppColors.chemicalAccent,
                   ),
                 ],
               ] else

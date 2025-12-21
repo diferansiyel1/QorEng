@@ -6,6 +6,7 @@ import 'package:engicore/features/electrical/domain/usecases/power_calculator.da
 import 'package:engicore/shared/widgets/app_button.dart';
 import 'package:engicore/shared/widgets/calculation_page.dart';
 import 'package:engicore/shared/widgets/engineering_input_field.dart';
+import 'package:engicore/shared/widgets/export_pdf_button.dart';
 import 'package:engicore/shared/widgets/result_card.dart';
 
 /// Power calculator screen.
@@ -173,6 +174,13 @@ class _PowerScreenState extends State<PowerScreen> {
               value: _result!.power / 1000000,
               unit: 'MW',
             ),
+          const SizedBox(height: 16),
+          ExportPdfButton(
+            title: 'Power Calculation',
+            inputs: _buildInputsMap(),
+            results: _buildResultsMap(),
+            color: AppColors.electricalAccent,
+          ),
         ] else
           const Center(
             child: Text(
@@ -182,6 +190,28 @@ class _PowerScreenState extends State<PowerScreen> {
           ),
       ],
     );
+  }
+
+  Map<String, String> _buildInputsMap() {
+    final inputs = <String, String>{};
+    if (_mode == PowerMode.fromVoltageAndCurrent || _mode == PowerMode.fromVoltageAndResistance) {
+      inputs['Voltage'] = '${_voltageController.text} ${_voltageUnit.symbol}';
+    }
+    if (_mode == PowerMode.fromVoltageAndCurrent || _mode == PowerMode.fromCurrentAndResistance) {
+      inputs['Current'] = '${_currentController.text} ${_currentUnit.symbol}';
+    }
+    if (_mode == PowerMode.fromCurrentAndResistance || _mode == PowerMode.fromVoltageAndResistance) {
+      inputs['Resistance'] = '${_resistanceController.text} ${_resistanceUnit.symbol}';
+    }
+    return inputs;
+  }
+
+  Map<String, String> _buildResultsMap() {
+    if (_result == null) return {};
+    return {
+      'Power': '${_result!.power.toStringAsFixed(2)} W',
+      'Power (kW)': '${(_result!.power / 1000).toStringAsFixed(4)} kW',
+    };
   }
 }
 

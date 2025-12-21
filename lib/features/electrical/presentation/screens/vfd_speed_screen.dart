@@ -8,6 +8,7 @@ import 'package:engicore/features/history/domain/entities/calculation_record.dar
 import 'package:engicore/features/history/domain/repositories/history_repository.dart';
 import 'package:engicore/shared/widgets/app_button.dart';
 import 'package:engicore/shared/widgets/engineering_input_field.dart';
+import 'package:engicore/shared/widgets/export_pdf_button.dart';
 import 'package:engicore/shared/widgets/result_card.dart';
 
 /// VFD Motor Speed Calculator screen.
@@ -189,6 +190,21 @@ class _VfdSpeedScreenState extends ConsumerState<VfdSpeedScreen> {
                   value: result.slipSpeed,
                   unit: 'RPM',
                   accentColor: AppColors.warning,
+                ),
+                const SizedBox(height: Dimens.spacingMd),
+                ExportPdfButton(
+                  title: 'VFD Motor Speed Calculation',
+                  inputs: {
+                    'Frequency': '${_frequencyController.text} Hz',
+                    'Motor Poles': input.poles.label,
+                    'Slip': '${_slipController.text} %',
+                  },
+                  results: {
+                    'Synchronous Speed': '${result.synchronousSpeed.toStringAsFixed(0)} RPM',
+                    'Actual Speed': '${result.actualSpeed.toStringAsFixed(0)} RPM',
+                    'Slip Speed': '${result.slipSpeed.toStringAsFixed(0)} RPM',
+                  },
+                  color: AppColors.electricalAccent,
                 ),
               ] else
                 Center(

@@ -1,8 +1,13 @@
+import 'dart:developer' as developer;
+
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
+import 'package:engicore/core/localization/localization_service.dart';
 import 'package:engicore/core/router/app_router.dart';
+import 'package:engicore/core/services/notification_service.dart';
 import 'package:engicore/core/theme/app_theme.dart';
 import 'package:engicore/features/history/domain/repositories/history_repository.dart';
 
@@ -18,6 +23,22 @@ void main() async {
 
   // Open the history box for calculation records
   final historyBox = await Hive.openBox<String>(HistoryRepository.boxName);
+
+  // Initialize localization service
+  await LocalizationService.initialize();
+
+  // Initialize Firebase (optional - app works without it)
+  try {
+    await Firebase.initializeApp();
+    developer.log('Firebase initialized');
+
+    // Initialize notifications after Firebase
+    final notificationService = NotificationService();
+    await notificationService.initialize();
+    await InterestTracker.initialize();
+  } catch (e) {
+    developer.log('Firebase not configured, running in offline mode: $e');
+  }
 
   runApp(
     ProviderScope(

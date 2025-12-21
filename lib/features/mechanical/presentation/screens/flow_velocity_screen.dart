@@ -8,6 +8,7 @@ import 'package:engicore/features/history/domain/repositories/history_repository
 import 'package:engicore/features/mechanical/domain/usecases/flow_velocity_logic.dart';
 import 'package:engicore/shared/widgets/app_button.dart';
 import 'package:engicore/shared/widgets/engineering_input_field.dart';
+import 'package:engicore/shared/widgets/export_pdf_button.dart';
 import 'package:engicore/shared/widgets/result_card.dart';
 
 /// Flow Velocity Calculator screen.
@@ -157,7 +158,11 @@ class _FlowVelocityScreenState extends ConsumerState<FlowVelocityScreen> {
               const SizedBox(height: Dimens.spacingMd),
 
               if (result != null) ...[
-                _VelocityResultCard(result: result),
+                _VelocityResultCard(
+                  result: result,
+                  flowRateText: _flowRateController.text,
+                  diameterText: _diameterController.text,
+                ),
               ] else
                 Center(
                   child: Text(
@@ -177,9 +182,15 @@ class _FlowVelocityScreenState extends ConsumerState<FlowVelocityScreen> {
 
 /// Velocity result card with warning indication.
 class _VelocityResultCard extends StatelessWidget {
-  const _VelocityResultCard({required this.result});
+  const _VelocityResultCard({
+    required this.result,
+    required this.flowRateText,
+    required this.diameterText,
+  });
 
   final FlowVelocityResult result;
+  final String flowRateText;
+  final String diameterText;
 
   Color get _warningColor {
     return switch (result.warning) {
@@ -233,6 +244,19 @@ class _VelocityResultCard extends StatelessWidget {
             ),
           ),
         ],
+        const SizedBox(height: Dimens.spacingMd),
+        ExportPdfButton(
+          title: 'Flow Velocity Calculation',
+          inputs: {
+            'Volumetric Flow Rate': '$flowRateText m³/h',
+            'Pipe Diameter': '$diameterText mm',
+          },
+          results: {
+            'Flow Velocity': '${result.velocity.toStringAsFixed(3)} m/s',
+            'Status': result.warning.name,
+          },
+          color: AppColors.mechanicalAccent,
+        ),
       ],
     );
   }

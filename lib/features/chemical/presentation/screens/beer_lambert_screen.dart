@@ -8,6 +8,7 @@ import 'package:engicore/features/history/domain/entities/calculation_record.dar
 import 'package:engicore/features/history/domain/repositories/history_repository.dart';
 import 'package:engicore/shared/widgets/app_button.dart';
 import 'package:engicore/shared/widgets/engineering_input_field.dart';
+import 'package:engicore/shared/widgets/export_pdf_button.dart';
 import 'package:engicore/shared/widgets/result_card.dart';
 
 /// Beer-Lambert Law Solver screen.
@@ -229,15 +230,24 @@ class _BeerLambertScreenState extends ConsumerState<BeerLambertScreen> {
               const SizedBox(height: Dimens.spacingLg),
 
               // Result
-              if (result != null)
+              if (result != null) ...[
                 ResultCard(
                   label: result.resultLabel,
                   value: result.result,
                   unit: result.unit,
                   formula: result.formula,
                   accentColor: AppColors.warning,
-                )
-              else
+                ),
+                const SizedBox(height: Dimens.spacingMd),
+                ExportPdfButton(
+                  title: 'Beer-Lambert Law Calculation',
+                  inputs: _buildBeerLambertInputs(input),
+                  results: {
+                    result.resultLabel: '${result.result.toStringAsFixed(6)} ${result.unit}',
+                  },
+                  color: AppColors.chemicalAccent,
+                ),
+              ] else
                 Center(
                   child: Text(
                     'Enter known values to solve',
@@ -251,6 +261,23 @@ class _BeerLambertScreenState extends ConsumerState<BeerLambertScreen> {
         ),
       ),
     );
+  }
+
+  Map<String, String> _buildBeerLambertInputs(BeerLambertInput input) {
+    final inputs = <String, String>{};
+    if (input.solveFor != BeerLambertSolveFor.absorbance) {
+      inputs['Absorbance'] = '${_absorbanceController.text} AU';
+    }
+    if (input.solveFor != BeerLambertSolveFor.molarAbsorptivity) {
+      inputs['Molar Absorptivity'] = '${_molarAbsorptivityController.text} L/(mol·cm)';
+    }
+    if (input.solveFor != BeerLambertSolveFor.pathLength) {
+      inputs['Path Length'] = '${_pathLengthController.text} cm';
+    }
+    if (input.solveFor != BeerLambertSolveFor.concentration) {
+      inputs['Concentration'] = '${_concentrationController.text} mol/L';
+    }
+    return inputs;
   }
 }
 

@@ -8,6 +8,7 @@ import 'package:engicore/features/history/domain/entities/calculation_record.dar
 import 'package:engicore/features/history/domain/repositories/history_repository.dart';
 import 'package:engicore/shared/widgets/app_button.dart';
 import 'package:engicore/shared/widgets/engineering_input_field.dart';
+import 'package:engicore/shared/widgets/export_pdf_button.dart';
 
 /// Arrhenius Rate Calculator screen.
 class ArrheniusScreen extends ConsumerStatefulWidget {
@@ -186,9 +187,23 @@ class _ArrheniusScreenState extends ConsumerState<ArrheniusScreen> {
               ),
               const SizedBox(height: Dimens.spacingMd),
 
-              if (result != null)
-                _ArrheniusResultCard(result: result)
-              else
+              if (result != null) ...[
+                _ArrheniusResultCard(result: result),
+                const SizedBox(height: Dimens.spacingMd),
+                ExportPdfButton(
+                  title: 'Arrhenius Rate Calculation',
+                  inputs: {
+                    'T₁ (Initial)': '${_t1Controller.text} °C',
+                    'T₂ (Final)': '${_t2Controller.text} °C',
+                    'Activation Energy': '${_eaController.text} kJ/mol',
+                  },
+                  results: {
+                    'Rate Ratio (k₂/k₁)': result.rateRatio.toStringAsFixed(4),
+                    'Effect': result.isFaster ? 'Faster' : 'Slower',
+                  },
+                  color: AppColors.chemicalAccent,
+                ),
+              ] else
                 Center(
                   child: Text(
                     'Enter temperatures and Ea to calculate rate change',

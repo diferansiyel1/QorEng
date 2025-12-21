@@ -8,6 +8,7 @@ import 'package:engicore/features/history/domain/entities/calculation_record.dar
 import 'package:engicore/features/history/domain/repositories/history_repository.dart';
 import 'package:engicore/shared/widgets/app_button.dart';
 import 'package:engicore/shared/widgets/engineering_input_field.dart';
+import 'package:engicore/shared/widgets/export_pdf_button.dart';
 
 /// Signal Scaler (4-20mA to PV) screen.
 class SignalScalerScreen extends ConsumerStatefulWidget {
@@ -271,9 +272,25 @@ class _SignalScalerScreenState extends ConsumerState<SignalScalerScreen> {
               const SizedBox(height: Dimens.spacingLg),
 
               // Result
-              if (result != null)
-                _SignalResultCard(result: result, input: input)
-              else
+              if (result != null) ...[
+                _SignalResultCard(result: result, input: input),
+                const SizedBox(height: Dimens.spacingMd),
+                ExportPdfButton(
+                  title: 'Signal Scaler Calculation',
+                  inputs: {
+                    'Mode': input.isReverse ? 'PV → mA' : 'mA → PV',
+                    'Signal Type': input.signalType.label,
+                    'Raw Range': '${_rawLowController.text} - ${_rawHighController.text}',
+                    'Eng Range': '${_engLowController.text} - ${_engHighController.text} ${_unitController.text}',
+                    'Measured': input.isReverse ? '${_measuredController.text} ${_unitController.text}' : '${_measuredController.text} mA',
+                  },
+                  results: {
+                    'Output': '${result.outputValue.toStringAsFixed(2)} ${input.isReverse ? "mA" : _unitController.text}',
+                    'Range %': '${result.percentageOfRange.toStringAsFixed(1)} %',
+                  },
+                  color: AppColors.electricalAccent,
+                ),
+              ] else
                 Center(
                   child: Text(
                     'Enter values to calculate',

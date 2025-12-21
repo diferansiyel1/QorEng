@@ -1,35 +1,40 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:engicore/core/constants/app_colors.dart';
 import 'package:engicore/core/constants/dimens.dart';
+import 'package:engicore/core/localization/localization_service.dart';
 import 'package:engicore/features/electrical/domain/entities/electrical_calculation.dart';
 
 /// Main screen for Electrical engineering calculations.
 ///
 /// Uses tabs to separate Power/Cables and Automation/Control calculators.
-class ElectricalScreen extends StatelessWidget {
+class ElectricalScreen extends ConsumerWidget {
   const ElectricalScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final strings = ref.strings;
+    final locale = ref.watch(localeProvider);
+
     return DefaultTabController(
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Electrical'),
+          title: Text(strings.electrical),
           centerTitle: true,
-          bottom: const TabBar(
+          bottom: TabBar(
             indicatorColor: AppColors.electricalAccent,
             labelColor: AppColors.electricalAccent,
             tabs: [
               Tab(
-                icon: Icon(Icons.bolt),
-                text: 'Power & Cables',
+                icon: const Icon(Icons.bolt),
+                text: locale == AppLocale.tr ? 'Güç & Kablo' : 'Power & Cables',
               ),
               Tab(
-                icon: Icon(Icons.memory),
-                text: 'Automation',
+                icon: const Icon(Icons.memory),
+                text: locale == AppLocale.tr ? 'Otomasyon' : 'Automation',
               ),
             ],
           ),

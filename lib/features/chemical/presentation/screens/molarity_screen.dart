@@ -8,6 +8,7 @@ import 'package:engicore/features/history/domain/entities/calculation_record.dar
 import 'package:engicore/features/history/domain/repositories/history_repository.dart';
 import 'package:engicore/shared/widgets/app_button.dart';
 import 'package:engicore/shared/widgets/engineering_input_field.dart';
+import 'package:engicore/shared/widgets/export_pdf_button.dart';
 import 'package:engicore/shared/widgets/result_card.dart';
 
 /// Molarity Converter screen (g/L to M).
@@ -170,6 +171,19 @@ class _MolarityScreenState extends ConsumerState<MolarityScreen> {
                   value: result.molarityMM,
                   unit: 'mM',
                   accentColor: AppColors.info,
+                ),
+                const SizedBox(height: Dimens.spacingMd),
+                ExportPdfButton(
+                  title: 'Molarity Conversion',
+                  inputs: {
+                    'Concentration': '${_concentrationController.text} g/L',
+                    'Molecular Weight': '${_mwController.text} g/mol',
+                  },
+                  results: {
+                    'Molarity': '${result.molarity.toStringAsFixed(6)} M',
+                    'Molarity (mM)': '${result.molarityMM.toStringAsFixed(3)} mM',
+                  },
+                  color: AppColors.chemicalAccent,
                 ),
               ] else
                 Center(

@@ -8,6 +8,7 @@ import 'package:engicore/features/history/domain/entities/calculation_record.dar
 import 'package:engicore/features/history/domain/repositories/history_repository.dart';
 import 'package:engicore/shared/widgets/app_button.dart';
 import 'package:engicore/shared/widgets/engineering_input_field.dart';
+import 'package:engicore/shared/widgets/export_pdf_button.dart';
 import 'package:engicore/shared/widgets/result_card.dart';
 
 /// pH Sensor Diagnostics screen (Nernst Equation).
@@ -244,6 +245,21 @@ class _PhSensorScreenState extends ConsumerState<PhSensorScreen> {
                       ),
                     ],
                   ),
+                ),
+                const SizedBox(height: Dimens.spacingMd),
+                ExportPdfButton(
+                  title: 'pH Sensor Diagnostics (Nernst)',
+                  inputs: {
+                    'Measured Voltage': '${_mvController.text} mV',
+                    'Temperature': '${_tempController.text} °C',
+                    'E₀ (Isopotential)': '${_e0Controller.text} mV',
+                  },
+                  results: {
+                    'Calculated pH': result.calculatedPh.toStringAsFixed(2),
+                    'Theoretical Slope': '${result.theoreticalSlope.abs().toStringAsFixed(2)} mV/pH',
+                    'Slope Efficiency': '${result.slopeEfficiency.toStringAsFixed(1)} %',
+                  },
+                  color: AppColors.chemicalAccent,
                 ),
               ] else
                 Center(

@@ -8,6 +8,7 @@ import 'package:engicore/features/history/domain/repositories/history_repository
 import 'package:engicore/features/mechanical/domain/usecases/pressure_drop_logic.dart';
 import 'package:engicore/shared/widgets/app_button.dart';
 import 'package:engicore/shared/widgets/engineering_input_field.dart';
+import 'package:engicore/shared/widgets/export_pdf_button.dart';
 import 'package:engicore/shared/widgets/result_card.dart';
 
 /// Pipe Pressure Drop Calculator screen (Darcy-Weisbach).
@@ -211,6 +212,22 @@ class _PressureDropScreenState extends ConsumerState<PressureDropScreen> {
                   value: result.pressureDropPsi,
                   unit: 'PSI',
                   accentColor: AppColors.info,
+                ),
+                const SizedBox(height: Dimens.spacingMd),
+                ExportPdfButton(
+                  title: 'Pipe Pressure Drop Calculation',
+                  inputs: {
+                    'Pipe Length': '${_lengthController.text} m',
+                    'Pipe Diameter': '${_diameterController.text} mm',
+                    'Flow Velocity': '${_velocityController.text} m/s',
+                    'Fluid Density': '${_densityController.text} kg/m³',
+                    'Friction Factor': _frictionController.text,
+                  },
+                  results: {
+                    'Pressure Drop': '${result.pressureDropBar.toStringAsFixed(4)} Bar',
+                    'Pressure Drop (PSI)': '${result.pressureDropPsi.toStringAsFixed(2)} PSI',
+                  },
+                  color: AppColors.mechanicalAccent,
                 ),
               ] else
                 Center(

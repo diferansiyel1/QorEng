@@ -8,6 +8,7 @@ import 'package:engicore/features/history/domain/repositories/history_repository
 import 'package:engicore/features/mechanical/domain/usecases/hydraulic_force_logic.dart';
 import 'package:engicore/shared/widgets/app_button.dart';
 import 'package:engicore/shared/widgets/engineering_input_field.dart';
+import 'package:engicore/shared/widgets/export_pdf_button.dart';
 import 'package:engicore/shared/widgets/result_card.dart';
 
 /// Hydraulic Cylinder Force Calculator screen.
@@ -186,6 +187,20 @@ class _HydraulicForceScreenState extends ConsumerState<HydraulicForceScreen> {
                   unit: 'kN',
                   formula: result.pullFormula,
                   accentColor: AppColors.warning,
+                ),
+                const SizedBox(height: Dimens.spacingMd),
+                ExportPdfButton(
+                  title: 'Hydraulic Cylinder Force Calculation',
+                  inputs: {
+                    'Bore Diameter': '${_boreController.text} mm',
+                    'Rod Diameter': '${_rodController.text} mm',
+                    'System Pressure': '${_pressureController.text} bar',
+                  },
+                  results: {
+                    'Push Force (Extend)': '${result.pushForce.toStringAsFixed(2)} kN',
+                    'Pull Force (Retract)': '${result.pullForce.toStringAsFixed(2)} kN',
+                  },
+                  color: AppColors.mechanicalAccent,
                 ),
               ] else
                 Center(

@@ -1,0 +1,20 @@
+flutter_native_splash:
+  # Solid black background for dark theme
+  color: "#000000"
+  
+  # White logo centered on black background
+  image: assets/images/splash_logo.png
+  
+  # Android 12+ specific settings
+  android_12:
+    image: assets/images/splash_logo.png
+    color: "#000000"
+  
+  # iOS settings
+  ios: true
+  
+  # Web - disabled (we'll use Flutter animated splash for web)
+  web: false
+  
+  # Keep splash visible while app initializes
+  fullscreen: true

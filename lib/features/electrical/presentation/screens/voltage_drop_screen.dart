@@ -9,6 +9,7 @@ import 'package:engicore/features/history/domain/repositories/history_repository
 import 'package:engicore/shared/widgets/app_button.dart';
 import 'package:engicore/shared/widgets/calculation_page.dart';
 import 'package:engicore/shared/widgets/engineering_input_field.dart';
+import 'package:engicore/shared/widgets/export_pdf_button.dart';
 import 'package:engicore/shared/widgets/result_card.dart';
 
 /// Standard cable cross-section sizes in mm².
@@ -194,6 +195,23 @@ class _VoltageDropScreenState extends ConsumerState<VoltageDropScreen> {
           ),
           if (result.warning != VoltageDropWarning.none)
             _WarningCard(warning: result.warning),
+          const SizedBox(height: 16),
+          ExportPdfButton(
+            title: 'Voltage Drop Calculation',
+            inputs: {
+              'Phase System': input.phaseSystem.label,
+              'Material': input.material.label,
+              'Current': '${_currentController.text} A',
+              'Cable Length': '${_lengthController.text} m',
+              'Cross-Section': '$_selectedCrossSection mm²',
+              'System Voltage': '${_voltageController.text} V',
+            },
+            results: {
+              'Voltage Drop': '${result.voltageDrop.toStringAsFixed(3)} V',
+              'Percentage': '${result.voltageDropPercentage.toStringAsFixed(2)} %',
+            },
+            color: AppColors.electricalAccent,
+          ),
         ] else
           const Center(
             child: Text(

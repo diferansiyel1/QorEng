@@ -4,6 +4,9 @@ import 'package:go_router/go_router.dart';
 
 import 'package:engicore/core/constants/app_colors.dart';
 import 'package:engicore/core/constants/dimens.dart';
+import 'package:engicore/core/localization/localization_service.dart';
+import 'package:engicore/core/router/app_router.dart';
+import 'package:engicore/core/services/notification_service.dart';
 import 'package:engicore/features/history/domain/repositories/history_repository.dart';
 import 'package:engicore/features/home/presentation/widgets/tool_search_delegate.dart';
 
@@ -11,23 +14,32 @@ import 'package:engicore/features/home/presentation/widgets/tool_search_delegate
 class DashboardScreen extends ConsumerWidget {
   const DashboardScreen({super.key});
 
-  String _getGreeting() {
+  String _getGreeting(AppStrings strings) {
     final hour = DateTime.now().hour;
-    if (hour < 6) return 'Night Shift';
-    if (hour < 12) return 'Good Morning';
-    if (hour < 17) return 'Good Afternoon';
-    if (hour < 22) return 'Good Evening';
-    return 'Night Shift';
+    if (hour < 6) return strings.nightShift;
+    if (hour < 12) return strings.goodMorning;
+    if (hour < 17) return strings.goodAfternoon;
+    if (hour < 22) return strings.goodEvening;
+    return strings.nightShift;
   }
 
-  String _getFormattedDate() {
+  String _getFormattedDate(AppLocale locale) {
     final now = DateTime.now();
-    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-    const months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
-    ];
-    return '${days[now.weekday % 7]}, ${months[now.month - 1]} ${now.day}';
+    if (locale == AppLocale.tr) {
+      const days = ['Paz', 'Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt'];
+      const months = [
+        'Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz',
+        'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara',
+      ];
+      return '${now.day} ${months[now.month - 1]}, ${days[now.weekday % 7]}';
+    } else {
+      const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+      const months = [
+        'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+        'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+      ];
+      return '${days[now.weekday % 7]}, ${months[now.month - 1]} ${now.day}';
+    }
   }
 
   @override
@@ -35,6 +47,8 @@ class DashboardScreen extends ConsumerWidget {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final recentRecords = ref.watch(historyRecordsProvider);
+    final strings = ref.strings;
+    final locale = ref.watch(localeProvider);
 
     return Scaffold(
       body: SafeArea(
@@ -45,8 +59,8 @@ class DashboardScreen extends ConsumerWidget {
             children: [
               // Header with logo
               _DashboardHeader(
-                greeting: _getGreeting(),
-                date: _getFormattedDate(),
+                greeting: _getGreeting(strings),
+                date: _getFormattedDate(locale),
               ),
 
               const SizedBox(height: Dimens.spacingXl),
@@ -65,7 +79,7 @@ class DashboardScreen extends ConsumerWidget {
 
               // Modules Section
               Text(
-                'Modules',
+                strings.modules,
                 style: theme.textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
@@ -73,11 +87,18 @@ class DashboardScreen extends ConsumerWidget {
               const SizedBox(height: Dimens.spacingMd),
               const _ModulesGrid(),
 
+              const SizedBox(height: Dimens.spacingMd),
+
+              // Pikolab Connect Card
+              _PikolabConnectCard(
+                onTap: () => context.push(AppRoutes.connect),
+              ),
+
               const SizedBox(height: Dimens.spacingXl),
 
               // Quick Access Section
               Text(
-                'Quick Access',
+                strings.quickAccess,
                 style: theme.textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
@@ -92,7 +113,7 @@ class DashboardScreen extends ConsumerWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Recent Activity',
+                    strings.recentActivity,
                     style: theme.textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -100,7 +121,7 @@ class DashboardScreen extends ConsumerWidget {
                   TextButton.icon(
                     onPressed: () => context.push('/history'),
                     icon: const Icon(Icons.arrow_forward, size: 16),
-                    label: const Text('See All'),
+                    label: Text(strings.viewAll),
                     style: TextButton.styleFrom(
                       foregroundColor: AppColors.accent,
                     ),
@@ -129,7 +150,7 @@ class DashboardScreen extends ConsumerWidget {
 }
 
 /// Empty recent activity placeholder.
-class _EmptyRecentActivity extends StatelessWidget {
+class _EmptyRecentActivity extends ConsumerWidget {
   const _EmptyRecentActivity({
     required this.isDark,
     required this.theme,
@@ -139,7 +160,9 @@ class _EmptyRecentActivity extends StatelessWidget {
   final ThemeData theme;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final strings = ref.strings;
+
     return Container(
       padding: const EdgeInsets.all(Dimens.spacingXl),
       decoration: BoxDecoration(
@@ -163,7 +186,7 @@ class _EmptyRecentActivity extends StatelessWidget {
             ),
             const SizedBox(height: Dimens.spacingMd),
             Text(
-              'No calculations yet',
+              strings.noRecentActivity,
               style: theme.textTheme.titleMedium?.copyWith(
                 color: isDark
                     ? AppColors.textSecondaryDark
@@ -172,7 +195,9 @@ class _EmptyRecentActivity extends StatelessWidget {
             ),
             const SizedBox(height: Dimens.spacingXs),
             Text(
-              'Your recent calculations will appear here',
+              ref.watch(localeProvider) == AppLocale.tr
+                  ? 'Son hesaplamalarınız burada görünecek'
+                  : 'Your recent calculations will appear here',
               style: theme.textTheme.bodySmall?.copyWith(
                 color: isDark
                     ? AppColors.textSecondaryDark
@@ -186,8 +211,8 @@ class _EmptyRecentActivity extends StatelessWidget {
   }
 }
 
-/// Dashboard header with logo, greeting, and date.
-class _DashboardHeader extends StatelessWidget {
+/// Dashboard header with logo, greeting, date, and notification bell.
+class _DashboardHeader extends ConsumerWidget {
   const _DashboardHeader({
     required this.greeting,
     required this.date,
@@ -196,30 +221,45 @@ class _DashboardHeader extends StatelessWidget {
   final String greeting;
   final String date;
 
+  void _showNotifications(BuildContext context, WidgetRef ref) {
+    final notificationService = ref.read(notificationServiceProvider);
+    final notifications = notificationService.getStoredNotifications();
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => _NotificationsSheet(notifications: notifications),
+    ).then((_) {
+      notificationService.markAllAsRead();
+      ref.read(unreadNotificationCountProvider.notifier).reset();
+    });
+  }
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
+    final unreadCount = ref.watch(unreadNotificationCountProvider);
 
     return Row(
       children: [
         // Logo
-        Container(
-          width: 56,
-          height: 56,
-          decoration: BoxDecoration(
-            color: AppColors.accent.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(Dimens.radiusMd),
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(Dimens.radiusMd),
-            child: Image.asset(
-              'assets/images/qoreng_logo.png',
-              fit: BoxFit.contain,
-              errorBuilder: (context, error, stackTrace) => const Icon(
+        SizedBox(
+          width: 64,
+          height: 64,
+          child: Image.asset(
+            'assets/images/qoreng_logo.png',
+            fit: BoxFit.contain,
+            errorBuilder: (context, error, stackTrace) => Container(
+              decoration: BoxDecoration(
+                color: AppColors.accent.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(Dimens.radiusMd),
+              ),
+              child: const Icon(
                 Icons.engineering,
                 color: AppColors.accent,
-                size: 32,
+                size: 36,
               ),
             ),
           ),
@@ -249,6 +289,48 @@ class _DashboardHeader extends StatelessWidget {
               ),
             ],
           ),
+        ),
+
+        // Notification Bell
+        Stack(
+          children: [
+            IconButton(
+              onPressed: () => _showNotifications(context, ref),
+              icon: Icon(
+                Icons.notifications_outlined,
+                color: isDark
+                    ? AppColors.textSecondaryDark
+                    : AppColors.textSecondaryLight,
+                size: 28,
+              ),
+              tooltip: 'Notifications',
+            ),
+            if (unreadCount > 0)
+              Positioned(
+                right: 8,
+                top: 8,
+                child: Container(
+                  width: 12,
+                  height: 12,
+                  decoration: const BoxDecoration(
+                    color: AppColors.error,
+                    shape: BoxShape.circle,
+                  ),
+                ),
+              ),
+        ],
+        ),
+        
+        // Language Toggle
+        IconButton(
+          onPressed: () => ref.read(localeProvider.notifier).toggleLocale(),
+          icon: Text(
+            ref.watch(localeProvider).flag,
+            style: const TextStyle(fontSize: 24),
+          ),
+          tooltip: ref.watch(localeProvider) == AppLocale.tr
+              ? 'Switch to English'
+              : 'Türkçe\'ye geç',
         ),
 
         // Date badge
@@ -392,38 +474,40 @@ class _SearchButton extends StatelessWidget {
 }
 
 /// Modules grid - 4 main modules.
-class _ModulesGrid extends StatelessWidget {
+class _ModulesGrid extends ConsumerWidget {
   const _ModulesGrid();
 
-  static const _modules = [
-    (
-      title: 'Electrical',
-      icon: Icons.bolt_rounded,
-      color: AppColors.electricalAccent,
-      route: '/electrical',
-    ),
-    (
-      title: 'Mechanical',
-      icon: Icons.settings_rounded,
-      color: AppColors.mechanicalAccent,
-      route: '/mechanical',
-    ),
-    (
-      title: 'Chemical',
-      icon: Icons.science_rounded,
-      color: AppColors.chemicalAccent,
-      route: '/chemical',
-    ),
-    (
-      title: 'Bioprocess',
-      icon: Icons.biotech_rounded,
-      color: AppColors.bioprocessAccent,
-      route: '/bioprocess',
-    ),
-  ];
-
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final strings = ref.strings;
+
+    final modules = [
+      (
+        title: strings.electrical,
+        icon: Icons.bolt_rounded,
+        color: AppColors.electricalAccent,
+        route: '/electrical',
+      ),
+      (
+        title: strings.mechanical,
+        icon: Icons.settings_rounded,
+        color: AppColors.mechanicalAccent,
+        route: '/mechanical',
+      ),
+      (
+        title: strings.chemical,
+        icon: Icons.science_rounded,
+        color: AppColors.chemicalAccent,
+        route: '/chemical',
+      ),
+      (
+        title: strings.bioprocess,
+        icon: Icons.biotech_rounded,
+        color: AppColors.bioprocessAccent,
+        route: '/bioprocess',
+      ),
+    ];
+
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -433,9 +517,9 @@ class _ModulesGrid extends StatelessWidget {
         crossAxisSpacing: Dimens.spacingMd,
         childAspectRatio: 1.4,
       ),
-      itemCount: _modules.length,
+      itemCount: modules.length,
       itemBuilder: (context, index) {
-        final module = _modules[index];
+        final module = modules[index];
         return _ModuleCard(
           title: module.title,
           icon: module.icon,
@@ -443,6 +527,90 @@ class _ModulesGrid extends StatelessWidget {
           onTap: () => context.go(module.route),
         );
       },
+    );
+  }
+}
+
+/// Pikolab Connect promotional card on Dashboard.
+class _PikolabConnectCard extends ConsumerWidget {
+  const _PikolabConnectCard({required this.onTap});
+
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final strings = ref.strings;
+
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(Dimens.radiusLg),
+        child: Container(
+          padding: const EdgeInsets.all(Dimens.spacingMd),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                AppColors.accent.withValues(alpha: 0.15),
+                AppColors.accent.withValues(alpha: 0.05),
+              ],
+            ),
+            borderRadius: BorderRadius.circular(Dimens.radiusLg),
+            border: Border.all(
+              color: AppColors.accent.withValues(alpha: 0.3),
+            ),
+          ),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(Dimens.spacingSm),
+                decoration: BoxDecoration(
+                  color: AppColors.accent.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(Dimens.radiusMd),
+                ),
+                child: const Icon(
+                  Icons.handshake_rounded,
+                  color: AppColors.accent,
+                  size: Dimens.iconMd,
+                ),
+              ),
+              const SizedBox(width: Dimens.spacingMd),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      strings.pikolabConnect,
+                      style: theme.textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: isDark
+                            ? AppColors.textPrimaryDark
+                            : AppColors.textPrimaryLight,
+                      ),
+                    ),
+                    Text(
+                      strings.pikolabConnectDesc,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: isDark
+                            ? AppColors.textSecondaryDark
+                            : AppColors.textSecondaryLight,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Icon(
+                Icons.chevron_right_rounded,
+                color: AppColors.accent.withValues(alpha: 0.7),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
@@ -574,7 +742,7 @@ class _QuickAccessList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 56,
+      height: 100,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         itemCount: _quickTools.length,
@@ -616,57 +784,56 @@ class _QuickAccessCard extends StatelessWidget {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
-    return Card(
-      elevation: Dimens.elevationSm,
-      shadowColor: color.withValues(alpha: 0.2),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(Dimens.radiusMd),
-      ),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(Dimens.radiusMd),
-        child: Container(
-          width: 140,
-          padding: const EdgeInsets.symmetric(
-            horizontal: Dimens.spacingMd,
-            vertical: Dimens.spacingSm,
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 150,
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: isDark ? AppColors.cardDark : AppColors.cardLight,
+          borderRadius: BorderRadius.circular(Dimens.radiusMd),
+          border: Border.all(
+            color: color.withValues(alpha: 0.3),
+            width: 1.5,
           ),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(Dimens.radiusMd),
-            border: Border.all(
-              color: color.withValues(alpha: 0.2),
+          boxShadow: [
+            BoxShadow(
+              color: color.withValues(alpha: 0.1),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
             ),
-          ),
-          child: Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(Dimens.spacingXs),
-                decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(Dimens.radiusSm),
-                ),
-                child: Icon(
-                  icon,
-                  color: color,
-                  size: Dimens.iconSm,
-                ),
+          ],
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(6),
+              decoration: BoxDecoration(
+                color: color.withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(Dimens.radiusSm),
               ),
-              const SizedBox(width: Dimens.spacingSm),
-              Expanded(
-                child: Text(
-                  title,
-                  style: theme.textTheme.labelMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: isDark
-                        ? AppColors.textPrimaryDark
-                        : AppColors.textPrimaryLight,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
+              child: Icon(
+                icon,
+                color: color,
+                size: 18,
               ),
-            ],
-          ),
+            ),
+            const SizedBox(width: 10),
+            Flexible(
+              child: Text(
+                title,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: isDark
+                      ? AppColors.textPrimaryDark
+                      : AppColors.textPrimaryLight,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -804,5 +971,211 @@ class _RecentActivityCard extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+/// Bottom sheet showing recent announcements/notifications.
+class _NotificationsSheet extends StatelessWidget {
+  const _NotificationsSheet({required this.notifications});
+
+  final List<Map<dynamic, dynamic>> notifications;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    return Container(
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height * 0.7,
+      ),
+      decoration: BoxDecoration(
+        color: isDark ? AppColors.backgroundDark : AppColors.backgroundLight,
+        borderRadius: const BorderRadius.vertical(
+          top: Radius.circular(Dimens.radiusXl),
+        ),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Handle bar
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: Dimens.spacingMd),
+            child: Container(
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: isDark
+                    ? AppColors.textSecondaryDark
+                    : AppColors.textSecondaryLight,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+          ),
+
+          // Header
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: Dimens.spacingLg),
+            child: Row(
+              children: [
+                const Icon(
+                  Icons.notifications_active,
+                  color: AppColors.accent,
+                  size: 24,
+                ),
+                const SizedBox(width: Dimens.spacingSm),
+                Text(
+                  'Announcements',
+                  style: theme.textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const Spacer(),
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Close'),
+                ),
+              ],
+            ),
+          ),
+          const Divider(),
+
+          // Notifications list
+          Flexible(
+            child: notifications.isEmpty
+                ? Padding(
+                    padding: const EdgeInsets.all(Dimens.spacingXl),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.notifications_off_outlined,
+                          size: 64,
+                          color: isDark
+                              ? AppColors.textSecondaryDark
+                              : AppColors.textSecondaryLight,
+                        ),
+                        const SizedBox(height: Dimens.spacingMd),
+                        Text(
+                          'No announcements yet',
+                          style: theme.textTheme.bodyLarge?.copyWith(
+                            color: isDark
+                                ? AppColors.textSecondaryDark
+                                : AppColors.textSecondaryLight,
+                          ),
+                        ),
+                        const SizedBox(height: Dimens.spacingSm),
+                        Text(
+                          'Product updates and technical tips will appear here.',
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: isDark
+                                ? AppColors.textSecondaryDark
+                                : AppColors.textSecondaryLight,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ),
+                  )
+                : ListView.separated(
+                    shrinkWrap: true,
+                    padding: const EdgeInsets.all(Dimens.spacingMd),
+                    itemCount: notifications.length,
+                    separatorBuilder: (_, __) =>
+                        const SizedBox(height: Dimens.spacingSm),
+                    itemBuilder: (context, index) {
+                      final notification = notifications[index];
+                      final isRead = notification['read'] == true;
+
+                      return Container(
+                        padding: const EdgeInsets.all(Dimens.spacingMd),
+                        decoration: BoxDecoration(
+                          color: isRead
+                              ? (isDark
+                                  ? AppColors.cardDark
+                                  : AppColors.cardLight)
+                              : AppColors.accent.withValues(alpha: 0.1),
+                          borderRadius:
+                              BorderRadius.circular(Dimens.radiusMd),
+                          border: isRead
+                              ? null
+                              : Border.all(
+                                  color: AppColors.accent,
+                                  width: 1,
+                                ),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                if (!isRead)
+                                  Container(
+                                    width: 8,
+                                    height: 8,
+                                    margin: const EdgeInsets.only(
+                                        right: Dimens.spacingSm),
+                                    decoration: const BoxDecoration(
+                                      color: AppColors.accent,
+                                      shape: BoxShape.circle,
+                                    ),
+                                  ),
+                                Expanded(
+                                  child: Text(
+                                    notification['title'] as String? ??
+                                        'Announcement',
+                                    style:
+                                        theme.textTheme.titleSmall?.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            if (notification['body'] != null) ...[
+                              const SizedBox(height: Dimens.spacingXs),
+                              Text(
+                                notification['body'] as String,
+                                style: theme.textTheme.bodyMedium,
+                              ),
+                            ],
+                            const SizedBox(height: Dimens.spacingXs),
+                            Text(
+                              _formatTimestamp(
+                                  notification['timestamp'] as String?),
+                              style: theme.textTheme.labelSmall?.copyWith(
+                                color: isDark
+                                    ? AppColors.textSecondaryDark
+                                    : AppColors.textSecondaryLight,
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _formatTimestamp(String? timestamp) {
+    if (timestamp == null) return '';
+    try {
+      final date = DateTime.parse(timestamp);
+      final now = DateTime.now();
+      final diff = now.difference(date);
+
+      if (diff.inMinutes < 60) {
+        return '${diff.inMinutes}m ago';
+      } else if (diff.inHours < 24) {
+        return '${diff.inHours}h ago';
+      } else {
+        return '${diff.inDays}d ago';
+      }
+    } catch (_) {
+      return '';
+    }
   }
 }

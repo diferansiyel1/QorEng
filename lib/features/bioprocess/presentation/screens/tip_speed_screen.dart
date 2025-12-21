@@ -8,6 +8,7 @@ import 'package:engicore/features/history/domain/entities/calculation_record.dar
 import 'package:engicore/features/history/domain/repositories/history_repository.dart';
 import 'package:engicore/shared/widgets/app_button.dart';
 import 'package:engicore/shared/widgets/engineering_input_field.dart';
+import 'package:engicore/shared/widgets/export_pdf_button.dart';
 
 /// Impeller Tip Speed Calculator screen.
 ///
@@ -167,9 +168,22 @@ class _TipSpeedScreenState extends ConsumerState<TipSpeedScreen> {
               const SizedBox(height: Dimens.spacingMd),
 
               // Animated Result Card
-              if (result != null)
-                _AnimatedResultCard(result: result)
-              else
+              if (result != null) ...[
+                _AnimatedResultCard(result: result),
+                const SizedBox(height: Dimens.spacingMd),
+                ExportPdfButton(
+                  title: 'Impeller Tip Speed Calculation',
+                  inputs: {
+                    'Impeller Diameter': '${_diameterController.text} ${input.diameterUnit.symbol}',
+                    'Agitation Speed': '${_rpmController.text} RPM',
+                  },
+                  results: {
+                    'Tip Speed': '${result.tipSpeed.toStringAsFixed(3)} m/s',
+                    'Status': result.status.label,
+                  },
+                  color: AppColors.bioprocessAccent,
+                ),
+              ] else
                 const _EmptyResultCard(),
             ],
           ),

@@ -1,39 +1,44 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:engicore/core/constants/app_colors.dart';
 import 'package:engicore/core/constants/dimens.dart';
+import 'package:engicore/core/localization/localization_service.dart';
 import 'package:engicore/features/chemical/domain/entities/chemical_calculation.dart';
 
 /// Main screen for Chemical engineering calculations.
 ///
 /// Uses tabs to separate General, Spectroscopy, and Electrochem calculators.
-class ChemicalScreen extends StatelessWidget {
+class ChemicalScreen extends ConsumerWidget {
   const ChemicalScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final strings = ref.strings;
+    final locale = ref.watch(localeProvider);
+
     return DefaultTabController(
       length: 3,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Chemical'),
+          title: Text(strings.chemical),
           centerTitle: true,
-          bottom: const TabBar(
+          bottom: TabBar(
             indicatorColor: AppColors.chemicalAccent,
             labelColor: AppColors.chemicalAccent,
             tabs: [
               Tab(
-                icon: Icon(Icons.science),
-                text: 'General',
+                icon: const Icon(Icons.science),
+                text: locale == AppLocale.tr ? 'Genel' : 'General',
               ),
               Tab(
-                icon: Icon(Icons.lightbulb),
-                text: 'Spectroscopy',
+                icon: const Icon(Icons.lightbulb),
+                text: locale == AppLocale.tr ? 'Spektroskopi' : 'Spectroscopy',
               ),
               Tab(
-                icon: Icon(Icons.monitor_heart),
-                text: 'Electrochem',
+                icon: const Icon(Icons.monitor_heart),
+                text: locale == AppLocale.tr ? 'Elektrokimya' : 'Electrochem',
               ),
             ],
           ),
