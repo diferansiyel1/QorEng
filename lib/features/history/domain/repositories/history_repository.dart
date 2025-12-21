@@ -86,20 +86,33 @@ class HistoryRecords extends _$HistoryRecords {
   Future<void> addRecord(CalculationRecord record) async {
     final repo = ref.read(historyRepositoryProvider);
     await repo.saveRecord(record);
-    ref.invalidateSelf();
+    // Use state assignment instead of invalidateSelf to avoid disposal issues
+    try {
+      state = repo.getAllRecords();
+    } catch (_) {
+      // Provider may have been disposed during async operation
+    }
   }
 
   /// Delete a record and refresh the list.
   Future<void> deleteRecord(String id) async {
     final repo = ref.read(historyRepositoryProvider);
     await repo.deleteRecord(id);
-    ref.invalidateSelf();
+    try {
+      state = repo.getAllRecords();
+    } catch (_) {
+      // Provider may have been disposed during async operation
+    }
   }
 
   /// Clear all records and refresh the list.
   Future<void> clearAll() async {
     final repo = ref.read(historyRepositoryProvider);
     await repo.clearHistory();
-    ref.invalidateSelf();
+    try {
+      state = [];
+    } catch (_) {
+      // Provider may have been disposed during async operation
+    }
   }
 }
