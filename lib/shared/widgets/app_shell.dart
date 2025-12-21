@@ -7,7 +7,7 @@ import 'package:engicore/core/constants/dimens.dart';
 /// App shell widget containing the BottomNavigationBar.
 ///
 /// This shell persists across all main feature screens and provides
-/// consistent navigation between the 4 engineering modules plus history.
+/// consistent navigation between Dashboard, 4 engineering modules, and history.
 class AppShell extends StatelessWidget {
   const AppShell({
     required this.navigationShell,
@@ -35,45 +35,50 @@ class AppShell extends StatelessWidget {
           currentIndex: navigationShell.currentIndex,
           onTap: (index) => _onTap(context, index),
           items: const [
+            // Home (Dashboard) - Index 0
             BottomNavigationBarItem(
-              icon: Icon(Icons.bolt),
+              icon: Icon(Icons.dashboard_outlined),
+              activeIcon: _ActiveNavIcon(
+                icon: Icons.dashboard,
+                color: AppColors.accent,
+              ),
+              label: 'Home',
+            ),
+            // Electrical - Index 1
+            BottomNavigationBarItem(
+              icon: Icon(Icons.bolt_outlined),
               activeIcon: _ActiveNavIcon(
                 icon: Icons.bolt,
                 color: AppColors.electricalAccent,
               ),
               label: 'Electrical',
             ),
+            // Mechanical - Index 2
             BottomNavigationBarItem(
-              icon: Icon(Icons.settings),
+              icon: Icon(Icons.settings_outlined),
               activeIcon: _ActiveNavIcon(
                 icon: Icons.settings,
                 color: AppColors.mechanicalAccent,
               ),
               label: 'Mechanical',
             ),
+            // Chemical - Index 3
             BottomNavigationBarItem(
-              icon: Icon(Icons.science),
+              icon: Icon(Icons.science_outlined),
               activeIcon: _ActiveNavIcon(
                 icon: Icons.science,
                 color: AppColors.chemicalAccent,
               ),
               label: 'Chemical',
             ),
+            // Bioprocess - Index 4
             BottomNavigationBarItem(
-              icon: Icon(Icons.biotech),
+              icon: Icon(Icons.biotech_outlined),
               activeIcon: _ActiveNavIcon(
                 icon: Icons.biotech,
                 color: AppColors.bioprocessAccent,
               ),
               label: 'Bioprocess',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.history),
-              activeIcon: _ActiveNavIcon(
-                icon: Icons.history,
-                color: AppColors.accent,
-              ),
-              label: 'History',
             ),
           ],
         ),

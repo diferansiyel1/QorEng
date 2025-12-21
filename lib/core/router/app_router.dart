@@ -18,6 +18,7 @@ import 'package:engicore/features/electrical/presentation/screens/signal_scaler_
 import 'package:engicore/features/electrical/presentation/screens/vfd_speed_screen.dart';
 import 'package:engicore/features/electrical/presentation/screens/voltage_drop_screen.dart';
 import 'package:engicore/features/history/presentation/screens/history_screen.dart';
+import 'package:engicore/features/home/presentation/screens/dashboard_screen.dart';
 import 'package:engicore/features/mechanical/presentation/screens/flow_velocity_screen.dart';
 import 'package:engicore/features/mechanical/presentation/screens/hydraulic_force_screen.dart';
 import 'package:engicore/features/mechanical/presentation/screens/mechanical_screen.dart';
@@ -29,6 +30,7 @@ import 'package:engicore/shared/widgets/app_shell.dart';
 /// Route paths for the application.
 abstract final class AppRoutes {
   // Main tabs
+  static const String home = '/';
   static const String electrical = '/electrical';
   static const String mechanical = '/mechanical';
   static const String chemical = '/chemical';
@@ -80,7 +82,7 @@ final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>(
 /// within each tab.
 final GoRouter appRouter = GoRouter(
   navigatorKey: _rootNavigatorKey,
-  initialLocation: AppRoutes.electrical,
+  initialLocation: AppRoutes.home,
   debugLogDiagnostics: true,
   routes: [
     StatefulShellRoute.indexedStack(
@@ -88,7 +90,18 @@ final GoRouter appRouter = GoRouter(
         return AppShell(navigationShell: navigationShell);
       },
       branches: [
-        // Electrical branch
+        // Home (Dashboard) branch - Index 0
+        StatefulShellBranch(
+          routes: [
+            GoRoute(
+              path: AppRoutes.home,
+              pageBuilder: (context, state) => const NoTransitionPage(
+                child: DashboardScreen(),
+              ),
+            ),
+          ],
+        ),
+        // Electrical branch - Index 1
         StatefulShellBranch(
           routes: [
             GoRoute(
@@ -121,7 +134,7 @@ final GoRouter appRouter = GoRouter(
             ),
           ],
         ),
-        // Mechanical branch
+        // Mechanical branch - Index 2
         StatefulShellBranch(
           routes: [
             GoRoute(
@@ -154,7 +167,7 @@ final GoRouter appRouter = GoRouter(
             ),
           ],
         ),
-        // Chemical branch
+        // Chemical branch - Index 3
         StatefulShellBranch(
           routes: [
             GoRoute(
@@ -198,7 +211,7 @@ final GoRouter appRouter = GoRouter(
             ),
           ],
         ),
-        // Bioprocess branch
+        // Bioprocess branch - Index 4
         StatefulShellBranch(
           routes: [
             GoRoute(
@@ -215,18 +228,12 @@ final GoRouter appRouter = GoRouter(
             ),
           ],
         ),
-        // History branch
-        StatefulShellBranch(
-          routes: [
-            GoRoute(
-              path: AppRoutes.history,
-              pageBuilder: (context, state) => const NoTransitionPage(
-                child: HistoryScreen(),
-              ),
-            ),
-          ],
-        ),
       ],
+    ),
+    // History route (outside bottom nav, accessed via Dashboard "See All")
+    GoRoute(
+      path: AppRoutes.history,
+      builder: (context, state) => const HistoryScreen(),
     ),
   ],
 );
