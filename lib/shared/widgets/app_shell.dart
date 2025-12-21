@@ -7,7 +7,7 @@ import 'package:engicore/core/constants/dimens.dart';
 /// App shell widget containing the BottomNavigationBar.
 ///
 /// This shell persists across all main feature screens and provides
-/// consistent navigation between the 4 engineering modules.
+/// consistent navigation between the 4 engineering modules plus history.
 class AppShell extends StatelessWidget {
   const AppShell({
     required this.navigationShell,
@@ -31,6 +31,7 @@ class AppShell extends StatelessWidget {
           ],
         ),
         child: BottomNavigationBar(
+          type: BottomNavigationBarType.fixed,
           currentIndex: navigationShell.currentIndex,
           onTap: (index) => _onTap(context, index),
           items: const [
@@ -65,6 +66,14 @@ class AppShell extends StatelessWidget {
                 color: AppColors.bioprocessAccent,
               ),
               label: 'Bioprocess',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.history),
+              activeIcon: _ActiveNavIcon(
+                icon: Icons.history,
+                color: AppColors.accent,
+              ),
+              label: 'History',
             ),
           ],
         ),

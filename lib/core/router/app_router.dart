@@ -8,6 +8,7 @@ import 'package:engicore/features/electrical/presentation/screens/electrical_scr
 import 'package:engicore/features/electrical/presentation/screens/ohms_law_screen.dart';
 import 'package:engicore/features/electrical/presentation/screens/power_screen.dart';
 import 'package:engicore/features/electrical/presentation/screens/voltage_drop_screen.dart';
+import 'package:engicore/features/history/presentation/screens/history_screen.dart';
 import 'package:engicore/features/mechanical/presentation/screens/mechanical_screen.dart';
 import 'package:engicore/shared/widgets/app_shell.dart';
 
@@ -18,6 +19,7 @@ abstract final class AppRoutes {
   static const String mechanical = '/mechanical';
   static const String chemical = '/chemical';
   static const String bioprocess = '/bioprocess';
+  static const String history = '/history';
 
   // Electrical calculators
   static const String ohmsLaw = '/electrical/ohms-law';
@@ -109,6 +111,17 @@ final GoRouter appRouter = GoRouter(
                   builder: (context, state) => const TipSpeedScreen(),
                 ),
               ],
+            ),
+          ],
+        ),
+        // History branch
+        StatefulShellBranch(
+          routes: [
+            GoRoute(
+              path: AppRoutes.history,
+              pageBuilder: (context, state) => const NoTransitionPage(
+                child: HistoryScreen(),
+              ),
             ),
           ],
         ),

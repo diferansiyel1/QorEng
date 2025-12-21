@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:engicore/core/constants/app_colors.dart';
 import 'package:engicore/core/constants/dimens.dart';
 import 'package:engicore/features/electrical/domain/usecases/voltage_drop_logic.dart';
+import 'package:engicore/features/history/domain/entities/calculation_record.dart';
+import 'package:engicore/features/history/domain/repositories/history_repository.dart';
 import 'package:engicore/shared/widgets/app_button.dart';
 import 'package:engicore/shared/widgets/calculation_page.dart';
 import 'package:engicore/shared/widgets/engineering_input_field.dart';
@@ -78,6 +80,24 @@ class _VoltageDropScreenState extends ConsumerState<VoltageDropScreen> {
     ref.read(voltageDropCalculatorProvider.notifier).reset();
   }
 
+  void _saveToHistory() {
+    final result = ref.read(voltageDropResultProvider);
+    if (result != null) {
+      final record = CalculationRecord(
+        title: 'Voltage Drop: ${result.voltageDrop.toStringAsFixed(2)}V',
+        resultValue: '${result.voltageDropPercentage.toStringAsFixed(1)}%',
+        moduleType: ModuleType.electrical,
+      );
+      ref.read(historyRecordsProvider.notifier).addRecord(record);
+    }
+  }
+
+  void _calculateAndSave() {
+    _updateCalculation();
+    // Defer save to after state update
+    Future.microtask(_saveToHistory);
+  }
+
   @override
   Widget build(BuildContext context) {
     final input = ref.watch(voltageDropCalculatorProvider);
@@ -150,7 +170,7 @@ class _VoltageDropScreenState extends ConsumerState<VoltageDropScreen> {
         AppButton(
           label: 'Calculate',
           icon: Icons.calculate,
-          onPressed: _updateCalculation,
+          onPressed: _calculateAndSave,
         ),
         AppButton(
           label: 'Clear',

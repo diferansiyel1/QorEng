@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:engicore/core/constants/app_colors.dart';
 import 'package:engicore/core/constants/dimens.dart';
 import 'package:engicore/features/bioprocess/domain/usecases/tip_speed_provider.dart';
+import 'package:engicore/features/history/domain/entities/calculation_record.dart';
+import 'package:engicore/features/history/domain/repositories/history_repository.dart';
 import 'package:engicore/shared/widgets/app_button.dart';
 import 'package:engicore/shared/widgets/engineering_input_field.dart';
 
@@ -42,6 +44,23 @@ class _TipSpeedScreenState extends ConsumerState<TipSpeedScreen> {
     _diameterController.clear();
     _rpmController.clear();
     ref.read(tipSpeedCalculatorProvider.notifier).reset();
+  }
+
+  void _saveToHistory() {
+    final result = ref.read(tipSpeedResultProvider);
+    if (result != null) {
+      final record = CalculationRecord(
+        title: 'Tip Speed: ${result.tipSpeed.toStringAsFixed(2)} m/s',
+        resultValue: result.status.label,
+        moduleType: ModuleType.bioprocess,
+      );
+      ref.read(historyRecordsProvider.notifier).addRecord(record);
+    }
+  }
+
+  void _calculateAndSave() {
+    _updateCalculation();
+    Future.microtask(_saveToHistory);
   }
 
   @override
@@ -126,7 +145,7 @@ class _TipSpeedScreenState extends ConsumerState<TipSpeedScreen> {
               AppButton(
                 label: 'Calculate',
                 icon: Icons.calculate,
-                onPressed: _updateCalculation,
+                onPressed: _calculateAndSave,
               ),
               const SizedBox(height: Dimens.spacingSm),
               AppButton(
