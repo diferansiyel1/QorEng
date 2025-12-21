@@ -30,8 +30,8 @@ class ElectricalCalculation {
   final String? formula;
 }
 
-/// Available electrical calculations in the app.
-abstract final class ElectricalCalculations {
+/// Available calculations for Power & Cables tab.
+abstract final class PowerCablesCalculations {
   static const List<ElectricalCalculation> all = [
     ElectricalCalculation(
       id: 'ohms-law',
@@ -57,5 +57,35 @@ abstract final class ElectricalCalculations {
       route: '/electrical/voltage-drop',
       formula: 'V = (k×I×L×ρ)/S',
     ),
+  ];
+}
+
+/// Available calculations for Automation & Control tab.
+abstract final class AutomationControlCalculations {
+  static const List<ElectricalCalculation> all = [
+    ElectricalCalculation(
+      id: 'signal-scaler',
+      name: 'Signal Scaler (4-20mA)',
+      description: 'Convert raw signals to engineering units',
+      icon: Icons.straighten,
+      route: '/electrical/signal-scaler',
+      formula: 'PV = Scale(mA)',
+    ),
+    ElectricalCalculation(
+      id: 'vfd-speed',
+      name: 'VFD Motor Speed',
+      description: 'Calculate motor RPM from frequency',
+      icon: Icons.speed,
+      route: '/electrical/vfd-speed',
+      formula: 'N = 120f/P',
+    ),
+  ];
+}
+
+/// Legacy: All electrical calculations combined.
+abstract final class ElectricalCalculations {
+  static const List<ElectricalCalculation> all = [
+    ...PowerCablesCalculations.all,
+    ...AutomationControlCalculations.all,
   ];
 }

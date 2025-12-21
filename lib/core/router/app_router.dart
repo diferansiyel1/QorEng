@@ -9,6 +9,8 @@ import 'package:engicore/features/chemical/presentation/screens/molarity_screen.
 import 'package:engicore/features/electrical/presentation/screens/electrical_screen.dart';
 import 'package:engicore/features/electrical/presentation/screens/ohms_law_screen.dart';
 import 'package:engicore/features/electrical/presentation/screens/power_screen.dart';
+import 'package:engicore/features/electrical/presentation/screens/signal_scaler_screen.dart';
+import 'package:engicore/features/electrical/presentation/screens/vfd_speed_screen.dart';
 import 'package:engicore/features/electrical/presentation/screens/voltage_drop_screen.dart';
 import 'package:engicore/features/history/presentation/screens/history_screen.dart';
 import 'package:engicore/features/mechanical/presentation/screens/flow_velocity_screen.dart';
@@ -27,10 +29,14 @@ abstract final class AppRoutes {
   static const String bioprocess = '/bioprocess';
   static const String history = '/history';
 
-  // Electrical calculators
+  // Electrical calculators - Power & Cables
   static const String ohmsLaw = '/electrical/ohms-law';
   static const String power = '/electrical/power';
   static const String voltageDrop = '/electrical/voltage-drop';
+
+  // Electrical calculators - Automation & Control
+  static const String signalScaler = '/electrical/signal-scaler';
+  static const String vfdSpeed = '/electrical/vfd-speed';
 
   // Mechanical calculators
   static const String hydraulicForce = '/mechanical/hydraulic-force';
@@ -86,6 +92,14 @@ final GoRouter appRouter = GoRouter(
                 GoRoute(
                   path: 'voltage-drop',
                   builder: (context, state) => const VoltageDropScreen(),
+                ),
+                GoRoute(
+                  path: 'signal-scaler',
+                  builder: (context, state) => const SignalScalerScreen(),
+                ),
+                GoRoute(
+                  path: 'vfd-speed',
+                  builder: (context, state) => const VfdSpeedScreen(),
                 ),
               ],
             ),
