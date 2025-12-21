@@ -39,17 +39,17 @@ class DashboardScreen extends ConsumerWidget {
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(Dimens.spacingMd),
+          padding: const EdgeInsets.all(Dimens.spacingLg),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Header
+              // Header with logo
               _DashboardHeader(
                 greeting: _getGreeting(),
                 date: _getFormattedDate(),
               ),
 
-              const SizedBox(height: Dimens.spacingLg),
+              const SizedBox(height: Dimens.spacingXl),
 
               // Search Bar (tap to open search)
               _SearchButton(
@@ -63,15 +63,27 @@ class DashboardScreen extends ConsumerWidget {
 
               const SizedBox(height: Dimens.spacingXl),
 
-              // Quick Access Section
+              // Modules Section
               Text(
-                'Quick Access',
-                style: theme.textTheme.titleMedium?.copyWith(
+                'Modules',
+                style: theme.textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
               ),
               const SizedBox(height: Dimens.spacingMd),
-              const _QuickAccessGrid(),
+              const _ModulesGrid(),
+
+              const SizedBox(height: Dimens.spacingXl),
+
+              // Quick Access Section
+              Text(
+                'Quick Access',
+                style: theme.textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: Dimens.spacingMd),
+              const _QuickAccessList(),
 
               const SizedBox(height: Dimens.spacingXl),
 
@@ -81,18 +93,16 @@ class DashboardScreen extends ConsumerWidget {
                 children: [
                   Text(
                     'Recent Activity',
-                    style: theme.textTheme.titleMedium?.copyWith(
+                    style: theme.textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  TextButton(
-                    onPressed: () => context.go('/history'),
-                    child: const Text(
-                      'See All',
-                      style: TextStyle(
-                        color: AppColors.accent,
-                        fontWeight: FontWeight.w600,
-                      ),
+                  TextButton.icon(
+                    onPressed: () => context.push('/history'),
+                    icon: const Icon(Icons.arrow_forward, size: 16),
+                    label: const Text('See All'),
+                    style: TextButton.styleFrom(
+                      foregroundColor: AppColors.accent,
                     ),
                   ),
                 ],
@@ -100,45 +110,7 @@ class DashboardScreen extends ConsumerWidget {
               const SizedBox(height: Dimens.spacingSm),
 
               if (recentRecords.isEmpty)
-                Container(
-                  padding: const EdgeInsets.all(Dimens.spacingLg),
-                  decoration: BoxDecoration(
-                    color: isDark
-                        ? AppColors.cardDark
-                        : AppColors.cardLight,
-                    borderRadius: BorderRadius.circular(Dimens.radiusMd),
-                  ),
-                  child: Center(
-                    child: Column(
-                      children: [
-                        Icon(
-                          Icons.history,
-                          size: 40,
-                          color: isDark
-                              ? AppColors.textSecondaryDark
-                              : AppColors.textSecondaryLight,
-                        ),
-                        const SizedBox(height: Dimens.spacingSm),
-                        Text(
-                          'No calculations yet',
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            color: isDark
-                                ? AppColors.textSecondaryDark
-                                : AppColors.textSecondaryLight,
-                          ),
-                        ),
-                        Text(
-                          'Your recent calculations will appear here',
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: isDark
-                                ? AppColors.textSecondaryDark
-                                : AppColors.textSecondaryLight,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                )
+                _EmptyRecentActivity(isDark: isDark, theme: theme)
               else
                 ...recentRecords.take(3).map((record) {
                   return _RecentActivityCard(
@@ -156,7 +128,65 @@ class DashboardScreen extends ConsumerWidget {
   }
 }
 
-/// Dashboard header with greeting and date.
+/// Empty recent activity placeholder.
+class _EmptyRecentActivity extends StatelessWidget {
+  const _EmptyRecentActivity({
+    required this.isDark,
+    required this.theme,
+  });
+
+  final bool isDark;
+  final ThemeData theme;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(Dimens.spacingXl),
+      decoration: BoxDecoration(
+        color: isDark ? AppColors.cardDark : AppColors.cardLight,
+        borderRadius: BorderRadius.circular(Dimens.radiusLg),
+        border: Border.all(
+          color: isDark
+              ? AppColors.textSecondaryDark.withValues(alpha: 0.2)
+              : AppColors.textSecondaryLight.withValues(alpha: 0.2),
+        ),
+      ),
+      child: Center(
+        child: Column(
+          children: [
+            Icon(
+              Icons.history_rounded,
+              size: 48,
+              color: isDark
+                  ? AppColors.textSecondaryDark
+                  : AppColors.textSecondaryLight,
+            ),
+            const SizedBox(height: Dimens.spacingMd),
+            Text(
+              'No calculations yet',
+              style: theme.textTheme.titleMedium?.copyWith(
+                color: isDark
+                    ? AppColors.textSecondaryDark
+                    : AppColors.textSecondaryLight,
+              ),
+            ),
+            const SizedBox(height: Dimens.spacingXs),
+            Text(
+              'Your recent calculations will appear here',
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: isDark
+                    ? AppColors.textSecondaryDark
+                    : AppColors.textSecondaryLight,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Dashboard header with logo, greeting, and date.
 class _DashboardHeader extends StatelessWidget {
   const _DashboardHeader({
     required this.greeting,
@@ -172,26 +202,56 @@ class _DashboardHeader extends StatelessWidget {
     final isDark = theme.brightness == Brightness.dark;
 
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              greeting,
-              style: theme.textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            Text(
-              'Engineer 🔧',
-              style: theme.textTheme.titleLarge?.copyWith(
+        // Logo
+        Container(
+          width: 56,
+          height: 56,
+          decoration: BoxDecoration(
+            color: AppColors.accent.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(Dimens.radiusMd),
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(Dimens.radiusMd),
+            child: Image.asset(
+              'assets/images/qoreng_logo.png',
+              fit: BoxFit.contain,
+              errorBuilder: (context, error, stackTrace) => const Icon(
+                Icons.engineering,
                 color: AppColors.accent,
-                fontWeight: FontWeight.w500,
+                size: 32,
               ),
             ),
-          ],
+          ),
         ),
+        const SizedBox(width: Dimens.spacingMd),
+
+        // Greeting
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                greeting,
+                style: theme.textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: isDark
+                      ? AppColors.textPrimaryDark
+                      : AppColors.textPrimaryLight,
+                ),
+              ),
+              Text(
+                'Engineer',
+                style: theme.textTheme.headlineSmall?.copyWith(
+                  color: AppColors.accent,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+        ),
+
+        // Date badge
         Container(
           padding: const EdgeInsets.symmetric(
             horizontal: Dimens.spacingMd,
@@ -199,13 +259,31 @@ class _DashboardHeader extends StatelessWidget {
           ),
           decoration: BoxDecoration(
             color: isDark ? AppColors.cardDark : AppColors.cardLight,
-            borderRadius: BorderRadius.circular(Dimens.radiusMd),
+            borderRadius: BorderRadius.circular(Dimens.radiusFull),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.1),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
           ),
-          child: Text(
-            date,
-            style: theme.textTheme.labelLarge?.copyWith(
-              fontWeight: FontWeight.w500,
-            ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(
+                Icons.calendar_today_rounded,
+                size: 14,
+                color: AppColors.accent,
+              ),
+              const SizedBox(width: Dimens.spacingXs),
+              Text(
+                date,
+                style: theme.textTheme.labelLarge?.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
           ),
         ),
       ],
@@ -213,7 +291,7 @@ class _DashboardHeader extends StatelessWidget {
   }
 }
 
-/// Fake search input that opens the search delegate.
+/// Search button that opens the search delegate.
 class _SearchButton extends StatelessWidget {
   const _SearchButton({required this.onTap});
 
@@ -224,72 +302,123 @@ class _SearchButton extends StatelessWidget {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        height: Dimens.inputHeightLg,
-        padding: const EdgeInsets.symmetric(horizontal: Dimens.spacingMd),
-        decoration: BoxDecoration(
-          color: isDark ? AppColors.cardDark : AppColors.cardLight,
-          borderRadius: BorderRadius.circular(Dimens.radiusMd),
-          border: Border.all(
-            color: isDark
-                ? AppColors.textSecondaryDark.withValues(alpha: 0.3)
-                : AppColors.textSecondaryLight.withValues(alpha: 0.3),
-          ),
-        ),
-        child: Row(
-          children: [
-            Icon(
-              Icons.search,
-              color: isDark
-                  ? AppColors.textSecondaryDark
-                  : AppColors.textSecondaryLight,
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(Dimens.radiusLg),
+        child: Container(
+          height: Dimens.inputHeightLg + 8,
+          padding: const EdgeInsets.symmetric(horizontal: Dimens.spacingLg),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                (isDark ? AppColors.cardDark : AppColors.cardLight),
+                (isDark ? AppColors.cardDark : AppColors.cardLight)
+                    .withValues(alpha: 0.8),
+              ],
             ),
-            const SizedBox(width: Dimens.spacingMd),
-            Text(
-              'Search tools...',
-              style: theme.textTheme.bodyLarge?.copyWith(
-                color: isDark
-                    ? AppColors.textSecondaryDark
-                    : AppColors.textSecondaryLight,
+            borderRadius: BorderRadius.circular(Dimens.radiusLg),
+            border: Border.all(
+              color: AppColors.accent.withValues(alpha: 0.2),
+              width: 1.5,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.accent.withValues(alpha: 0.1),
+                blurRadius: 12,
+                offset: const Offset(0, 4),
               ),
-            ),
-          ],
+            ],
+          ),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(Dimens.spacingSm),
+                decoration: BoxDecoration(
+                  color: AppColors.accent.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(Dimens.radiusMd),
+                ),
+                child: const Icon(
+                  Icons.search_rounded,
+                  color: AppColors.accent,
+                  size: 20,
+                ),
+              ),
+              const SizedBox(width: Dimens.spacingMd),
+              Text(
+                'Search tools...',
+                style: theme.textTheme.bodyLarge?.copyWith(
+                  color: isDark
+                      ? AppColors.textSecondaryDark
+                      : AppColors.textSecondaryLight,
+                ),
+              ),
+              const Spacer(),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: Dimens.spacingSm,
+                  vertical: Dimens.spacingXs,
+                ),
+                decoration: BoxDecoration(
+                  color: AppColors.accent.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(Dimens.radiusSm),
+                ),
+                child: const Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.keyboard_command_key,
+                        size: 12, color: AppColors.accent),
+                    SizedBox(width: 2),
+                    Text(
+                      'K',
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.accent,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 }
 
-/// Quick access grid with popular tools.
-class _QuickAccessGrid extends StatelessWidget {
-  const _QuickAccessGrid();
+/// Modules grid - 4 main modules.
+class _ModulesGrid extends StatelessWidget {
+  const _ModulesGrid();
 
-  static const _quickTools = [
+  static const _modules = [
     (
-      title: 'Voltage Drop',
-      icon: Icons.bolt,
-      color: Color(0xFFFFC107),
-      route: '/electrical/voltage-drop',
+      title: 'Electrical',
+      icon: Icons.bolt_rounded,
+      color: AppColors.electricalAccent,
+      route: '/electrical',
     ),
     (
-      title: 'Hydraulic Force',
-      icon: Icons.compress,
-      color: Color(0xFFFF6D00),
-      route: '/mechanical/hydraulic-force',
+      title: 'Mechanical',
+      icon: Icons.settings_rounded,
+      color: AppColors.mechanicalAccent,
+      route: '/mechanical',
     ),
     (
-      title: 'Signal Scaler',
-      icon: Icons.straighten,
-      color: Color(0xFF00E5FF),
-      route: '/electrical/signal-scaler',
+      title: 'Chemical',
+      icon: Icons.science_rounded,
+      color: AppColors.chemicalAccent,
+      route: '/chemical',
     ),
     (
-      title: 'Dilution',
-      icon: Icons.science,
-      color: Color(0xFF7C4DFF),
-      route: '/chemical/dilution',
+      title: 'Bioprocess',
+      icon: Icons.biotech_rounded,
+      color: AppColors.bioprocessAccent,
+      route: '/bioprocess',
     ),
   ];
 
@@ -302,25 +431,25 @@ class _QuickAccessGrid extends StatelessWidget {
         crossAxisCount: 2,
         mainAxisSpacing: Dimens.spacingMd,
         crossAxisSpacing: Dimens.spacingMd,
-        childAspectRatio: 1.5,
+        childAspectRatio: 1.4,
       ),
-      itemCount: _quickTools.length,
+      itemCount: _modules.length,
       itemBuilder: (context, index) {
-        final tool = _quickTools[index];
-        return _QuickAccessCard(
-          title: tool.title,
-          icon: tool.icon,
-          color: tool.color,
-          onTap: () => context.push(tool.route),
+        final module = _modules[index];
+        return _ModuleCard(
+          title: module.title,
+          icon: module.icon,
+          color: module.color,
+          onTap: () => context.go(module.route),
         );
       },
     );
   }
 }
 
-/// Quick access card widget.
-class _QuickAccessCard extends StatelessWidget {
-  const _QuickAccessCard({
+/// Module card with better readability.
+class _ModuleCard extends StatelessWidget {
+  const _ModuleCard({
     required this.title,
     required this.icon,
     required this.color,
@@ -335,33 +464,182 @@ class _QuickAccessCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
     return Card(
       elevation: Dimens.elevationMd,
+      shadowColor: color.withValues(alpha: 0.3),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(Dimens.radiusLg),
+      ),
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(Dimens.radiusMd),
+        borderRadius: BorderRadius.circular(Dimens.radiusLg),
         child: Container(
           padding: const EdgeInsets.all(Dimens.spacingMd),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(Dimens.radiusMd),
+            borderRadius: BorderRadius.circular(Dimens.radiusLg),
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                color.withValues(alpha: 0.15),
-                color.withValues(alpha: 0.05),
+                color.withValues(alpha: 0.2),
+                color.withValues(alpha: 0.08),
               ],
+            ),
+            border: Border.all(
+              color: color.withValues(alpha: 0.3),
+              width: 1,
             ),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
+              // Icon container
+              Container(
+                padding: const EdgeInsets.all(Dimens.spacingSm + 2),
+                decoration: BoxDecoration(
+                  color: color.withValues(alpha: 0.25),
+                  borderRadius: BorderRadius.circular(Dimens.radiusMd),
+                  boxShadow: [
+                    BoxShadow(
+                      color: color.withValues(alpha: 0.2),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Icon(
+                  icon,
+                  color: color,
+                  size: Dimens.iconLg,
+                ),
+              ),
+
+              // Title with high contrast
+              Text(
+                title,
+                style: theme.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: isDark
+                      ? AppColors.textPrimaryDark
+                      : AppColors.textPrimaryLight,
+                  letterSpacing: -0.2,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Quick access horizontal list.
+class _QuickAccessList extends StatelessWidget {
+  const _QuickAccessList();
+
+  static const _quickTools = [
+    (
+      title: 'Voltage Drop',
+      subtitle: 'Cable sizing',
+      icon: Icons.bolt_rounded,
+      color: Color(0xFFFFC107),
+      route: '/electrical/voltage-drop',
+    ),
+    (
+      title: 'Signal Scaler',
+      subtitle: '4-20mA conversion',
+      icon: Icons.straighten_rounded,
+      color: Color(0xFF00E5FF),
+      route: '/electrical/signal-scaler',
+    ),
+    (
+      title: 'Viscosity Lab',
+      subtitle: 'Dynamic/Kinematic',
+      icon: Icons.water_drop_rounded,
+      color: Color(0xFFFF6D00),
+      route: '/mechanical/viscosity',
+    ),
+    (
+      title: 'Beer-Lambert',
+      subtitle: 'Spectroscopy',
+      icon: Icons.lightbulb_rounded,
+      color: Color(0xFF7C4DFF),
+      route: '/chemical/beer-lambert',
+    ),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 100,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        itemCount: _quickTools.length,
+        separatorBuilder: (context, index) =>
+            const SizedBox(width: Dimens.spacingMd),
+        itemBuilder: (context, index) {
+          final tool = _quickTools[index];
+          return _QuickAccessCard(
+            title: tool.title,
+            subtitle: tool.subtitle,
+            icon: tool.icon,
+            color: tool.color,
+            onTap: () => context.push(tool.route),
+          );
+        },
+      ),
+    );
+  }
+}
+
+/// Quick access card widget.
+class _QuickAccessCard extends StatelessWidget {
+  const _QuickAccessCard({
+    required this.title,
+    required this.subtitle,
+    required this.icon,
+    required this.color,
+    required this.onTap,
+  });
+
+  final String title;
+  final String subtitle;
+  final IconData icon;
+  final Color color;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    return Card(
+      elevation: Dimens.elevationSm,
+      shadowColor: color.withValues(alpha: 0.2),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(Dimens.radiusMd),
+      ),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(Dimens.radiusMd),
+        child: Container(
+          width: 160,
+          padding: const EdgeInsets.all(Dimens.spacingMd),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(Dimens.radiusMd),
+            border: Border.all(
+              color: color.withValues(alpha: 0.2),
+            ),
+          ),
+          child: Row(
+            children: [
               Container(
                 padding: const EdgeInsets.all(Dimens.spacingSm),
                 decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.2),
+                  color: color.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(Dimens.radiusSm),
                 ),
                 child: Icon(
@@ -370,13 +648,35 @@ class _QuickAccessCard extends StatelessWidget {
                   size: Dimens.iconMd,
                 ),
               ),
-              Text(
-                title,
-                style: theme.textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w600,
+              const SizedBox(width: Dimens.spacingSm),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      title,
+                      style: theme.textTheme.labelLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: isDark
+                            ? AppColors.textPrimaryDark
+                            : AppColors.textPrimaryLight,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    Text(
+                      subtitle,
+                      style: theme.textTheme.labelSmall?.copyWith(
+                        color: isDark
+                            ? AppColors.textSecondaryDark
+                            : AppColors.textSecondaryLight,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
                 ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
               ),
             ],
           ),
@@ -402,11 +702,11 @@ class _RecentActivityCard extends StatelessWidget {
 
   IconData get _moduleIcon {
     return switch (moduleType) {
-      'electrical' => Icons.bolt,
-      'mechanical' => Icons.construction,
-      'chemical' => Icons.science,
-      'bioprocess' => Icons.biotech,
-      _ => Icons.calculate,
+      'electrical' => Icons.bolt_rounded,
+      'mechanical' => Icons.settings_rounded,
+      'chemical' => Icons.science_rounded,
+      'bioprocess' => Icons.biotech_rounded,
+      _ => Icons.calculate_rounded,
     };
   }
 
@@ -441,16 +741,19 @@ class _RecentActivityCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: isDark ? AppColors.cardDark : AppColors.cardLight,
         borderRadius: BorderRadius.circular(Dimens.radiusMd),
+        border: Border.all(
+          color: _moduleColor.withValues(alpha: 0.2),
+        ),
       ),
       child: Row(
         children: [
           // Module icon
           Container(
-            width: 40,
-            height: 40,
+            width: 44,
+            height: 44,
             decoration: BoxDecoration(
               color: _moduleColor.withValues(alpha: 0.15),
-              borderRadius: BorderRadius.circular(Dimens.radiusSm),
+              borderRadius: BorderRadius.circular(Dimens.radiusMd),
             ),
             child: Icon(
               _moduleIcon,
@@ -468,11 +771,15 @@ class _RecentActivityCard extends StatelessWidget {
                 Text(
                   title,
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.w500,
+                    fontWeight: FontWeight.w600,
+                    color: isDark
+                        ? AppColors.textPrimaryDark
+                        : AppColors.textPrimaryLight,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
+                const SizedBox(height: 2),
                 Text(
                   result,
                   style: theme.textTheme.bodySmall?.copyWith(
@@ -486,12 +793,25 @@ class _RecentActivityCard extends StatelessWidget {
           ),
 
           // Time
-          Text(
-            _formatTime(timestamp),
-            style: theme.textTheme.labelSmall?.copyWith(
+          Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: Dimens.spacingSm,
+              vertical: Dimens.spacingXs,
+            ),
+            decoration: BoxDecoration(
               color: isDark
-                  ? AppColors.textSecondaryDark
-                  : AppColors.textSecondaryLight,
+                  ? AppColors.backgroundDark
+                  : AppColors.backgroundLight,
+              borderRadius: BorderRadius.circular(Dimens.radiusSm),
+            ),
+            child: Text(
+              _formatTime(timestamp),
+              style: theme.textTheme.labelSmall?.copyWith(
+                color: isDark
+                    ? AppColors.textSecondaryDark
+                    : AppColors.textSecondaryLight,
+                fontWeight: FontWeight.w500,
+              ),
             ),
           ),
         ],
