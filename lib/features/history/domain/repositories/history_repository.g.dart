@@ -142,7 +142,7 @@ final class HistoryRecordsProvider
   }
 }
 
-String _$historyRecordsHash() => r'd98d3875de673be3dfe583337e82c08fbe4837bf';
+String _$historyRecordsHash() => r'406a151503be19eaff0dc66312c2687d7651b305';
 
 /// Provider for the list of calculation records.
 

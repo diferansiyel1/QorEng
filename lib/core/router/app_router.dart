@@ -4,8 +4,13 @@ import 'package:go_router/go_router.dart';
 import 'package:engicore/features/bioprocess/presentation/screens/bioprocess_screen.dart';
 import 'package:engicore/features/bioprocess/presentation/screens/tip_speed_screen.dart';
 import 'package:engicore/features/chemical/presentation/screens/chemical_screen.dart';
+import 'package:engicore/features/chemical/presentation/screens/arrhenius_screen.dart';
+import 'package:engicore/features/chemical/presentation/screens/beer_lambert_screen.dart';
 import 'package:engicore/features/chemical/presentation/screens/dilution_screen.dart';
 import 'package:engicore/features/chemical/presentation/screens/molarity_screen.dart';
+import 'package:engicore/features/chemical/presentation/screens/od_cell_density_screen.dart';
+import 'package:engicore/features/chemical/presentation/screens/ph_sensor_screen.dart';
+import 'package:engicore/features/chemical/presentation/screens/transmittance_screen.dart';
 import 'package:engicore/features/electrical/presentation/screens/electrical_screen.dart';
 import 'package:engicore/features/electrical/presentation/screens/ohms_law_screen.dart';
 import 'package:engicore/features/electrical/presentation/screens/power_screen.dart';
@@ -44,9 +49,18 @@ abstract final class AppRoutes {
   static const String pressureDrop = '/mechanical/pressure-drop';
   static const String flowVelocity = '/mechanical/flow-velocity';
 
-  // Chemical calculators
+  // Chemical calculators - General
   static const String dilution = '/chemical/dilution';
   static const String molarity = '/chemical/molarity';
+
+  // Chemical calculators - Spectroscopy
+  static const String beerLambert = '/chemical/beer-lambert';
+  static const String transmittance = '/chemical/transmittance';
+  static const String odCellDensity = '/chemical/od-cell-density';
+
+  // Chemical calculators - Electrochem
+  static const String phSensor = '/chemical/ph-sensor';
+  static const String arrhenius = '/chemical/arrhenius';
 
   // Bioprocess calculators
   static const String tipSpeed = '/bioprocess/tip-speed';
@@ -143,6 +157,7 @@ final GoRouter appRouter = GoRouter(
                 child: ChemicalScreen(),
               ),
               routes: [
+                // General
                 GoRoute(
                   path: 'dilution',
                   builder: (context, state) => const DilutionScreen(),
@@ -150,6 +165,28 @@ final GoRouter appRouter = GoRouter(
                 GoRoute(
                   path: 'molarity',
                   builder: (context, state) => const MolarityScreen(),
+                ),
+                // Spectroscopy
+                GoRoute(
+                  path: 'beer-lambert',
+                  builder: (context, state) => const BeerLambertScreen(),
+                ),
+                GoRoute(
+                  path: 'transmittance',
+                  builder: (context, state) => const TransmittanceScreen(),
+                ),
+                GoRoute(
+                  path: 'od-cell-density',
+                  builder: (context, state) => const OdCellDensityScreen(),
+                ),
+                // Electrochem
+                GoRoute(
+                  path: 'ph-sensor',
+                  builder: (context, state) => const PhSensorScreen(),
+                ),
+                GoRoute(
+                  path: 'arrhenius',
+                  builder: (context, state) => const ArrheniusScreen(),
                 ),
               ],
             ),

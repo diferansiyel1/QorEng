@@ -6,35 +6,128 @@ import 'package:engicore/core/constants/dimens.dart';
 import 'package:engicore/features/chemical/domain/entities/chemical_calculation.dart';
 
 /// Main screen for Chemical engineering calculations.
+///
+/// Uses tabs to separate General, Spectroscopy, and Electrochem calculators.
 class ChemicalScreen extends StatelessWidget {
   const ChemicalScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Chemical'),
-        centerTitle: true,
-      ),
-      body: ListView.separated(
-        padding: const EdgeInsets.all(Dimens.spacingMd),
-        itemCount: ChemicalCalculations.all.length,
-        separatorBuilder: (context, index) =>
-            const SizedBox(height: Dimens.spacingSm),
-        itemBuilder: (context, index) {
-          final calc = ChemicalCalculations.all[index];
-          return _CalculationCard(calculation: calc);
-        },
+    return DefaultTabController(
+      length: 3,
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Chemical'),
+          centerTitle: true,
+          bottom: const TabBar(
+            indicatorColor: AppColors.chemicalAccent,
+            labelColor: AppColors.chemicalAccent,
+            tabs: [
+              Tab(
+                icon: Icon(Icons.science),
+                text: 'General',
+              ),
+              Tab(
+                icon: Icon(Icons.lightbulb),
+                text: 'Spectroscopy',
+              ),
+              Tab(
+                icon: Icon(Icons.monitor_heart),
+                text: 'Electrochem',
+              ),
+            ],
+          ),
+        ),
+        body: const TabBarView(
+          children: [
+            _GeneralTab(),
+            _SpectroscopyTab(),
+            _ElectrochemTab(),
+          ],
+        ),
       ),
     );
   }
 }
 
-/// Card widget for displaying a chemical calculation entry.
+/// Tab 1: General chemistry calculations.
+class _GeneralTab extends StatelessWidget {
+  const _GeneralTab();
+
+  @override
+  Widget build(BuildContext context) {
+    const calculations = GeneralChemistryCalculations.all;
+
+    return ListView.separated(
+      padding: const EdgeInsets.all(Dimens.spacingMd),
+      itemCount: calculations.length,
+      separatorBuilder: (context, index) =>
+          const SizedBox(height: Dimens.spacingSm),
+      itemBuilder: (context, index) {
+        return _CalculationCard(
+          calculation: calculations[index],
+          accentColor: AppColors.chemicalAccent,
+        );
+      },
+    );
+  }
+}
+
+/// Tab 2: Spectroscopy calculations.
+class _SpectroscopyTab extends StatelessWidget {
+  const _SpectroscopyTab();
+
+  @override
+  Widget build(BuildContext context) {
+    const calculations = SpectroscopyCalculations.all;
+
+    return ListView.separated(
+      padding: const EdgeInsets.all(Dimens.spacingMd),
+      itemCount: calculations.length,
+      separatorBuilder: (context, index) =>
+          const SizedBox(height: Dimens.spacingSm),
+      itemBuilder: (context, index) {
+        return _CalculationCard(
+          calculation: calculations[index],
+          accentColor: AppColors.warning, // Orange/yellow for light-based
+        );
+      },
+    );
+  }
+}
+
+/// Tab 3: Electrochemistry & Kinetics calculations.
+class _ElectrochemTab extends StatelessWidget {
+  const _ElectrochemTab();
+
+  @override
+  Widget build(BuildContext context) {
+    const calculations = ElectrochemCalculations.all;
+
+    return ListView.separated(
+      padding: const EdgeInsets.all(Dimens.spacingMd),
+      itemCount: calculations.length,
+      separatorBuilder: (context, index) =>
+          const SizedBox(height: Dimens.spacingSm),
+      itemBuilder: (context, index) {
+        return _CalculationCard(
+          calculation: calculations[index],
+          accentColor: AppColors.info, // Blue for electrochemistry
+        );
+      },
+    );
+  }
+}
+
+/// Card widget for displaying a calculation entry.
 class _CalculationCard extends StatelessWidget {
-  const _CalculationCard({required this.calculation});
+  const _CalculationCard({
+    required this.calculation,
+    required this.accentColor,
+  });
 
   final ChemicalCalculation calculation;
+  final Color accentColor;
 
   @override
   Widget build(BuildContext context) {
@@ -55,12 +148,12 @@ class _CalculationCard extends StatelessWidget {
                 width: Dimens.touchTargetMin,
                 height: Dimens.touchTargetMin,
                 decoration: BoxDecoration(
-                  color: AppColors.chemicalAccent.withValues(alpha: 0.15),
+                  color: accentColor.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(Dimens.radiusMd),
                 ),
                 child: Icon(
                   calculation.icon,
-                  color: AppColors.chemicalAccent,
+                  color: accentColor,
                   size: Dimens.iconLg,
                 ),
               ),
@@ -94,16 +187,14 @@ class _CalculationCard extends StatelessWidget {
                           vertical: Dimens.spacingXs / 2,
                         ),
                         decoration: BoxDecoration(
-                          color: AppColors.chemicalAccent.withValues(
-                            alpha: 0.1,
-                          ),
+                          color: accentColor.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(Dimens.radiusSm),
                         ),
                         child: Text(
                           calculation.formula!,
                           style: theme.textTheme.bodySmall?.copyWith(
                             fontFamily: 'monospace',
-                            color: AppColors.chemicalAccent,
+                            color: accentColor,
                             fontWeight: FontWeight.w600,
                           ),
                         ),

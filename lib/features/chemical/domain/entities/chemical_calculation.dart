@@ -19,13 +19,13 @@ class ChemicalCalculation {
   final String? formula;
 }
 
-/// Available chemical calculations in the app.
-abstract final class ChemicalCalculations {
+/// General chemistry calculations (Tab 1).
+abstract final class GeneralChemistryCalculations {
   static const List<ChemicalCalculation> all = [
     ChemicalCalculation(
       id: 'dilution',
       name: 'Dilution Calculator',
-      description: 'Calculate stock solution and water volumes',
+      description: 'Calculate stock and water volumes for dilutions',
       icon: Icons.water_drop,
       route: '/chemical/dilution',
       formula: 'C₁V₁ = C₂V₂',
@@ -38,5 +38,66 @@ abstract final class ChemicalCalculations {
       route: '/chemical/molarity',
       formula: 'M = (g/L) / MW',
     ),
+  ];
+}
+
+/// Spectroscopy calculations (Tab 2).
+abstract final class SpectroscopyCalculations {
+  static const List<ChemicalCalculation> all = [
+    ChemicalCalculation(
+      id: 'beer-lambert',
+      name: 'Beer-Lambert Solver',
+      description: 'Solve for absorbance, concentration, or extinction',
+      icon: Icons.lightbulb,
+      route: '/chemical/beer-lambert',
+      formula: 'A = ε × l × c',
+    ),
+    ChemicalCalculation(
+      id: 'transmittance',
+      name: 'Transmittance Converter',
+      description: 'Convert between %T and Absorbance',
+      icon: Icons.swap_horiz,
+      route: '/chemical/transmittance',
+      formula: 'A = 2 - log(%T)',
+    ),
+    ChemicalCalculation(
+      id: 'od-cell-density',
+      name: 'OD / Cell Density',
+      description: 'Estimate cell count from OD600 readings',
+      icon: Icons.biotech,
+      route: '/chemical/od-cell-density',
+      formula: 'Cells = OD × Dilution × Factor',
+    ),
+  ];
+}
+
+/// Electrochemistry & kinetics calculations (Tab 3).
+abstract final class ElectrochemCalculations {
+  static const List<ChemicalCalculation> all = [
+    ChemicalCalculation(
+      id: 'ph-sensor',
+      name: 'pH Sensor Diagnostics',
+      description: 'Calculate pH from mV using Nernst equation',
+      icon: Icons.monitor_heart,
+      route: '/chemical/ph-sensor',
+      formula: 'E = E₀ - (RT/F)×2.303×pH',
+    ),
+    ChemicalCalculation(
+      id: 'arrhenius',
+      name: 'Arrhenius Rate Calculator',
+      description: 'Calculate reaction rate change with temperature',
+      icon: Icons.speed,
+      route: '/chemical/arrhenius',
+      formula: 'k₂/k₁ = exp(Ea/R × ΔT⁻¹)',
+    ),
+  ];
+}
+
+/// Legacy: All chemical calculations combined.
+abstract final class ChemicalCalculations {
+  static const List<ChemicalCalculation> all = [
+    ...GeneralChemistryCalculations.all,
+    ...SpectroscopyCalculations.all,
+    ...ElectrochemCalculations.all,
   ];
 }
