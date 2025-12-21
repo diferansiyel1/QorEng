@@ -49,5 +49,13 @@ abstract final class ElectricalCalculations {
       route: '/electrical/power',
       formula: 'P = V × I',
     ),
+    ElectricalCalculation(
+      id: 'voltage-drop',
+      name: 'Voltage Drop Calculator',
+      description: 'Calculate cable voltage drop and percentage',
+      icon: Icons.trending_down,
+      route: '/electrical/voltage-drop',
+      formula: 'V = (k×I×L×ρ)/S',
+    ),
   ];
 }

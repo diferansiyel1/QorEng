@@ -6,6 +6,7 @@ import 'package:engicore/features/chemical/presentation/screens/chemical_screen.
 import 'package:engicore/features/electrical/presentation/screens/electrical_screen.dart';
 import 'package:engicore/features/electrical/presentation/screens/ohms_law_screen.dart';
 import 'package:engicore/features/electrical/presentation/screens/power_screen.dart';
+import 'package:engicore/features/electrical/presentation/screens/voltage_drop_screen.dart';
 import 'package:engicore/features/mechanical/presentation/screens/mechanical_screen.dart';
 import 'package:engicore/shared/widgets/app_shell.dart';
 
@@ -20,6 +21,7 @@ abstract final class AppRoutes {
   // Electrical calculators
   static const String ohmsLaw = '/electrical/ohms-law';
   static const String power = '/electrical/power';
+  static const String voltageDrop = '/electrical/voltage-drop';
 }
 
 /// Global navigation key for the router.
@@ -58,6 +60,10 @@ final GoRouter appRouter = GoRouter(
                 GoRoute(
                   path: 'power',
                   builder: (context, state) => const PowerScreen(),
+                ),
+                GoRoute(
+                  path: 'voltage-drop',
+                  builder: (context, state) => const VoltageDropScreen(),
                 ),
               ],
             ),
