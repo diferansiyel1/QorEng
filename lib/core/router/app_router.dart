@@ -4,12 +4,18 @@ import 'package:go_router/go_router.dart';
 import 'package:engicore/features/bioprocess/presentation/screens/bioprocess_screen.dart';
 import 'package:engicore/features/bioprocess/presentation/screens/tip_speed_screen.dart';
 import 'package:engicore/features/chemical/presentation/screens/chemical_screen.dart';
+import 'package:engicore/features/chemical/presentation/screens/dilution_screen.dart';
+import 'package:engicore/features/chemical/presentation/screens/molarity_screen.dart';
 import 'package:engicore/features/electrical/presentation/screens/electrical_screen.dart';
 import 'package:engicore/features/electrical/presentation/screens/ohms_law_screen.dart';
 import 'package:engicore/features/electrical/presentation/screens/power_screen.dart';
 import 'package:engicore/features/electrical/presentation/screens/voltage_drop_screen.dart';
 import 'package:engicore/features/history/presentation/screens/history_screen.dart';
+import 'package:engicore/features/mechanical/presentation/screens/flow_velocity_screen.dart';
+import 'package:engicore/features/mechanical/presentation/screens/hydraulic_force_screen.dart';
 import 'package:engicore/features/mechanical/presentation/screens/mechanical_screen.dart';
+import 'package:engicore/features/mechanical/presentation/screens/pressure_drop_screen.dart';
+import 'package:engicore/features/mechanical/presentation/screens/reynolds_screen.dart';
 import 'package:engicore/shared/widgets/app_shell.dart';
 
 /// Route paths for the application.
@@ -25,6 +31,16 @@ abstract final class AppRoutes {
   static const String ohmsLaw = '/electrical/ohms-law';
   static const String power = '/electrical/power';
   static const String voltageDrop = '/electrical/voltage-drop';
+
+  // Mechanical calculators
+  static const String hydraulicForce = '/mechanical/hydraulic-force';
+  static const String reynolds = '/mechanical/reynolds';
+  static const String pressureDrop = '/mechanical/pressure-drop';
+  static const String flowVelocity = '/mechanical/flow-velocity';
+
+  // Chemical calculators
+  static const String dilution = '/chemical/dilution';
+  static const String molarity = '/chemical/molarity';
 
   // Bioprocess calculators
   static const String tipSpeed = '/bioprocess/tip-speed';
@@ -83,6 +99,24 @@ final GoRouter appRouter = GoRouter(
               pageBuilder: (context, state) => const NoTransitionPage(
                 child: MechanicalScreen(),
               ),
+              routes: [
+                GoRoute(
+                  path: 'hydraulic-force',
+                  builder: (context, state) => const HydraulicForceScreen(),
+                ),
+                GoRoute(
+                  path: 'reynolds',
+                  builder: (context, state) => const ReynoldsScreen(),
+                ),
+                GoRoute(
+                  path: 'pressure-drop',
+                  builder: (context, state) => const PressureDropScreen(),
+                ),
+                GoRoute(
+                  path: 'flow-velocity',
+                  builder: (context, state) => const FlowVelocityScreen(),
+                ),
+              ],
             ),
           ],
         ),
@@ -94,6 +128,16 @@ final GoRouter appRouter = GoRouter(
               pageBuilder: (context, state) => const NoTransitionPage(
                 child: ChemicalScreen(),
               ),
+              routes: [
+                GoRoute(
+                  path: 'dilution',
+                  builder: (context, state) => const DilutionScreen(),
+                ),
+                GoRoute(
+                  path: 'molarity',
+                  builder: (context, state) => const MolarityScreen(),
+                ),
+              ],
             ),
           ],
         ),
