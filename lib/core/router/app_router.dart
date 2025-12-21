@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:engicore/features/bioprocess/presentation/screens/bioprocess_screen.dart';
+import 'package:engicore/features/bioprocess/presentation/screens/tip_speed_screen.dart';
 import 'package:engicore/features/chemical/presentation/screens/chemical_screen.dart';
 import 'package:engicore/features/electrical/presentation/screens/electrical_screen.dart';
 import 'package:engicore/features/electrical/presentation/screens/ohms_law_screen.dart';
@@ -22,6 +23,9 @@ abstract final class AppRoutes {
   static const String ohmsLaw = '/electrical/ohms-law';
   static const String power = '/electrical/power';
   static const String voltageDrop = '/electrical/voltage-drop';
+
+  // Bioprocess calculators
+  static const String tipSpeed = '/bioprocess/tip-speed';
 }
 
 /// Global navigation key for the router.
@@ -99,6 +103,12 @@ final GoRouter appRouter = GoRouter(
               pageBuilder: (context, state) => const NoTransitionPage(
                 child: BioprocessScreen(),
               ),
+              routes: [
+                GoRoute(
+                  path: 'tip-speed',
+                  builder: (context, state) => const TipSpeedScreen(),
+                ),
+              ],
             ),
           ],
         ),

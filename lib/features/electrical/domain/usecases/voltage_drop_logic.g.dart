@@ -150,4 +150,4 @@ final class VoltageDropResultProvider
   }
 }
 
-String _$voltageDropResultHash() => r'b16d492082decd34603bc6285405452ef31eba6a';
+String _$voltageDropResultHash() => r'c4b4bca8da23c0de15983ad7d0664637a6e6499a';
