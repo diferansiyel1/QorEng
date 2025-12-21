@@ -60,5 +60,13 @@ abstract final class FluidFlowCalculations {
       route: '/mechanical/flow-velocity',
       formula: 'V = Q/A',
     ),
+    MechanicalCalculation(
+      id: 'viscosity',
+      name: 'Viscosity Lab',
+      description: 'Dynamic/Kinematic converter and Efflux Cup calculator',
+      icon: Icons.water_drop,
+      route: '/mechanical/viscosity',
+      formula: 'ν = μ/ρ',
+    ),
   ];
 }

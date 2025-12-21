@@ -23,6 +23,7 @@ import 'package:engicore/features/mechanical/presentation/screens/hydraulic_forc
 import 'package:engicore/features/mechanical/presentation/screens/mechanical_screen.dart';
 import 'package:engicore/features/mechanical/presentation/screens/pressure_drop_screen.dart';
 import 'package:engicore/features/mechanical/presentation/screens/reynolds_screen.dart';
+import 'package:engicore/features/mechanical/presentation/screens/viscosity_screen.dart';
 import 'package:engicore/shared/widgets/app_shell.dart';
 
 /// Route paths for the application.
@@ -48,6 +49,7 @@ abstract final class AppRoutes {
   static const String reynolds = '/mechanical/reynolds';
   static const String pressureDrop = '/mechanical/pressure-drop';
   static const String flowVelocity = '/mechanical/flow-velocity';
+  static const String viscosity = '/mechanical/viscosity';
 
   // Chemical calculators - General
   static const String dilution = '/chemical/dilution';
@@ -143,6 +145,10 @@ final GoRouter appRouter = GoRouter(
                 GoRoute(
                   path: 'flow-velocity',
                   builder: (context, state) => const FlowVelocityScreen(),
+                ),
+                GoRoute(
+                  path: 'viscosity',
+                  builder: (context, state) => const ViscosityScreen(),
                 ),
               ],
             ),
