@@ -574,7 +574,7 @@ class _QuickAccessList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 100,
+      height: 56,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         itemCount: _quickTools.length,
@@ -626,8 +626,11 @@ class _QuickAccessCard extends StatelessWidget {
         onTap: onTap,
         borderRadius: BorderRadius.circular(Dimens.radiusMd),
         child: Container(
-          width: 160,
-          padding: const EdgeInsets.all(Dimens.spacingMd),
+          width: 140,
+          padding: const EdgeInsets.symmetric(
+            horizontal: Dimens.spacingMd,
+            vertical: Dimens.spacingSm,
+          ),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(Dimens.radiusMd),
             border: Border.all(
@@ -637,7 +640,7 @@ class _QuickAccessCard extends StatelessWidget {
           child: Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(Dimens.spacingSm),
+                padding: const EdgeInsets.all(Dimens.spacingXs),
                 decoration: BoxDecoration(
                   color: color.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(Dimens.radiusSm),
@@ -645,37 +648,21 @@ class _QuickAccessCard extends StatelessWidget {
                 child: Icon(
                   icon,
                   color: color,
-                  size: Dimens.iconMd,
+                  size: Dimens.iconSm,
                 ),
               ),
               const SizedBox(width: Dimens.spacingSm),
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      title,
-                      style: theme.textTheme.labelLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: isDark
-                            ? AppColors.textPrimaryDark
-                            : AppColors.textPrimaryLight,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    Text(
-                      subtitle,
-                      style: theme.textTheme.labelSmall?.copyWith(
-                        color: isDark
-                            ? AppColors.textSecondaryDark
-                            : AppColors.textSecondaryLight,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
+                child: Text(
+                  title,
+                  style: theme.textTheme.labelMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: isDark
+                        ? AppColors.textPrimaryDark
+                        : AppColors.textPrimaryLight,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
             ],
