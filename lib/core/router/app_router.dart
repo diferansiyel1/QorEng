@@ -26,6 +26,9 @@ import 'package:engicore/features/mechanical/presentation/screens/pressure_drop_
 import 'package:engicore/features/mechanical/presentation/screens/reynolds_screen.dart';
 import 'package:engicore/features/mechanical/presentation/screens/viscosity_screen.dart';
 import 'package:engicore/features/connect/presentation/screens/pikolab_connect_screen.dart';
+import 'package:engicore/features/field_logger/presentation/screens/create_session_screen.dart';
+import 'package:engicore/features/field_logger/presentation/screens/active_logging_screen.dart';
+import 'package:engicore/features/field_logger/presentation/screens/session_summary_screen.dart';
 import 'package:engicore/shared/widgets/app_shell.dart';
 
 /// Route paths for the application.
@@ -72,6 +75,11 @@ abstract final class AppRoutes {
 
   // Pikolab Connect
   static const String connect = '/connect';
+
+  // Field Logger
+  static const String fieldLogger = '/field-logger';
+  static const String fieldLoggerActive = '/field-logger/active';
+  static const String fieldLoggerSummary = '/field-logger/summary';
 }
 
 /// Global navigation key for the router.
@@ -243,6 +251,19 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: AppRoutes.connect,
       builder: (context, state) => const PikolabConnectScreen(),
+    ),
+    // Field Logger routes
+    GoRoute(
+      path: AppRoutes.fieldLogger,
+      builder: (context, state) => const CreateSessionScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.fieldLoggerActive,
+      builder: (context, state) => const ActiveLoggingScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.fieldLoggerSummary,
+      builder: (context, state) => const SessionSummaryScreen(),
     ),
   ],
 );

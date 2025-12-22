@@ -30,11 +30,11 @@ class ElectricalScreen extends ConsumerWidget {
             tabs: [
               Tab(
                 icon: const Icon(Icons.bolt),
-                text: locale == AppLocale.tr ? 'Güç & Kablo' : 'Power & Cables',
+                text: strings.powerCables,
               ),
               Tab(
                 icon: const Icon(Icons.memory),
-                text: locale == AppLocale.tr ? 'Otomasyon' : 'Automation',
+                text: strings.automationTab,
               ),
             ],
           ),

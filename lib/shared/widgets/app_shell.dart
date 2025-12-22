@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:engicore/core/constants/app_colors.dart';
 import 'package:engicore/core/constants/dimens.dart';
+import 'package:engicore/core/localization/localization_service.dart';
 
 /// App shell widget containing the BottomNavigationBar.
 ///
 /// This shell persists across all main feature screens and provides
 /// consistent navigation between Dashboard, 4 engineering modules, and history.
-class AppShell extends StatelessWidget {
+class AppShell extends ConsumerWidget {
   const AppShell({
     required this.navigationShell,
     super.key,
@@ -17,7 +19,9 @@ class AppShell extends StatelessWidget {
   final StatefulNavigationShell navigationShell;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final strings = ref.strings;
+
     return Scaffold(
       body: navigationShell,
       bottomNavigationBar: Container(
@@ -34,51 +38,51 @@ class AppShell extends StatelessWidget {
           type: BottomNavigationBarType.fixed,
           currentIndex: navigationShell.currentIndex,
           onTap: (index) => _onTap(context, index),
-          items: const [
+          items: [
             // Home (Dashboard) - Index 0
             BottomNavigationBarItem(
-              icon: Icon(Icons.dashboard_outlined),
-              activeIcon: _ActiveNavIcon(
+              icon: const Icon(Icons.dashboard_outlined),
+              activeIcon: const _ActiveNavIcon(
                 icon: Icons.dashboard,
                 color: AppColors.accent,
               ),
-              label: 'Home',
+              label: strings.home,
             ),
             // Electrical - Index 1
             BottomNavigationBarItem(
-              icon: Icon(Icons.bolt_outlined),
-              activeIcon: _ActiveNavIcon(
+              icon: const Icon(Icons.bolt_outlined),
+              activeIcon: const _ActiveNavIcon(
                 icon: Icons.bolt,
                 color: AppColors.electricalAccent,
               ),
-              label: 'Electrical',
+              label: strings.electrical,
             ),
             // Mechanical - Index 2
             BottomNavigationBarItem(
-              icon: Icon(Icons.settings_outlined),
-              activeIcon: _ActiveNavIcon(
+              icon: const Icon(Icons.settings_outlined),
+              activeIcon: const _ActiveNavIcon(
                 icon: Icons.settings,
                 color: AppColors.mechanicalAccent,
               ),
-              label: 'Mechanical',
+              label: strings.mechanical,
             ),
             // Chemical - Index 3
             BottomNavigationBarItem(
-              icon: Icon(Icons.science_outlined),
-              activeIcon: _ActiveNavIcon(
+              icon: const Icon(Icons.science_outlined),
+              activeIcon: const _ActiveNavIcon(
                 icon: Icons.science,
                 color: AppColors.chemicalAccent,
               ),
-              label: 'Chemical',
+              label: strings.chemical,
             ),
             // Bioprocess - Index 4
             BottomNavigationBarItem(
-              icon: Icon(Icons.biotech_outlined),
-              activeIcon: _ActiveNavIcon(
+              icon: const Icon(Icons.biotech_outlined),
+              activeIcon: const _ActiveNavIcon(
                 icon: Icons.biotech,
                 color: AppColors.bioprocessAccent,
               ),
-              label: 'Bioprocess',
+              label: strings.bioprocess,
             ),
           ],
         ),

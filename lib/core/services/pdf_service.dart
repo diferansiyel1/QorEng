@@ -3,8 +3,10 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 
 import 'package:engicore/features/history/domain/entities/calculation_record.dart';
+import 'package:engicore/features/field_logger/domain/entities/log_session.dart';
 
 /// Pikolab branded PDF colors.
 class PdfBrandColors {
@@ -406,6 +408,200 @@ class PdfService {
       inputs: {},
       results: {'Result': record.resultValue},
     );
+  }
+
+  /// Generate a PDF report for a Field Logger session.
+  Future<Uint8List> generateLoggerReport(LogSession session) async {
+    final pdf = pw.Document();
+    final dateFormat = DateFormat('yyyy-MM-dd');
+    final timeFormat = DateFormat('HH:mm:ss');
+
+    // Load logo
+    pw.MemoryImage? logoImage;
+    try {
+      final logoData = await rootBundle.load('assets/images/qoreng_logo.png');
+      logoImage = pw.MemoryImage(logoData.buffer.asUint8List());
+    } catch (e) {
+      // Logo not available
+    }
+
+    pdf.addPage(
+      pw.MultiPage(
+        pageFormat: PdfPageFormat.a4,
+        margin: const pw.EdgeInsets.all(40),
+        header: (context) => _buildLetterhead(logoImage),
+        footer: (context) => pw.Container(
+          alignment: pw.Alignment.centerRight,
+          margin: const pw.EdgeInsets.only(top: 10),
+          child: pw.Text(
+            'Page ${context.pageNumber} of ${context.pagesCount}',
+            style: const pw.TextStyle(fontSize: 9, color: PdfColors.grey),
+          ),
+        ),
+        build: (context) => [
+          pw.SizedBox(height: 8),
+          pw.Container(
+            width: double.infinity,
+            height: 2,
+            color: PdfBrandColors.teal,
+          ),
+          pw.SizedBox(height: 16),
+
+          // Title
+          pw.Text(
+            'Field Logger Report',
+            style: pw.TextStyle(
+              fontSize: 22,
+              fontWeight: pw.FontWeight.bold,
+              color: PdfBrandColors.tealDark,
+            ),
+          ),
+          pw.SizedBox(height: 8),
+          pw.Text(
+            session.title,
+            style: pw.TextStyle(
+              fontSize: 16,
+              fontWeight: pw.FontWeight.bold,
+            ),
+          ),
+          pw.SizedBox(height: 16),
+
+          // Session info
+          _buildSectionHeader('Session Information'),
+          pw.SizedBox(height: 8),
+          pw.Table(
+            border: pw.TableBorder.all(color: PdfColors.grey300, width: 0.5),
+            children: [
+              pw.TableRow(
+                children: [
+                  pw.Padding(
+                    padding: const pw.EdgeInsets.all(8),
+                    child: pw.Text('Start Time', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)),
+                  ),
+                  pw.Padding(
+                    padding: const pw.EdgeInsets.all(8),
+                    child: pw.Text('${dateFormat.format(session.startTime)} ${timeFormat.format(session.startTime)}', style: const pw.TextStyle(fontSize: 10)),
+                  ),
+                ],
+              ),
+              if (session.endTime != null)
+                pw.TableRow(
+                  children: [
+                    pw.Padding(
+                      padding: const pw.EdgeInsets.all(8),
+                      child: pw.Text('End Time', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)),
+                    ),
+                    pw.Padding(
+                      padding: const pw.EdgeInsets.all(8),
+                      child: pw.Text('${dateFormat.format(session.endTime!)} ${timeFormat.format(session.endTime!)}', style: const pw.TextStyle(fontSize: 10)),
+                    ),
+                  ],
+                ),
+              pw.TableRow(
+                children: [
+                  pw.Padding(
+                    padding: const pw.EdgeInsets.all(8),
+                    child: pw.Text('Duration', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)),
+                  ),
+                  pw.Padding(
+                    padding: const pw.EdgeInsets.all(8),
+                    child: pw.Text(_formatDuration(session.duration), style: const pw.TextStyle(fontSize: 10)),
+                  ),
+                ],
+              ),
+              pw.TableRow(
+                children: [
+                  pw.Padding(
+                    padding: const pw.EdgeInsets.all(8),
+                    child: pw.Text('Total Entries', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)),
+                  ),
+                  pw.Padding(
+                    padding: const pw.EdgeInsets.all(8),
+                    child: pw.Text('${session.entries.length}', style: const pw.TextStyle(fontSize: 10)),
+                  ),
+                ],
+              ),
+              pw.TableRow(
+                children: [
+                  pw.Padding(
+                    padding: const pw.EdgeInsets.all(8),
+                    child: pw.Text('Parameters', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)),
+                  ),
+                  pw.Padding(
+                    padding: const pw.EdgeInsets.all(8),
+                    child: pw.Text(session.parameters.map((p) => '${p.name} (${p.unit})').join(', '), style: const pw.TextStyle(fontSize: 10)),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          pw.SizedBox(height: 24),
+
+          // Data table
+          _buildSectionHeader('Recorded Data'),
+          pw.SizedBox(height: 8),
+          pw.Table(
+            border: pw.TableBorder.all(color: PdfColors.grey300, width: 0.5),
+            columnWidths: {
+              0: const pw.FlexColumnWidth(1.5),
+              for (int i = 0; i < session.parameters.length; i++)
+                i + 1: const pw.FlexColumnWidth(1),
+            },
+            children: [
+              // Header row
+              pw.TableRow(
+                decoration: const pw.BoxDecoration(color: PdfColors.grey100),
+                children: [
+                  pw.Padding(
+                    padding: const pw.EdgeInsets.all(6),
+                    child: pw.Text('Time', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 9)),
+                  ),
+                  ...session.parameters.map((param) => pw.Padding(
+                    padding: const pw.EdgeInsets.all(6),
+                    child: pw.Text('${param.name}\n(${param.unit})', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 9)),
+                  )),
+                ],
+              ),
+              // Data rows
+              ...session.entries.map((entry) => pw.TableRow(
+                children: [
+                  pw.Padding(
+                    padding: const pw.EdgeInsets.all(6),
+                    child: pw.Text(timeFormat.format(entry.timestamp), style: const pw.TextStyle(fontSize: 9)),
+                  ),
+                  ...session.parameters.map((param) => pw.Padding(
+                    padding: const pw.EdgeInsets.all(6),
+                    child: pw.Text(
+                      entry.values[param.name]?.toStringAsFixed(2) ?? '—',
+                      style: const pw.TextStyle(fontSize: 9),
+                    ),
+                  )),
+                ],
+              )),
+            ],
+          ),
+          pw.SizedBox(height: 24),
+
+          // Footer
+          _buildPikolabFooter(),
+        ],
+      ),
+    );
+
+    return pdf.save();
+  }
+
+  /// Format duration as readable string.
+  String _formatDuration(Duration duration) {
+    final hours = duration.inHours;
+    final minutes = duration.inMinutes.remainder(60);
+    final seconds = duration.inSeconds.remainder(60);
+    if (hours > 0) {
+      return '${hours}h ${minutes}m ${seconds}s';
+    } else if (minutes > 0) {
+      return '${minutes}m ${seconds}s';
+    }
+    return '${seconds}s';
   }
 
   /// Print or share the PDF.

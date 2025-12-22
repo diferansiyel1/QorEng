@@ -24,7 +24,7 @@ class PikolabConnectScreen extends ConsumerStatefulWidget {
 
 class _PikolabConnectScreenState extends ConsumerState<PikolabConnectScreen> {
   // TODO: Replace with actual Pikolab contact info
-  static const String _whatsappNumber = '+905551234567';
+  static const String _whatsappNumber = '+905436639797';
   static const String _rfqEmail = 'sales@pikolab.com';
   static const String _linkedInUrl =
       'https://www.linkedin.com/company/pikolab-engineering';

@@ -2,6 +2,7 @@ import 'dart:developer' as developer;
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
@@ -10,6 +11,7 @@ import 'package:engicore/core/router/app_router.dart';
 import 'package:engicore/core/services/notification_service.dart';
 import 'package:engicore/core/theme/app_theme.dart';
 import 'package:engicore/features/history/domain/repositories/history_repository.dart';
+import 'package:engicore/features/field_logger/domain/repositories/field_logger_repository.dart';
 
 /// EngiCore - Mission-critical engineering calculations super-app.
 ///
@@ -21,11 +23,12 @@ void main() async {
   // Initialize Hive for local persistence
   await Hive.initFlutter();
 
-  // Open the history box for calculation records
-  final historyBox = await Hive.openBox<String>(HistoryRepository.boxName);
-
   // Initialize localization service
   await LocalizationService.initialize();
+
+  // Open Hive boxes
+  final historyBox = await Hive.openBox<String>(HistoryRepository.boxName);
+  final fieldLoggerBox = await Hive.openBox<String>(FieldLoggerRepository.boxName);
 
   // Initialize Firebase (optional - app works without it)
   try {
@@ -45,6 +48,8 @@ void main() async {
       overrides: [
         // Override the historyBox provider with the actual box
         historyBoxProvider.overrideWithValue(historyBox),
+        // Override the fieldLoggerBox provider with the actual box
+        fieldLoggerBoxProvider.overrideWithValue(fieldLoggerBox),
       ],
       child: const QorEngApp(),
     ),
@@ -66,6 +71,18 @@ class QorEngApp extends StatelessWidget {
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: ThemeMode.dark,
+      // Turkish is the default locale
+      locale: const Locale('tr', 'TR'),
+      supportedLocales: const [
+        Locale('tr', 'TR'),
+        Locale('en', 'US'),
+      ],
+      // Add localization delegates for Material and Cupertino widgets
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
       routerConfig: appRouter,
     );
   }

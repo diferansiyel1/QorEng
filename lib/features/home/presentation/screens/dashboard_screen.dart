@@ -195,9 +195,7 @@ class _EmptyRecentActivity extends ConsumerWidget {
             ),
             const SizedBox(height: Dimens.spacingXs),
             Text(
-              ref.watch(localeProvider) == AppLocale.tr
-                  ? 'Son hesaplamalarınız burada görünecek'
-                  : 'Your recent calculations will appear here',
+              strings.recentActivityHint,
               style: theme.textTheme.bodySmall?.copyWith(
                 color: isDark
                     ? AppColors.textSecondaryDark
@@ -241,99 +239,118 @@ class _DashboardHeader extends ConsumerWidget {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final unreadCount = ref.watch(unreadNotificationCountProvider);
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isSmallScreen = screenWidth < 400;
+    final strings = ref.strings;
 
-    return Row(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Logo
-        SizedBox(
-          width: 64,
-          height: 64,
-          child: Image.asset(
-            'assets/images/qoreng_logo.png',
-            fit: BoxFit.contain,
-            errorBuilder: (context, error, stackTrace) => Container(
-              decoration: BoxDecoration(
-                color: AppColors.accent.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(Dimens.radiusMd),
-              ),
-              child: const Icon(
-                Icons.engineering,
-                color: AppColors.accent,
-                size: 36,
-              ),
-            ),
-          ),
-        ),
-        const SizedBox(width: Dimens.spacingMd),
-
-        // Greeting
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                greeting,
-                style: theme.textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: isDark
-                      ? AppColors.textPrimaryDark
-                      : AppColors.textPrimaryLight,
-                ),
-              ),
-              Text(
-                'Engineer',
-                style: theme.textTheme.headlineSmall?.copyWith(
-                  color: AppColors.accent,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-        ),
-
-        // Notification Bell
-        Stack(
+        // Main header row
+        Row(
           children: [
-            IconButton(
-              onPressed: () => _showNotifications(context, ref),
-              icon: Icon(
-                Icons.notifications_outlined,
-                color: isDark
-                    ? AppColors.textSecondaryDark
-                    : AppColors.textSecondaryLight,
-                size: 28,
-              ),
-              tooltip: 'Notifications',
-            ),
-            if (unreadCount > 0)
-              Positioned(
-                right: 8,
-                top: 8,
-                child: Container(
-                  width: 12,
-                  height: 12,
-                  decoration: const BoxDecoration(
-                    color: AppColors.error,
-                    shape: BoxShape.circle,
+            // Logo - smaller on compact screens
+            SizedBox(
+              width: isSmallScreen ? 48 : 56,
+              height: isSmallScreen ? 48 : 56,
+              child: Image.asset(
+                'assets/images/qoreng_logo.png',
+                fit: BoxFit.contain,
+                errorBuilder: (context, error, stackTrace) => Container(
+                  decoration: BoxDecoration(
+                    color: AppColors.accent.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(Dimens.radiusMd),
+                  ),
+                  child: Icon(
+                    Icons.engineering,
+                    color: AppColors.accent,
+                    size: isSmallScreen ? 28 : 32,
                   ),
                 ),
               ),
-        ],
-        ),
-        
-        // Language Toggle
-        IconButton(
-          onPressed: () => ref.read(localeProvider.notifier).toggleLocale(),
-          icon: Text(
-            ref.watch(localeProvider).flag,
-            style: const TextStyle(fontSize: 24),
-          ),
-          tooltip: ref.watch(localeProvider) == AppLocale.tr
-              ? 'Switch to English'
-              : 'Türkçe\'ye geç',
+            ),
+            const SizedBox(width: Dimens.spacingSm),
+
+            // Greeting - flexible width with horizontal layout
+            Expanded(
+              child: Wrap(
+                spacing: 4,
+                children: [
+                  Text(
+                    greeting,
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: isDark
+                          ? AppColors.textPrimaryDark
+                          : AppColors.textPrimaryLight,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  Text(
+                    strings.engineer,
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      color: AppColors.accent,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ),
+
+            // Notification Bell
+            Stack(
+              children: [
+                IconButton(
+                  onPressed: () => _showNotifications(context, ref),
+                  icon: Icon(
+                    Icons.notifications_outlined,
+                    color: isDark
+                        ? AppColors.textSecondaryDark
+                        : AppColors.textSecondaryLight,
+                    size: 24,
+                  ),
+                  tooltip: 'Notifications',
+                  padding: const EdgeInsets.all(8),
+                  constraints: const BoxConstraints(),
+                ),
+                if (unreadCount > 0)
+                  Positioned(
+                    right: 4,
+                    top: 4,
+                    child: Container(
+                      width: 10,
+                      height: 10,
+                      decoration: const BoxDecoration(
+                        color: AppColors.error,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+            const SizedBox(width: 4),
+
+            // Language Toggle
+            IconButton(
+              onPressed: () => ref.read(localeProvider.notifier).toggleLocale(),
+              icon: Text(
+                ref.watch(localeProvider).flag,
+                style: const TextStyle(fontSize: 20),
+              ),
+              tooltip: ref.watch(localeProvider) == AppLocale.tr
+                  ? 'Switch to English'
+                  : 'Türkçe\'ye geç',
+              padding: const EdgeInsets.all(8),
+              constraints: const BoxConstraints(),
+            ),
+          ],
         ),
 
-        // Date badge
+        // Date badge - below header on separate row
+        const SizedBox(height: Dimens.spacingSm),
         Container(
           padding: const EdgeInsets.symmetric(
             horizontal: Dimens.spacingMd,
@@ -430,12 +447,14 @@ class _SearchButton extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: Dimens.spacingMd),
-              Text(
-                'Search tools...',
-                style: theme.textTheme.bodyLarge?.copyWith(
-                  color: isDark
-                      ? AppColors.textSecondaryDark
-                      : AppColors.textSecondaryLight,
+              Consumer(
+                builder: (context, ref, _) => Text(
+                  ref.strings.searchTools,
+                  style: theme.textTheme.bodyLarge?.copyWith(
+                    color: isDark
+                        ? AppColors.textSecondaryDark
+                        : AppColors.textSecondaryLight,
+                  ),
                 ),
               ),
               const Spacer(),
@@ -515,7 +534,7 @@ class _ModulesGrid extends ConsumerWidget {
         crossAxisCount: 2,
         mainAxisSpacing: Dimens.spacingMd,
         crossAxisSpacing: Dimens.spacingMd,
-        childAspectRatio: 1.4,
+        childAspectRatio: 0.85,
       ),
       itemCount: modules.length,
       itemBuilder: (context, index) {
@@ -666,7 +685,7 @@ class _ModuleCard extends StatelessWidget {
             children: [
               // Icon container
               Container(
-                padding: const EdgeInsets.all(Dimens.spacingSm + 2),
+                padding: const EdgeInsets.all(Dimens.spacingSm),
                 decoration: BoxDecoration(
                   color: color.withValues(alpha: 0.25),
                   borderRadius: BorderRadius.circular(Dimens.radiusMd),
@@ -705,51 +724,60 @@ class _ModuleCard extends StatelessWidget {
 }
 
 /// Quick access horizontal list.
-class _QuickAccessList extends StatelessWidget {
+class _QuickAccessList extends ConsumerWidget {
   const _QuickAccessList();
 
-  static const _quickTools = [
-    (
-      title: 'Voltage Drop',
-      subtitle: 'Cable sizing',
-      icon: Icons.bolt_rounded,
-      color: Color(0xFFFFC107),
-      route: '/electrical/voltage-drop',
-    ),
-    (
-      title: 'Signal Scaler',
-      subtitle: '4-20mA conversion',
-      icon: Icons.straighten_rounded,
-      color: Color(0xFF00E5FF),
-      route: '/electrical/signal-scaler',
-    ),
-    (
-      title: 'Viscosity Lab',
-      subtitle: 'Dynamic/Kinematic',
-      icon: Icons.water_drop_rounded,
-      color: Color(0xFFFF6D00),
-      route: '/mechanical/viscosity',
-    ),
-    (
-      title: 'Beer-Lambert',
-      subtitle: 'Spectroscopy',
-      icon: Icons.lightbulb_rounded,
-      color: Color(0xFF7C4DFF),
-      route: '/chemical/beer-lambert',
-    ),
-  ];
-
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final strings = ref.strings;
+    
+    final quickTools = [
+      (
+        title: strings.fieldLogger,
+        subtitle: strings.fieldLoggerDesc,
+        icon: Icons.edit_note_rounded,
+        color: AppColors.bioprocessAccent,
+        route: '/field-logger',
+      ),
+      (
+        title: strings.voltageDrop,
+        subtitle: strings.cableSizing,
+        icon: Icons.bolt_rounded,
+        color: const Color(0xFFFFC107),
+        route: '/electrical/voltage-drop',
+      ),
+      (
+        title: strings.signalScaler,
+        subtitle: strings.conversionLabel,
+        icon: Icons.straighten_rounded,
+        color: const Color(0xFF00E5FF),
+        route: '/electrical/signal-scaler',
+      ),
+      (
+        title: strings.viscosityLab,
+        subtitle: strings.dynamicKinematic,
+        icon: Icons.water_drop_rounded,
+        color: const Color(0xFFFF6D00),
+        route: '/mechanical/viscosity',
+      ),
+      (
+        title: strings.beerLambert,
+        subtitle: strings.spectroscopy,
+        icon: Icons.lightbulb_rounded,
+        color: const Color(0xFF7C4DFF),
+        route: '/chemical/beer-lambert',
+      ),
+    ];
+
     return SizedBox(
       height: 100,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
-        itemCount: _quickTools.length,
+        itemCount: quickTools.length,
         separatorBuilder: (context, index) =>
             const SizedBox(width: Dimens.spacingMd),
         itemBuilder: (context, index) {
-          final tool = _quickTools[index];
+          final tool = quickTools[index];
           return _QuickAccessCard(
             title: tool.title,
             subtitle: tool.subtitle,

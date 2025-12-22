@@ -30,11 +30,11 @@ class MechanicalScreen extends ConsumerWidget {
             tabs: [
               Tab(
                 icon: const Icon(Icons.construction),
-                text: locale == AppLocale.tr ? 'Katı & Hidrolik' : 'Solids & Hydraulics',
+                text: strings.solidsHydraulics,
               ),
               Tab(
                 icon: const Icon(Icons.water_drop),
-                text: locale == AppLocale.tr ? 'Akışkan & Debi' : 'Fluid & Flow',
+                text: strings.fluidFlow,
               ),
             ],
           ),

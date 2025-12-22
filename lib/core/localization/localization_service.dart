@@ -242,6 +242,118 @@ abstract class AppStrings {
   String get version;
   String get privacyPolicy;
   String get termsOfService;
+
+  // Navigation
+  String get home;
+  String get dashboard;
+  String get searchTools;
+  String get recentActivityHint;
+  String get comingSoon;
+  String get clear;
+  String get reset;
+  String get copyValue;
+
+  // Quick Access
+  String get cableSizing;
+  String get conversionLabel;
+  String get viscosityLab;
+  String get dynamicKinematic;
+  String get spectroscopy;
+
+  // Tab Labels
+  String get powerCables;
+  String get automationTab;
+  String get solidsHydraulics;
+  String get fluidFlow;
+
+  // Input Labels
+  String get phaseSystem;
+  String get conductorMaterial;
+  String get cableCrossSection;
+  String get systemVoltage;
+  String get copper;
+  String get aluminum;
+  String get singlePhase;
+  String get threePhase;
+  String get enterCurrent;
+  String get enterLength;
+  String get enterVoltage;
+  String get enterValues;
+
+  // Calculator Outputs
+  String get ok;
+  String get critical;
+  String get voltageDropPercentage;
+  String get exceedsLightingLimit;
+  String get exceedsPowerLimit;
+
+  // Pikolab Connect Extended
+  String get pikolabEngineering;
+  String get yourPartner;
+  String get getExpertSupport;
+  String get instantSupport;
+  String get technicalQuestion;
+  String get chatWhatsApp;
+  String get requestQuote;
+  String get getPricing;
+  String get selectCategory;
+  String get category;
+  String get describeRequirements;
+  String get requirementsHint;
+  String get sendRequest;
+  String get proMember;
+  String get proCommunity;
+  String get proUnlocked;
+  String get unlockInsights;
+  String get followLinkedInPrompt;
+  String get industryInsights;
+  String get earlyAccess;
+  String get webinarInvitations;
+  String get followOnLinkedIn;
+  String get visitWebsite;
+  String get thankYouFollowing;
+
+  // Categories
+  String get processAnalytics;
+  String get automationControl;
+  String get industrialChemicals;
+  String get bioprocessEquipment;
+  String get otherCategory;
+
+  // Promo Headlines
+  String get automationSystems;
+  String get pumpSolutions;
+  String get labEquipment;
+  String get bioreactorSensors;
+  String get exploreSolutions;
+  String get getQuote;
+  String get learnMore;
+
+  // Auth Extended
+  String get signingIn;
+  String get signInFailed;
+
+  // Errors & Messages
+  String get couldNotOpenWhatsApp;
+  String get couldNotOpenEmail;
+  String get couldNotOpenLinkedIn;
+  String get openingEmail;
+  String get proFeaturesUnlocked;
+
+  // Field Logger
+  String get fieldLogger;
+  String get fieldLoggerDesc;
+  String get sessionName;
+  String get sessionNameHint;
+  String get enterSessionName;
+  String get parameters;
+  String get addParameter;
+  String get startLogging;
+  String get recordPoint;
+  String get endSession;
+  String get entries;
+  String get sessionSummary;
+  String get exportCsv;
 }
 
 /// Turkish strings implementation.
@@ -403,6 +515,118 @@ class TurkishStrings implements AppStrings {
   @override String get version => 'Versiyon';
   @override String get privacyPolicy => 'Gizlilik Politikası';
   @override String get termsOfService => 'Kullanım Koşulları';
+
+  // Navigation
+  @override String get home => 'Ana Sayfa';
+  @override String get dashboard => 'Gösterge Paneli';
+  @override String get searchTools => 'Araç ara...';
+  @override String get recentActivityHint => 'Son hesaplamalarınız burada görünecek';
+  @override String get comingSoon => 'Yakında';
+  @override String get clear => 'Temizle';
+  @override String get reset => 'Sıfırla';
+  @override String get copyValue => 'Değeri kopyala';
+
+  // Quick Access
+  @override String get cableSizing => 'Kablo boyutlandırma';
+  @override String get conversionLabel => '4-20mA dönüşüm';
+  @override String get viscosityLab => 'Viskozite Lab';
+  @override String get dynamicKinematic => 'Dinamik/Kinematik';
+  @override String get spectroscopy => 'Spektroskopi';
+
+  // Tab Labels
+  @override String get powerCables => 'Güç & Kablo';
+  @override String get automationTab => 'Otomasyon';
+  @override String get solidsHydraulics => 'Katı & Hidrolik';
+  @override String get fluidFlow => 'Akışkan & Debi';
+
+  // Input Labels
+  @override String get phaseSystem => 'Faz Sistemi';
+  @override String get conductorMaterial => 'İletken Malzeme';
+  @override String get cableCrossSection => 'Kablo Kesiti (S)';
+  @override String get systemVoltage => 'Sistem Gerilimi';
+  @override String get copper => 'Bakır';
+  @override String get aluminum => 'Alüminyum';
+  @override String get singlePhase => 'Tek Faz (1F)';
+  @override String get threePhase => 'Üç Faz (3F)';
+  @override String get enterCurrent => 'Akım girin';
+  @override String get enterLength => 'Uzunluk girin';
+  @override String get enterVoltage => 'Gerilim girin';
+  @override String get enterValues => 'Hesaplamak için değer girin';
+
+  // Calculator Outputs
+  @override String get ok => 'Tamam';
+  @override String get critical => 'Kritik';
+  @override String get voltageDropPercentage => 'Gerilim Düşümü Yüzdesi';
+  @override String get exceedsLightingLimit => 'Gerilim düşümü aydınlatma devreleri için %3 sınırını aşıyor!';
+  @override String get exceedsPowerLimit => 'Gerilim düşümü güç devreleri için %5 sınırını aşıyor!';
+
+  // Pikolab Connect Extended
+  @override String get pikolabEngineering => 'Pikolab Mühendislik';
+  @override String get yourPartner => 'Proses Mühendisliği Ortağınız';
+  @override String get getExpertSupport => 'Uzman desteği alın, teklif isteyin ve profesyonel topluluğumuza katılın.';
+  @override String get instantSupport => 'WhatsApp ile anında destek alın';
+  @override String get technicalQuestion => 'Sürecinizle ilgili teknik sorunuz mu var? Mühendislerimiz yardıma hazır.';
+  @override String get chatWhatsApp => 'WhatsApp\'ta Sohbet';
+  @override String get requestQuote => 'Teklif İste';
+  @override String get getPricing => 'Ekipman ve hizmetler için fiyat alın';
+  @override String get selectCategory => 'Bir kategori seçin ve ihtiyaçlarınızı açıklayın:';
+  @override String get category => 'Kategori';
+  @override String get describeRequirements => 'Gereksinimlerinizi açıklayın';
+  @override String get requirementsHint => 'örn. biyoreaktör izleme için pH sensörleri...';
+  @override String get sendRequest => 'İstek Gönder';
+  @override String get proMember => 'Pro Üye';
+  @override String get proCommunity => 'Pro Topluluk';
+  @override String get proUnlocked => 'Pro özelliklerin kilidini açtınız!';
+  @override String get unlockInsights => 'Özel içerik ve özelliklere erişin';
+  @override String get followLinkedInPrompt => 'Kilidi açmak için Pikolab\'ı LinkedIn\'de takip edin:';
+  @override String get industryInsights => 'Sektör analizleri ve en iyi uygulamalar';
+  @override String get earlyAccess => 'Yeni hesaplayıcılara erken erişim';
+  @override String get webinarInvitations => 'Özel webinar davetleri';
+  @override String get followOnLinkedIn => 'LinkedIn\'de Takip Et';
+  @override String get visitWebsite => 'pikolab.com\'u ziyaret edin';
+  @override String get thankYouFollowing => 'Takip ettiğiniz için teşekkürler!';
+
+  // Categories
+  @override String get processAnalytics => 'Proses Analitiği';
+  @override String get automationControl => 'Otomasyon ve Kontrol';
+  @override String get industrialChemicals => 'Endüstriyel Kimyasallar';
+  @override String get bioprocessEquipment => 'Biyoproses Ekipmanları';
+  @override String get otherCategory => 'Diğer';
+
+  // Promo Headlines
+  @override String get automationSystems => 'Otomasyon ve Kontrol Sistemleri';
+  @override String get pumpSolutions => 'Endüstriyel Pompa ve Akış Çözümleri';
+  @override String get labEquipment => 'Proses Analitiği ve Laboratuvar Ekipmanları';
+  @override String get bioreactorSensors => 'Biyoreaktör Sensörlerine mi İhtiyacınız Var?';
+  @override String get exploreSolutions => 'Çözümleri Keşfedin';
+  @override String get getQuote => 'Teklif Alın';
+  @override String get learnMore => 'Daha Fazla Bilgi';
+
+  // Auth Extended
+  @override String get signingIn => 'Giriş yapılıyor...';
+  @override String get signInFailed => 'Giriş iptal edildi veya başarısız oldu';
+
+  // Errors & Messages
+  @override String get couldNotOpenWhatsApp => 'WhatsApp açılamadı';
+  @override String get couldNotOpenEmail => 'E-posta istemcisi açılamadı';
+  @override String get couldNotOpenLinkedIn => 'LinkedIn açılamadı';
+  @override String get openingEmail => 'E-posta istemcisi açılıyor...';
+  @override String get proFeaturesUnlocked => '🎉 Pro özellikler açıldı! Takip ettiğiniz için teşekkürler.';
+
+  // Field Logger
+  @override String get fieldLogger => 'Saha Kaydı';
+  @override String get fieldLoggerDesc => 'Zaman serisi veri kaydı';
+  @override String get sessionName => 'Oturum Adı';
+  @override String get sessionNameHint => 'örn. Reaktör 3 Testi';
+  @override String get enterSessionName => 'Oturum adı girin';
+  @override String get parameters => 'Parametreler';
+  @override String get addParameter => 'Parametre Ekle';
+  @override String get startLogging => 'Kayda Başla';
+  @override String get recordPoint => 'Nokta Kaydet';
+  @override String get endSession => 'Oturumu Bitir';
+  @override String get entries => 'Kayıtlar';
+  @override String get sessionSummary => 'Oturum Özeti';
+  @override String get exportCsv => 'CSV Dışa Aktar';
 }
 
 /// English strings implementation.
@@ -564,4 +788,116 @@ class EnglishStrings implements AppStrings {
   @override String get version => 'Version';
   @override String get privacyPolicy => 'Privacy Policy';
   @override String get termsOfService => 'Terms of Service';
+
+  // Navigation
+  @override String get home => 'Home';
+  @override String get dashboard => 'Dashboard';
+  @override String get searchTools => 'Search tools...';
+  @override String get recentActivityHint => 'Your recent calculations will appear here';
+  @override String get comingSoon => 'Coming soon';
+  @override String get clear => 'Clear';
+  @override String get reset => 'Reset';
+  @override String get copyValue => 'Copy value';
+
+  // Quick Access
+  @override String get cableSizing => 'Cable sizing';
+  @override String get conversionLabel => '4-20mA conversion';
+  @override String get viscosityLab => 'Viscosity Lab';
+  @override String get dynamicKinematic => 'Dynamic/Kinematic';
+  @override String get spectroscopy => 'Spectroscopy';
+
+  // Tab Labels
+  @override String get powerCables => 'Power & Cables';
+  @override String get automationTab => 'Automation';
+  @override String get solidsHydraulics => 'Solids & Hydraulics';
+  @override String get fluidFlow => 'Fluid & Flow';
+
+  // Input Labels
+  @override String get phaseSystem => 'Phase System';
+  @override String get conductorMaterial => 'Conductor Material';
+  @override String get cableCrossSection => 'Cable Cross-Section (S)';
+  @override String get systemVoltage => 'System Voltage';
+  @override String get copper => 'Copper';
+  @override String get aluminum => 'Aluminum';
+  @override String get singlePhase => 'Single Phase (1P)';
+  @override String get threePhase => 'Three Phase (3P)';
+  @override String get enterCurrent => 'Enter current';
+  @override String get enterLength => 'Enter length';
+  @override String get enterVoltage => 'Enter voltage';
+  @override String get enterValues => 'Enter values to calculate';
+
+  // Calculator Outputs
+  @override String get ok => 'OK';
+  @override String get critical => 'Critical';
+  @override String get voltageDropPercentage => 'Voltage Drop Percentage';
+  @override String get exceedsLightingLimit => 'Voltage drop exceeds 3% limit for lighting circuits!';
+  @override String get exceedsPowerLimit => 'Voltage drop exceeds 5% limit for power circuits!';
+
+  // Pikolab Connect Extended
+  @override String get pikolabEngineering => 'Pikolab Engineering';
+  @override String get yourPartner => 'Your Process Engineering Partner';
+  @override String get getExpertSupport => 'Get expert support, request quotes, and join our professional community.';
+  @override String get instantSupport => 'Get instant support via WhatsApp';
+  @override String get technicalQuestion => 'Have a technical question about your process? Our engineers are ready to help.';
+  @override String get chatWhatsApp => 'Chat on WhatsApp';
+  @override String get requestQuote => 'Request Quote';
+  @override String get getPricing => 'Get pricing for equipment & services';
+  @override String get selectCategory => 'Select a category and describe your needs:';
+  @override String get category => 'Category';
+  @override String get describeRequirements => 'Describe your requirements';
+  @override String get requirementsHint => 'e.g., pH sensors for bioreactor monitoring...';
+  @override String get sendRequest => 'Send Request';
+  @override String get proMember => 'Pro Member';
+  @override String get proCommunity => 'Pro Community';
+  @override String get proUnlocked => 'You have unlocked pro features!';
+  @override String get unlockInsights => 'Unlock exclusive insights & features';
+  @override String get followLinkedInPrompt => 'Follow Pikolab on LinkedIn to unlock:';
+  @override String get industryInsights => 'Industry insights & best practices';
+  @override String get earlyAccess => 'Early access to new calculators';
+  @override String get webinarInvitations => 'Exclusive webinar invitations';
+  @override String get followOnLinkedIn => 'Follow on LinkedIn';
+  @override String get visitWebsite => 'Visit pikolab.com';
+  @override String get thankYouFollowing => 'Thank you for following!';
+
+  // Categories
+  @override String get processAnalytics => 'Process Analytics';
+  @override String get automationControl => 'Automation & Control';
+  @override String get industrialChemicals => 'Industrial Chemicals';
+  @override String get bioprocessEquipment => 'Bioprocess Equipment';
+  @override String get otherCategory => 'Other';
+
+  // Promo Headlines
+  @override String get automationSystems => 'Automation & Control Systems';
+  @override String get pumpSolutions => 'Industrial Pump & Flow Solutions';
+  @override String get labEquipment => 'Process Analytics & Lab Equipment';
+  @override String get bioreactorSensors => 'Need Bioreactor Sensors?';
+  @override String get exploreSolutions => 'Explore Solutions';
+  @override String get getQuote => 'Get Quote';
+  @override String get learnMore => 'Learn More';
+
+  // Auth Extended
+  @override String get signingIn => 'Signing in...';
+  @override String get signInFailed => 'Sign-in was cancelled or failed';
+
+  // Errors & Messages
+  @override String get couldNotOpenWhatsApp => 'Could not open WhatsApp';
+  @override String get couldNotOpenEmail => 'Could not open email client';
+  @override String get couldNotOpenLinkedIn => 'Could not open LinkedIn';
+  @override String get openingEmail => 'Opening email client...';
+  @override String get proFeaturesUnlocked => '🎉 Pro features unlocked! Thank you for following.';
+
+  // Field Logger
+  @override String get fieldLogger => 'Field Logger';
+  @override String get fieldLoggerDesc => 'Time-series data logging';
+  @override String get sessionName => 'Session Name';
+  @override String get sessionNameHint => 'e.g., Reactor 3 Test';
+  @override String get enterSessionName => 'Enter session name';
+  @override String get parameters => 'Parameters';
+  @override String get addParameter => 'Add Parameter';
+  @override String get startLogging => 'Start Logging';
+  @override String get recordPoint => 'Record Point';
+  @override String get endSession => 'End Session';
+  @override String get entries => 'Entries';
+  @override String get sessionSummary => 'Session Summary';
+  @override String get exportCsv => 'Export CSV';
 }
