@@ -23,6 +23,22 @@ class ChemicalCalculation {
 abstract final class GeneralChemistryCalculations {
   static const List<ChemicalCalculation> all = [
     ChemicalCalculation(
+      id: 'chem-guard',
+      name: 'ChemGuard',
+      description: 'Check chemical-material compatibility ratings',
+      icon: Icons.shield,
+      route: '/chemical/chem-guard',
+      formula: 'A/B/C/D Ratings',
+    ),
+    ChemicalCalculation(
+      id: 'material-finder',
+      name: 'Material Finder',
+      description: 'Find compatible materials for a chemical',
+      icon: Icons.search,
+      route: '/chemical/material-finder',
+      formula: 'Reverse Lookup',
+    ),
+    ChemicalCalculation(
       id: 'dilution',
       name: 'Dilution Calculator',
       description: 'Calculate stock and water volumes for dilutions',

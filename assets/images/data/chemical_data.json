@@ -1,0 +1,1226 @@
+[
+    {
+        "name": "Acetaldehyde",
+        "cas_number": "75-07-0",
+        "formula": "C2H4O",
+        "category": "Aldehyde",
+        "properties": {
+            "boiling_point": "20.2°C",
+            "flash_point": "-39°C"
+        },
+        "materials": {
+            "SS316": "A",
+            "SS304": "A",
+            "Aluminum": "B",
+            "Carbon Steel": "C",
+            "PVC": "D",
+            "PP": "B",
+            "PTFE": "A",
+            "PVDF": "C",
+            "Viton": "D",
+            "EPDM": "A",
+            "Buna-N": "D",
+            "Neoprene": "B"
+        }
+    },
+    {
+        "name": "Acetic Acid",
+        "cas_number": "64-19-7",
+        "formula": "CH3COOH",
+        "category": "Organic Acid",
+        "properties": {
+            "boiling_point": "118°C",
+            "flash_point": "39°C"
+        },
+        "materials": {
+            "SS316": "A",
+            "SS304": "B",
+            "Aluminum": "A",
+            "Carbon Steel": "D",
+            "PVC": "B",
+            "PP": "A",
+            "PTFE": "A",
+            "PVDF": "A",
+            "Viton": "C",
+            "EPDM": "A",
+            "Buna-N": "B",
+            "Neoprene": "B"
+        }
+    },
+    {
+        "name": "Acetone",
+        "cas_number": "67-64-1",
+        "formula": "C3H6O",
+        "category": "Ketone",
+        "properties": {
+            "boiling_point": "56°C",
+            "flash_point": "-20°C"
+        },
+        "materials": {
+            "SS316": "A",
+            "SS304": "A",
+            "Aluminum": "A",
+            "Carbon Steel": "A",
+            "PVC": "D",
+            "PP": "A",
+            "PTFE": "A",
+            "PVDF": "D",
+            "Viton": "D",
+            "EPDM": "A",
+            "Buna-N": "D",
+            "Neoprene": "B"
+        }
+    },
+    {
+        "name": "Acetonitrile",
+        "cas_number": "75-05-8",
+        "formula": "C2H3N",
+        "category": "Nitrile",
+        "properties": {
+            "boiling_point": "82°C",
+            "flash_point": "2°C"
+        },
+        "materials": {
+            "SS316": "A",
+            "SS304": "A",
+            "Aluminum": "A",
+            "Carbon Steel": "A",
+            "PVC": "D",
+            "PP": "A",
+            "PTFE": "A",
+            "PVDF": "A",
+            "Viton": "D",
+            "EPDM": "A",
+            "Buna-N": "D",
+            "Neoprene": "D"
+        }
+    },
+    {
+        "name": "Ammonia, Anhydrous",
+        "cas_number": "7664-41-7",
+        "formula": "NH3",
+        "category": "Base / Gas",
+        "properties": {
+            "boiling_point": "-33°C",
+            "flash_point": "Gas"
+        },
+        "materials": {
+            "SS316": "A",
+            "SS304": "A",
+            "Aluminum": "A",
+            "Carbon Steel": "A",
+            "PVC": "D",
+            "PP": "A",
+            "PTFE": "A",
+            "PVDF": "A",
+            "Viton": "D",
+            "EPDM": "A",
+            "Buna-N": "A",
+            "Neoprene": "A"
+        }
+    },
+    {
+        "name": "Ammonium Hydroxide",
+        "cas_number": "1336-21-6",
+        "formula": "NH4OH",
+        "category": "Base",
+        "properties": {
+            "boiling_point": "27°C",
+            "flash_point": "N/A"
+        },
+        "materials": {
+            "SS316": "A",
+            "SS304": "A",
+            "Aluminum": "B",
+            "Carbon Steel": "B",
+            "PVC": "A",
+            "PP": "A",
+            "PTFE": "A",
+            "PVDF": "A",
+            "Viton": "A",
+            "EPDM": "A",
+            "Buna-N": "A",
+            "Neoprene": "A"
+        }
+    },
+    {
+        "name": "Benzene",
+        "cas_number": "71-43-2",
+        "formula": "C6H6",
+        "category": "Aromatic Hydrocarbon",
+        "properties": {
+            "boiling_point": "80°C",
+            "flash_point": "-11°C"
+        },
+        "materials": {
+            "SS316": "A",
+            "SS304": "A",
+            "Aluminum": "A",
+            "Carbon Steel": "A",
+            "PVC": "D",
+            "PP": "D",
+            "PTFE": "A",
+            "PVDF": "A",
+            "Viton": "A",
+            "EPDM": "D",
+            "Buna-N": "D",
+            "Neoprene": "D"
+        }
+    },
+    {
+        "name": "Gasoline (Unleaded)",
+        "cas_number": "8006-61-9",
+        "formula": "Mixture",
+        "category": "Fuel / Hydrocarbon",
+        "properties": {
+            "boiling_point": "38-204°C",
+            "flash_point": "-43°C"
+        },
+        "materials": {
+            "SS316": "A",
+            "SS304": "A",
+            "Aluminum": "A",
+            "Carbon Steel": "A",
+            "PVC": "B",
+            "PP": "C",
+            "PTFE": "A",
+            "PVDF": "A",
+            "Viton": "A",
+            "EPDM": "D",
+            "Buna-N": "A",
+            "Neoprene": "B"
+        }
+    },
+    {
+        "name": "Bromine",
+        "cas_number": "7726-95-6",
+        "formula": "Br2",
+        "category": "Halogen",
+        "properties": {
+            "boiling_point": "59°C",
+            "flash_point": "N/A"
+        },
+        "materials": {
+            "SS316": "D",
+            "SS304": "D",
+            "Aluminum": "D",
+            "Carbon Steel": "D",
+            "PVC": "B",
+            "PP": "D",
+            "PTFE": "A",
+            "PVDF": "A",
+            "Viton": "A",
+            "EPDM": "D",
+            "Buna-N": "D",
+            "Neoprene": "D"
+        }
+    },
+    {
+        "name": "Butyl Acetate",
+        "cas_number": "123-86-4",
+        "formula": "C6H12O2",
+        "category": "Ester",
+        "properties": {
+            "boiling_point": "126°C",
+            "flash_point": "22°C"
+        },
+        "materials": {
+            "SS316": "A",
+            "SS304": "A",
+            "Aluminum": "A",
+            "Carbon Steel": "A",
+            "PVC": "D",
+            "PP": "B",
+            "PTFE": "A",
+            "PVDF": "B",
+            "Viton": "D",
+            "EPDM": "A",
+            "Buna-N": "D",
+            "Neoprene": "D"
+        }
+    },
+    {
+        "name": "Butyl Alcohol (Butanol)",
+        "cas_number": "71-36-3",
+        "formula": "C4H10O",
+        "category": "Alcohol",
+        "properties": {
+            "boiling_point": "117°C",
+            "flash_point": "37°C"
+        },
+        "materials": {
+            "SS316": "A",
+            "SS304": "A",
+            "Aluminum": "A",
+            "Carbon Steel": "A",
+            "PVC": "B",
+            "PP": "A",
+            "PTFE": "A",
+            "PVDF": "A",
+            "Viton": "A",
+            "EPDM": "A",
+            "Buna-N": "A",
+            "Neoprene": "A"
+        }
+    },
+    {
+        "name": "Diethyl Ether",
+        "cas_number": "60-29-7",
+        "formula": "(C2H5)2O",
+        "category": "Ether",
+        "properties": {
+            "boiling_point": "34.6°C",
+            "flash_point": "-45°C"
+        },
+        "materials": {
+            "SS316": "A",
+            "SS304": "A",
+            "Aluminum": "A",
+            "Carbon Steel": "A",
+            "PVC": "D",
+            "PP": "D",
+            "PTFE": "A",
+            "PVDF": "B",
+            "Viton": "D",
+            "EPDM": "D",
+            "Buna-N": "D",
+            "Neoprene": "D"
+        }
+    },
+    {
+        "name": "Dimethylformamide (DMF)",
+        "cas_number": "68-12-2",
+        "formula": "C3H7NO",
+        "category": "Amide",
+        "properties": {
+            "boiling_point": "153°C",
+            "flash_point": "58°C"
+        },
+        "materials": {
+            "SS316": "A",
+            "SS304": "A",
+            "Aluminum": "B",
+            "Carbon Steel": "A",
+            "PVC": "D",
+            "PP": "A",
+            "PTFE": "A",
+            "PVDF": "D",
+            "Viton": "D",
+            "EPDM": "A",
+            "Buna-N": "D",
+            "Neoprene": "B"
+        }
+    },
+    {
+        "name": "Dimethyl Sulfoxide (DMSO)",
+        "cas_number": "67-68-5",
+        "formula": "C2H6OS",
+        "category": "Sulfoxide",
+        "properties": {
+            "boiling_point": "189°C",
+            "flash_point": "95°C"
+        },
+        "materials": {
+            "SS316": "A",
+            "SS304": "A",
+            "Aluminum": "A",
+            "Carbon Steel": "A",
+            "PVC": "D",
+            "PP": "A",
+            "PTFE": "A",
+            "PVDF": "A",
+            "Viton": "D",
+            "EPDM": "A",
+            "Buna-N": "D",
+            "Neoprene": "A"
+        }
+    },
+    {
+        "name": "Diesel Fuel",
+        "cas_number": "68334-30-5",
+        "formula": "Mixture",
+        "category": "Fuel",
+        "properties": {
+            "boiling_point": "170-360°C",
+            "flash_point": ">55°C"
+        },
+        "materials": {
+            "SS316": "A",
+            "SS304": "A",
+            "Aluminum": "A",
+            "Carbon Steel": "A",
+            "PVC": "A",
+            "PP": "B",
+            "PTFE": "A",
+            "PVDF": "A",
+            "Viton": "A",
+            "EPDM": "D",
+            "Buna-N": "A",
+            "Neoprene": "B"
+        }
+    },
+    {
+        "name": "Ethanol",
+        "cas_number": "64-17-5",
+        "formula": "C2H5OH",
+        "category": "Alcohol",
+        "properties": {
+            "boiling_point": "78°C",
+            "flash_point": "13°C"
+        },
+        "materials": {
+            "SS316": "A",
+            "SS304": "A",
+            "Aluminum": "A",
+            "Carbon Steel": "A",
+            "PVC": "B",
+            "PP": "A",
+            "PTFE": "A",
+            "PVDF": "B",
+            "Viton": "B",
+            "EPDM": "A",
+            "Buna-N": "A",
+            "Neoprene": "A"
+        }
+    },
+    {
+        "name": "Ethyl Acetate",
+        "cas_number": "141-78-6",
+        "formula": "C4H8O2",
+        "category": "Ester",
+        "properties": {
+            "boiling_point": "77°C",
+            "flash_point": "-4°C"
+        },
+        "materials": {
+            "SS316": "A",
+            "SS304": "A",
+            "Aluminum": "A",
+            "Carbon Steel": "A",
+            "PVC": "D",
+            "PP": "B",
+            "PTFE": "A",
+            "PVDF": "C",
+            "Viton": "D",
+            "EPDM": "A",
+            "Buna-N": "D",
+            "Neoprene": "D"
+        }
+    },
+    {
+        "name": "Ethylene Glycol",
+        "cas_number": "107-21-1",
+        "formula": "C2H6O2",
+        "category": "Alcohol / Glycol",
+        "properties": {
+            "boiling_point": "197°C",
+            "flash_point": "111°C"
+        },
+        "materials": {
+            "SS316": "A",
+            "SS304": "A",
+            "Aluminum": "A",
+            "Carbon Steel": "A",
+            "PVC": "A",
+            "PP": "A",
+            "PTFE": "A",
+            "PVDF": "A",
+            "Viton": "A",
+            "EPDM": "A",
+            "Buna-N": "A",
+            "Neoprene": "A"
+        }
+    },
+    {
+        "name": "Phenol",
+        "cas_number": "108-95-2",
+        "formula": "C6H5OH",
+        "category": "Alcohol / Aromatic",
+        "properties": {
+            "boiling_point": "181°C",
+            "flash_point": "79°C"
+        },
+        "materials": {
+            "SS316": "A",
+            "SS304": "A",
+            "Aluminum": "B",
+            "Carbon Steel": "C",
+            "PVC": "D",
+            "PP": "B",
+            "PTFE": "A",
+            "PVDF": "A",
+            "Viton": "A",
+            "EPDM": "D",
+            "Buna-N": "D",
+            "Neoprene": "D"
+        }
+    },
+    {
+        "name": "Formaldehyde",
+        "cas_number": "50-00-0",
+        "formula": "CH2O",
+        "category": "Aldehyde",
+        "properties": {
+            "boiling_point": "-19°C",
+            "flash_point": "64°C"
+        },
+        "materials": {
+            "SS316": "A",
+            "SS304": "A",
+            "Aluminum": "A",
+            "Carbon Steel": "B",
+            "PVC": "A",
+            "PP": "A",
+            "PTFE": "A",
+            "PVDF": "A",
+            "Viton": "B",
+            "EPDM": "A",
+            "Buna-N": "B",
+            "Neoprene": "A"
+        }
+    },
+    {
+        "name": "Formic Acid",
+        "cas_number": "64-18-6",
+        "formula": "CH2O2",
+        "category": "Organic Acid",
+        "properties": {
+            "boiling_point": "100.8°C",
+            "flash_point": "69°C"
+        },
+        "materials": {
+            "SS316": "A",
+            "SS304": "B",
+            "Aluminum": "B",
+            "Carbon Steel": "D",
+            "PVC": "B",
+            "PP": "A",
+            "PTFE": "A",
+            "PVDF": "A",
+            "Viton": "C",
+            "EPDM": "A",
+            "Buna-N": "B",
+            "Neoprene": "A"
+        }
+    },
+    {
+        "name": "Phosphoric Acid (85%)",
+        "cas_number": "7664-38-2",
+        "formula": "H3PO4",
+        "category": "Inorganic Acid",
+        "properties": {
+            "boiling_point": "158°C",
+            "flash_point": "N/A"
+        },
+        "materials": {
+            "SS316": "A",
+            "SS304": "B",
+            "Aluminum": "D",
+            "Carbon Steel": "D",
+            "PVC": "A",
+            "PP": "A",
+            "PTFE": "A",
+            "PVDF": "A",
+            "Viton": "A",
+            "EPDM": "A",
+            "Buna-N": "B",
+            "Neoprene": "B"
+        }
+    },
+    {
+        "name": "Kerosene (Jet A-1)",
+        "cas_number": "8008-20-6",
+        "formula": "Mixture",
+        "category": "Fuel",
+        "properties": {
+            "boiling_point": "150-300°C",
+            "flash_point": ">38°C"
+        },
+        "materials": {
+            "SS316": "A",
+            "SS304": "A",
+            "Aluminum": "A",
+            "Carbon Steel": "A",
+            "PVC": "A",
+            "PP": "B",
+            "PTFE": "A",
+            "PVDF": "A",
+            "Viton": "A",
+            "EPDM": "D",
+            "Buna-N": "A",
+            "Neoprene": "B"
+        }
+    },
+    {
+        "name": "Hexane",
+        "cas_number": "110-54-3",
+        "formula": "C6H14",
+        "category": "Alkane / Solvent",
+        "properties": {
+            "boiling_point": "69°C",
+            "flash_point": "-22°C"
+        },
+        "materials": {
+            "SS316": "A",
+            "SS304": "A",
+            "Aluminum": "A",
+            "Carbon Steel": "A",
+            "PVC": "B",
+            "PP": "B",
+            "PTFE": "A",
+            "PVDF": "A",
+            "Viton": "A",
+            "EPDM": "D",
+            "Buna-N": "A",
+            "Neoprene": "B"
+        }
+    },
+    {
+        "name": "Heptane",
+        "cas_number": "142-82-5",
+        "formula": "C7H16",
+        "category": "Alkane",
+        "properties": {
+            "boiling_point": "98°C",
+            "flash_point": "-4°C"
+        },
+        "materials": {
+            "SS316": "A",
+            "SS304": "A",
+            "Aluminum": "A",
+            "Carbon Steel": "A",
+            "PVC": "C",
+            "PP": "B",
+            "PTFE": "A",
+            "PVDF": "A",
+            "Viton": "A",
+            "EPDM": "D",
+            "Buna-N": "A",
+            "Neoprene": "A"
+        }
+    },
+    {
+        "name": "Hydrofluoric Acid (HF)",
+        "cas_number": "7664-39-3",
+        "formula": "HF",
+        "category": "Inorganic Acid",
+        "properties": {
+            "boiling_point": "19.5°C",
+            "flash_point": "N/A"
+        },
+        "materials": {
+            "SS316": "D",
+            "SS304": "D",
+            "Aluminum": "D",
+            "Carbon Steel": "D",
+            "PVC": "B",
+            "PP": "A",
+            "PTFE": "A",
+            "PVDF": "A",
+            "Viton": "A",
+            "EPDM": "B",
+            "Buna-N": "D",
+            "Neoprene": "C"
+        }
+    },
+    {
+        "name": "Hydrogen Peroxide (30%)",
+        "cas_number": "7722-84-1",
+        "formula": "H2O2",
+        "category": "Oxidizer",
+        "properties": {
+            "boiling_point": "108°C",
+            "flash_point": "N/A"
+        },
+        "materials": {
+            "SS316": "A",
+            "SS304": "A",
+            "Aluminum": "A",
+            "Carbon Steel": "D",
+            "PVC": "A",
+            "PP": "B",
+            "PTFE": "A",
+            "PVDF": "A",
+            "Viton": "A",
+            "EPDM": "B",
+            "Buna-N": "C",
+            "Neoprene": "C"
+        }
+    },
+    {
+        "name": "Hydrochloric Acid (37%)",
+        "cas_number": "7647-01-0",
+        "formula": "HCl",
+        "category": "Inorganic Acid",
+        "properties": {
+            "boiling_point": "48°C",
+            "flash_point": "N/A"
+        },
+        "materials": {
+            "SS316": "D",
+            "SS304": "D",
+            "Aluminum": "D",
+            "Carbon Steel": "D",
+            "PVC": "A",
+            "PP": "A",
+            "PTFE": "A",
+            "PVDF": "A",
+            "Viton": "A",
+            "EPDM": "C",
+            "Buna-N": "D",
+            "Neoprene": "D"
+        }
+    },
+    {
+        "name": "Isopropyl Alcohol (IPA)",
+        "cas_number": "67-63-0",
+        "formula": "C3H8O",
+        "category": "Alcohol",
+        "properties": {
+            "boiling_point": "82.6°C",
+            "flash_point": "12°C"
+        },
+        "materials": {
+            "SS316": "A",
+            "SS304": "A",
+            "Aluminum": "A",
+            "Carbon Steel": "A",
+            "PVC": "A",
+            "PP": "A",
+            "PTFE": "A",
+            "PVDF": "A",
+            "Viton": "A",
+            "EPDM": "A",
+            "Buna-N": "B",
+            "Neoprene": "A"
+        }
+    },
+    {
+        "name": "Carbon Disulfide",
+        "cas_number": "75-15-0",
+        "formula": "CS2",
+        "category": "Sulfur Compound",
+        "properties": {
+            "boiling_point": "46°C",
+            "flash_point": "-30°C"
+        },
+        "materials": {
+            "SS316": "A",
+            "SS304": "B",
+            "Aluminum": "B",
+            "Carbon Steel": "B",
+            "PVC": "D",
+            "PP": "D",
+            "PTFE": "A",
+            "PVDF": "A",
+            "Viton": "A",
+            "EPDM": "D",
+            "Buna-N": "B",
+            "Neoprene": "C"
+        }
+    },
+    {
+        "name": "Carbon Tetrachloride",
+        "cas_number": "56-23-5",
+        "formula": "CCl4",
+        "category": "Chlorinated Solvent",
+        "properties": {
+            "boiling_point": "76.7°C",
+            "flash_point": "N/A"
+        },
+        "materials": {
+            "SS316": "A",
+            "SS304": "A",
+            "Aluminum": "D",
+            "Carbon Steel": "B",
+            "PVC": "D",
+            "PP": "D",
+            "PTFE": "A",
+            "PVDF": "A",
+            "Viton": "A",
+            "EPDM": "D",
+            "Buna-N": "D",
+            "Neoprene": "D"
+        }
+    },
+    {
+        "name": "Chlorine (Liquid/Dry)",
+        "cas_number": "7782-50-5",
+        "formula": "Cl2",
+        "category": "Halogen",
+        "properties": {
+            "boiling_point": "-34°C",
+            "flash_point": "Oxidizer"
+        },
+        "materials": {
+            "SS316": "C",
+            "SS304": "C",
+            "Aluminum": "C",
+            "Carbon Steel": "A",
+            "PVC": "A",
+            "PP": "D",
+            "PTFE": "A",
+            "PVDF": "A",
+            "Viton": "A",
+            "EPDM": "D",
+            "Buna-N": "D",
+            "Neoprene": "D"
+        }
+    },
+    {
+        "name": "Chloroform",
+        "cas_number": "67-66-3",
+        "formula": "CHCl3",
+        "category": "Chlorinated Solvent",
+        "properties": {
+            "boiling_point": "61.2°C",
+            "flash_point": "N/A"
+        },
+        "materials": {
+            "SS316": "A",
+            "SS304": "A",
+            "Aluminum": "A",
+            "Carbon Steel": "B",
+            "PVC": "D",
+            "PP": "D",
+            "PTFE": "A",
+            "PVDF": "A",
+            "Viton": "A",
+            "EPDM": "D",
+            "Buna-N": "D",
+            "Neoprene": "D"
+        }
+    },
+    {
+        "name": "Chromic Acid (50%)",
+        "cas_number": "7738-94-5",
+        "formula": "H2CrO4",
+        "category": "Inorganic Acid",
+        "properties": {
+            "boiling_point": "250°C",
+            "flash_point": "N/A"
+        },
+        "materials": {
+            "SS316": "B",
+            "SS304": "C",
+            "Aluminum": "C",
+            "Carbon Steel": "D",
+            "PVC": "A",
+            "PP": "A",
+            "PTFE": "A",
+            "PVDF": "A",
+            "Viton": "A",
+            "EPDM": "C",
+            "Buna-N": "D",
+            "Neoprene": "D"
+        }
+    },
+    {
+        "name": "Xylene",
+        "cas_number": "1330-20-7",
+        "formula": "C8H10",
+        "category": "Aromatic Hydrocarbon",
+        "properties": {
+            "boiling_point": "144°C",
+            "flash_point": "27°C"
+        },
+        "materials": {
+            "SS316": "A",
+            "SS304": "A",
+            "Aluminum": "A",
+            "Carbon Steel": "A",
+            "PVC": "D",
+            "PP": "C",
+            "PTFE": "A",
+            "PVDF": "A",
+            "Viton": "A",
+            "EPDM": "D",
+            "Buna-N": "D",
+            "Neoprene": "D"
+        }
+    },
+    {
+        "name": "Methanol",
+        "cas_number": "67-56-1",
+        "formula": "CH3OH",
+        "category": "Alcohol",
+        "properties": {
+            "boiling_point": "64.7°C",
+            "flash_point": "11°C"
+        },
+        "materials": {
+            "SS316": "A",
+            "SS304": "A",
+            "Aluminum": "B",
+            "Carbon Steel": "A",
+            "PVC": "A",
+            "PP": "A",
+            "PTFE": "A",
+            "PVDF": "B",
+            "Viton": "C",
+            "EPDM": "A",
+            "Buna-N": "A",
+            "Neoprene": "A"
+        }
+    },
+    {
+        "name": "Methylene Chloride",
+        "cas_number": "75-09-2",
+        "formula": "CH2Cl2",
+        "category": "Chlorinated Solvent",
+        "properties": {
+            "boiling_point": "39.6°C",
+            "flash_point": "N/A"
+        },
+        "materials": {
+            "SS316": "B",
+            "SS304": "B",
+            "Aluminum": "B",
+            "Carbon Steel": "B",
+            "PVC": "D",
+            "PP": "D",
+            "PTFE": "A",
+            "PVDF": "A",
+            "Viton": "B",
+            "EPDM": "D",
+            "Buna-N": "D",
+            "Neoprene": "D"
+        }
+    },
+    {
+        "name": "Methyl Ethyl Ketone (MEK)",
+        "cas_number": "78-93-3",
+        "formula": "C4H8O",
+        "category": "Ketone",
+        "properties": {
+            "boiling_point": "79.6°C",
+            "flash_point": "-9°C"
+        },
+        "materials": {
+            "SS316": "A",
+            "SS304": "A",
+            "Aluminum": "A",
+            "Carbon Steel": "A",
+            "PVC": "D",
+            "PP": "A",
+            "PTFE": "A",
+            "PVDF": "D",
+            "Viton": "D",
+            "EPDM": "A",
+            "Buna-N": "D",
+            "Neoprene": "D"
+        }
+    },
+    {
+        "name": "Naphtha",
+        "cas_number": "8030-30-6",
+        "formula": "Mixture",
+        "category": "Hydrocarbon",
+        "properties": {
+            "boiling_point": "30-200°C",
+            "flash_point": "<0°C"
+        },
+        "materials": {
+            "SS316": "A",
+            "SS304": "A",
+            "Aluminum": "A",
+            "Carbon Steel": "A",
+            "PVC": "B",
+            "PP": "B",
+            "PTFE": "A",
+            "PVDF": "A",
+            "Viton": "A",
+            "EPDM": "D",
+            "Buna-N": "A",
+            "Neoprene": "D"
+        }
+    },
+    {
+        "name": "Nitric Acid (Concentrated)",
+        "cas_number": "7697-37-2",
+        "formula": "HNO3",
+        "category": "Inorganic Acid",
+        "properties": {
+            "boiling_point": "83°C",
+            "flash_point": "Oxidizer"
+        },
+        "materials": {
+            "SS316": "B",
+            "SS304": "A",
+            "Aluminum": "A",
+            "Carbon Steel": "D",
+            "PVC": "D",
+            "PP": "D",
+            "PTFE": "A",
+            "PVDF": "A",
+            "Viton": "A",
+            "EPDM": "D",
+            "Buna-N": "D",
+            "Neoprene": "D"
+        }
+    },
+    {
+        "name": "Oleic Acid",
+        "cas_number": "112-80-1",
+        "formula": "C18H34O2",
+        "category": "Fatty Acid",
+        "properties": {
+            "boiling_point": "360°C",
+            "flash_point": "189°C"
+        },
+        "materials": {
+            "SS316": "A",
+            "SS304": "A",
+            "Aluminum": "A",
+            "Carbon Steel": "C",
+            "PVC": "A",
+            "PP": "B",
+            "PTFE": "A",
+            "PVDF": "A",
+            "Viton": "A",
+            "EPDM": "D",
+            "Buna-N": "A",
+            "Neoprene": "D"
+        }
+    },
+    {
+        "name": "Potassium Hydroxide (50%)",
+        "cas_number": "1310-58-3",
+        "formula": "KOH",
+        "category": "Base",
+        "properties": {
+            "boiling_point": "1320°C (Pure)",
+            "flash_point": "N/A"
+        },
+        "materials": {
+            "SS316": "B",
+            "SS304": "B",
+            "Aluminum": "D",
+            "Carbon Steel": "B",
+            "PVC": "A",
+            "PP": "A",
+            "PTFE": "A",
+            "PVDF": "A",
+            "Viton": "B",
+            "EPDM": "A",
+            "Buna-N": "B",
+            "Neoprene": "A"
+        }
+    },
+    {
+        "name": "Cyclohexane",
+        "cas_number": "110-82-7",
+        "formula": "C6H12",
+        "category": "Alkane",
+        "properties": {
+            "boiling_point": "80.7°C",
+            "flash_point": "-20°C"
+        },
+        "materials": {
+            "SS316": "A",
+            "SS304": "A",
+            "Aluminum": "A",
+            "Carbon Steel": "A",
+            "PVC": "D",
+            "PP": "D",
+            "PTFE": "A",
+            "PVDF": "A",
+            "Viton": "A",
+            "EPDM": "D",
+            "Buna-N": "A",
+            "Neoprene": "D"
+        }
+    },
+    {
+        "name": "Citric Acid",
+        "cas_number": "77-92-9",
+        "formula": "C6H8O7",
+        "category": "Organic Acid",
+        "properties": {
+            "boiling_point": "310°C",
+            "flash_point": "155°C"
+        },
+        "materials": {
+            "SS316": "A",
+            "SS304": "A",
+            "Aluminum": "B",
+            "Carbon Steel": "D",
+            "PVC": "A",
+            "PP": "A",
+            "PTFE": "A",
+            "PVDF": "A",
+            "Viton": "A",
+            "EPDM": "A",
+            "Buna-N": "A",
+            "Neoprene": "A"
+        }
+    },
+    {
+        "name": "Sodium Hydroxide (50%)",
+        "cas_number": "1310-73-2",
+        "formula": "NaOH",
+        "category": "Base",
+        "properties": {
+            "boiling_point": "145°C",
+            "flash_point": "N/A"
+        },
+        "materials": {
+            "SS316": "A",
+            "SS304": "A",
+            "Aluminum": "D",
+            "Carbon Steel": "B",
+            "PVC": "A",
+            "PP": "A",
+            "PTFE": "A",
+            "PVDF": "A",
+            "Viton": "B",
+            "EPDM": "A",
+            "Buna-N": "B",
+            "Neoprene": "A"
+        }
+    },
+    {
+        "name": "Sodium Hypochlorite (Bleach)",
+        "cas_number": "7681-52-9",
+        "formula": "NaOCl",
+        "category": "Oxidizer",
+        "properties": {
+            "boiling_point": "101°C",
+            "flash_point": "N/A"
+        },
+        "materials": {
+            "SS316": "C",
+            "SS304": "D",
+            "Aluminum": "D",
+            "Carbon Steel": "D",
+            "PVC": "A",
+            "PP": "A",
+            "PTFE": "A",
+            "PVDF": "A",
+            "Viton": "A",
+            "EPDM": "A",
+            "Buna-N": "C",
+            "Neoprene": "B"
+        }
+    },
+    {
+        "name": "Styrene",
+        "cas_number": "100-42-5",
+        "formula": "C8H8",
+        "category": "Monomer",
+        "properties": {
+            "boiling_point": "145°C",
+            "flash_point": "31°C"
+        },
+        "materials": {
+            "SS316": "A",
+            "SS304": "A",
+            "Aluminum": "A",
+            "Carbon Steel": "B",
+            "PVC": "D",
+            "PP": "D",
+            "PTFE": "A",
+            "PVDF": "A",
+            "Viton": "A",
+            "EPDM": "D",
+            "Buna-N": "D",
+            "Neoprene": "D"
+        }
+    },
+    {
+        "name": "Sulfuric Acid (Concentrated)",
+        "cas_number": "7664-93-9",
+        "formula": "H2SO4",
+        "category": "Inorganic Acid",
+        "properties": {
+            "boiling_point": "337°C",
+            "flash_point": "N/A"
+        },
+        "materials": {
+            "SS316": "C",
+            "SS304": "D",
+            "Aluminum": "D",
+            "Carbon Steel": "B",
+            "PVC": "A",
+            "PP": "B",
+            "PTFE": "A",
+            "PVDF": "A",
+            "Viton": "A",
+            "EPDM": "D",
+            "Buna-N": "D",
+            "Neoprene": "D"
+        }
+    },
+    {
+        "name": "Tetrahydrofuran (THF)",
+        "cas_number": "109-99-9",
+        "formula": "C4H8O",
+        "category": "Ether / Solvent",
+        "properties": {
+            "boiling_point": "66°C",
+            "flash_point": "-14°C"
+        },
+        "materials": {
+            "SS316": "A",
+            "SS304": "A",
+            "Aluminum": "A",
+            "Carbon Steel": "A",
+            "PVC": "D",
+            "PP": "B",
+            "PTFE": "A",
+            "PVDF": "D",
+            "Viton": "D",
+            "EPDM": "A",
+            "Buna-N": "D",
+            "Neoprene": "D"
+        }
+    },
+    {
+        "name": "Toluene",
+        "cas_number": "108-88-3",
+        "formula": "C7H8",
+        "category": "Aromatic Hydrocarbon",
+        "properties": {
+            "boiling_point": "110.6°C",
+            "flash_point": "4°C"
+        },
+        "materials": {
+            "SS316": "A",
+            "SS304": "A",
+            "Aluminum": "A",
+            "Carbon Steel": "A",
+            "PVC": "D",
+            "PP": "D",
+            "PTFE": "A",
+            "PVDF": "A",
+            "Viton": "A",
+            "EPDM": "D",
+            "Buna-N": "D",
+            "Neoprene": "D"
+        }
+    },
+    {
+        "name": "Trichloroethylene (TCE)",
+        "cas_number": "79-01-6",
+        "formula": "C2HCl3",
+        "category": "Chlorinated Solvent",
+        "properties": {
+            "boiling_point": "87.2°C",
+            "flash_point": "N/A"
+        },
+        "materials": {
+            "SS316": "A",
+            "SS304": "A",
+            "Aluminum": "A",
+            "Carbon Steel": "A",
+            "PVC": "D",
+            "PP": "D",
+            "PTFE": "A",
+            "PVDF": "A",
+            "Viton": "A",
+            "EPDM": "D",
+            "Buna-N": "D",
+            "Neoprene": "D"
+        }
+    }
+]

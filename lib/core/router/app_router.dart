@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:engicore/features/bioprocess/presentation/screens/bioprocess_screen.dart';
 import 'package:engicore/features/bioprocess/presentation/screens/tip_speed_screen.dart';
 import 'package:engicore/features/chemical/presentation/screens/chemical_screen.dart';
+import 'package:engicore/features/chemical/presentation/screens/compatibility_check_screen.dart';
+import 'package:engicore/features/chemical/presentation/screens/material_finder_screen.dart';
 import 'package:engicore/features/chemical/presentation/screens/arrhenius_screen.dart';
 import 'package:engicore/features/chemical/presentation/screens/beer_lambert_screen.dart';
 import 'package:engicore/features/chemical/presentation/screens/dilution_screen.dart';
@@ -71,6 +73,10 @@ abstract final class AppRoutes {
   // Chemical calculators - Electrochem
   static const String phSensor = '/chemical/ph-sensor';
   static const String arrhenius = '/chemical/arrhenius';
+
+  // ChemGuard (Chemical Compatibility)
+  static const String chemGuard = '/chemical/chem-guard';
+  static const String materialFinder = '/chemical/material-finder';
 
   // Bioprocess calculators
   static const String tipSpeed = '/bioprocess/tip-speed';
@@ -225,6 +231,15 @@ final GoRouter appRouter = GoRouter(
                 GoRoute(
                   path: 'arrhenius',
                   builder: (context, state) => const ArrheniusScreen(),
+                ),
+                // ChemGuard
+                GoRoute(
+                  path: 'chem-guard',
+                  builder: (context, state) => const CompatibilityCheckScreen(),
+                ),
+                GoRoute(
+                  path: 'material-finder',
+                  builder: (context, state) => const MaterialFinderScreen(),
                 ),
               ],
             ),
