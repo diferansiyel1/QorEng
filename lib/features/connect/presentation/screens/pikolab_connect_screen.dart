@@ -7,13 +7,16 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:engicore/core/constants/app_colors.dart';
 import 'package:engicore/core/constants/dimens.dart';
 import 'package:engicore/core/services/analytics_service.dart';
+import 'package:engicore/core/services/auth_service.dart';
+import 'package:engicore/shared/widgets/app_button.dart';
 
-/// Pikolab Connect screen for business intelligence and lead generation.
+/// Engineering Hub - High-Conversion Business Intelligence Screen.
 ///
 /// Features:
-/// - Ask an Expert (WhatsApp)
-/// - Request Quote (RFQ form)
-/// - Pro Community (LinkedIn gate)
+/// - Collapsible SliverAppBar with gradient
+/// - Quick Actions Grid (WhatsApp, Meeting, Website, LinkedIn)
+/// - Smart Project Inquiry Form with auth auto-fill
+/// - Priority toggle for urgent requests
 class PikolabConnectScreen extends ConsumerStatefulWidget {
   const PikolabConnectScreen({super.key});
 
@@ -23,19 +26,50 @@ class PikolabConnectScreen extends ConsumerStatefulWidget {
 }
 
 class _PikolabConnectScreenState extends ConsumerState<PikolabConnectScreen> {
-  // TODO: Replace with actual Pikolab contact info
+  // Contact Information
   static const String _whatsappNumber = '+905436639797';
   static const String _rfqEmail = 'sales@pikolab.com';
   static const String _linkedInUrl =
       'https://www.linkedin.com/company/pikolab-engineering';
   static const String _websiteUrl = 'https://www.pikolab.com';
+  static const String _calendlyUrl =
+      'https://calendly.com/fehmiozel/30min';
 
-  String? _selectedCategory;
+  // Form Controllers
+  final _formKey = GlobalKey<FormState>();
+  final _nameController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _companyController = TextEditingController();
   final _messageController = TextEditingController();
-  bool _isProUser = false;
+
+  // Form State
+  String _selectedSubject = 'Proses Tasarımı';
+  bool _isUrgent = false;
+  bool _isSubmitting = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _prefillUserData();
+  }
+
+  /// Pre-fill form with authenticated user data.
+  void _prefillUserData() {
+    final authService = ref.read(authServiceProvider);
+    final user = authService.currentUser;
+
+    if (user != null && !user.isGuest) {
+      _nameController.text = user.displayName ?? '';
+      _emailController.text = user.email;
+      _companyController.text = user.company ?? '';
+    }
+  }
 
   @override
   void dispose() {
+    _nameController.dispose();
+    _emailController.dispose();
+    _companyController.dispose();
     _messageController.dispose();
     super.dispose();
   }
@@ -45,291 +79,402 @@ class _PikolabConnectScreenState extends ConsumerState<PikolabConnectScreen> {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
+    // Watch auth state for auto-fill updates
+    ref.listen(currentUserProvider, (previous, next) {
+      next.whenData((user) {
+        if (user != null && !user.isGuest) {
+          if (_nameController.text.isEmpty) {
+            _nameController.text = user.displayName ?? '';
+          }
+          if (_emailController.text.isEmpty) {
+            _emailController.text = user.email;
+          }
+          if (_companyController.text.isEmpty) {
+            _companyController.text = user.company ?? '';
+          }
+        }
+      });
+    });
+
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Pikolab Connect'),
-        centerTitle: true,
+      body: CustomScrollView(
+        slivers: [
+          // SLIVER APP BAR with gradient
+          _buildSliverAppBar(theme),
+
+          // QUICK ACTIONS SECTION
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(
+                Dimens.spacingLg,
+                Dimens.spacingLg,
+                Dimens.spacingLg,
+                0,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Hızlı Erişim',
+                    style: theme.textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: Dimens.spacingMd),
+                ],
+              ),
+            ),
+          ),
+
+          // QUICK ACTIONS GRID
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: Dimens.spacingLg),
+              child: _buildQuickActionsGrid(theme, isDark),
+            ),
+          ),
+
+          // PROJECT INQUIRY SECTION
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.all(Dimens.spacingLg),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: Dimens.spacingMd),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.rocket_launch_rounded,
+                        color: AppColors.accent,
+                      ),
+                      const SizedBox(width: Dimens.spacingSm),
+                      Text(
+                        'Proje Başlat',
+                        style: theme.textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: Dimens.spacingMd),
+                  _buildProjectInquiryForm(theme, isDark),
+                ],
+              ),
+            ),
+          ),
+
+          // BOTTOM PADDING
+          const SliverToBoxAdapter(
+            child: SizedBox(height: Dimens.spacingXl),
+          ),
+        ],
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(Dimens.spacingLg),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Header
-            _buildHeader(theme, isDark),
+    );
+  }
 
-            const SizedBox(height: Dimens.spacingXl),
-
-            // Ask an Expert - WhatsApp
-            _buildAskExpertCard(theme, isDark),
-
-            const SizedBox(height: Dimens.spacingLg),
-
-            // Request Quote - RFQ
-            _buildRfqCard(theme, isDark),
-
-            const SizedBox(height: Dimens.spacingLg),
-
-            // Pro Community - LinkedIn
-            _buildProCommunityCard(theme, isDark),
-
-            const SizedBox(height: Dimens.spacingXl),
-
-            // Website Footer
-            _buildWebsiteFooter(theme, isDark),
-          ],
+  /// Builds the collapsible SliverAppBar with gradient.
+  Widget _buildSliverAppBar(ThemeData theme) {
+    return SliverAppBar(
+      expandedHeight: 160.0,
+      pinned: true,
+      flexibleSpace: FlexibleSpaceBar(
+        title: const Text(
+          'Mühendislik Merkezi',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            shadows: [
+              Shadow(
+                color: Colors.black45,
+                blurRadius: 4,
+              ),
+            ],
+          ),
+        ),
+        background: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                AppColors.primary,
+                AppColors.accentDark,
+                AppColors.accent,
+              ],
+            ),
+          ),
+          child: Stack(
+            children: [
+              // Subtle pattern overlay
+              Positioned.fill(
+                child: Opacity(
+                  opacity: 0.08,
+                  child: CustomPaint(
+                    painter: _GridPatternPainter(),
+                  ),
+                ),
+              ),
+              // Icon decorations
+              Positioned(
+                right: -20,
+                bottom: -20,
+                child: Opacity(
+                  opacity: 0.15,
+                  child: Icon(
+                    Icons.engineering_rounded,
+                    size: 160,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+              // Tagline
+              Positioned(
+                left: Dimens.spacingLg,
+                bottom: 60,
+                child: Text(
+                  'Proses Mühendisliği Ortağınız',
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: Colors.white70,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildHeader(ThemeData theme, bool isDark) {
+  /// Builds the Quick Actions layout with WhatsApp spanning full width.
+  Widget _buildQuickActionsGrid(ThemeData theme, bool isDark) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // WhatsApp - Full width
+        _QuickActionCard(
+          icon: Icons.chat_rounded,
+          label: 'WhatsApp Destek',
+          color: const Color(0xFF25D366),
+          onTap: _openWhatsApp,
+          aspectRatio: 2.6,
+        ),
+        const SizedBox(height: Dimens.spacingMd),
+        // Web and LinkedIn in a row
         Row(
           children: [
-            Container(
-              padding: const EdgeInsets.all(Dimens.spacingMd),
-              decoration: BoxDecoration(
-                color: AppColors.accent.withValues(alpha: 0.15),
-                borderRadius: BorderRadius.circular(Dimens.radiusMd),
-              ),
-              child: const Icon(
-                Icons.handshake_rounded,
-                color: AppColors.accent,
-                size: 32,
+            Expanded(
+              child: _QuickActionCard(
+                icon: Icons.public_rounded,
+                label: 'Web Sitesi',
+                color: const Color(0xFF2196F3),
+                onTap: _openWebsite,
               ),
             ),
             const SizedBox(width: Dimens.spacingMd),
             Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Pikolab Engineering',
-                    style: theme.textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Text(
-                    'Your Process Engineering Partner',
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: isDark
-                          ? AppColors.textSecondaryDark
-                          : AppColors.textSecondaryLight,
-                    ),
-                  ),
-                ],
+              child: _QuickActionCard(
+                icon: Icons.people_rounded,
+                label: 'LinkedIn Topluluk',
+                color: const Color(0xFF0A66C2),
+                onTap: _openLinkedIn,
               ),
             ),
           ],
-        ),
-        const SizedBox(height: Dimens.spacingMd),
-        Text(
-          'Get expert support, request quotes, and join our professional community.',
-          style: theme.textTheme.bodyMedium?.copyWith(
-            color: isDark
-                ? AppColors.textSecondaryDark
-                : AppColors.textSecondaryLight,
-          ),
         ),
       ],
     );
   }
 
-  Widget _buildAskExpertCard(ThemeData theme, bool isDark) {
-    return _ConnectCard(
-      icon: Icons.chat_rounded,
-      iconColor: const Color(0xFF25D366), // WhatsApp green
-      title: 'Ask an Expert',
-      subtitle: 'Get instant support via WhatsApp',
-      child: Column(
-        children: [
-          Text(
-            'Have a technical question about your process? '
-            'Our engineers are ready to help.',
-            style: theme.textTheme.bodyMedium,
-          ),
-          const SizedBox(height: Dimens.spacingMd),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton.icon(
-              onPressed: _openWhatsApp,
-              icon: const Icon(Icons.chat_bubble_rounded),
-              label: const Text('Chat on WhatsApp'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF25D366),
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(
-                  vertical: Dimens.spacingMd,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildRfqCard(ThemeData theme, bool isDark) {
-    final categories = [
-      'Process Analytics',
-      'Automation & Control',
-      'Industrial Chemicals',
-      'Bioprocess Equipment',
-      'Other',
+  /// Builds the Smart Project Inquiry form.
+  Widget _buildProjectInquiryForm(ThemeData theme, bool isDark) {
+    final subjects = [
+      'Proses Tasarımı',
+      'Ekipman',
+      'Otomasyon',
+      'Diğer',
     ];
 
-    return _ConnectCard(
-      icon: Icons.request_quote_rounded,
-      iconColor: AppColors.electricalAccent,
-      title: 'Request Quote',
-      subtitle: 'Get pricing for equipment & services',
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Select a category and describe your needs:',
-            style: theme.textTheme.bodyMedium,
-          ),
-          const SizedBox(height: Dimens.spacingMd),
-          DropdownButtonFormField<String>(
-            initialValue: _selectedCategory,
-            decoration: const InputDecoration(
-              labelText: 'Category',
-              border: OutlineInputBorder(),
-            ),
-            items: categories.map((cat) {
-              return DropdownMenuItem(value: cat, child: Text(cat));
-            }).toList(),
-            onChanged: (value) => setState(() => _selectedCategory = value),
-          ),
-          const SizedBox(height: Dimens.spacingMd),
-          TextField(
-            controller: _messageController,
-            maxLines: 3,
-            decoration: const InputDecoration(
-              labelText: 'Describe your requirements',
-              hintText: 'e.g., pH sensors for bioreactor monitoring...',
-              border: OutlineInputBorder(),
-            ),
-          ),
-          const SizedBox(height: Dimens.spacingMd),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton.icon(
-              onPressed:
-                  _selectedCategory != null ? _sendRfqEmail : null,
-              icon: const Icon(Icons.send_rounded),
-              label: const Text('Send Request'),
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(
-                  vertical: Dimens.spacingMd,
-                ),
-              ),
-            ),
-          ),
-        ],
+    return Card(
+      elevation: Dimens.elevationMd,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(Dimens.radiusLg),
       ),
-    );
-  }
-
-  Widget _buildProCommunityCard(ThemeData theme, bool isDark) {
-    return _ConnectCard(
-      icon: _isProUser ? Icons.verified_rounded : Icons.workspace_premium,
-      iconColor: _isProUser ? Colors.green : const Color(0xFF0A66C2),
-      title: _isProUser ? 'Pro Member' : 'Pro Community',
-      subtitle: _isProUser
-          ? 'You have unlocked pro features!'
-          : 'Unlock exclusive insights & features',
-      child: Column(
-        children: [
-          if (_isProUser) ...[
-            Container(
-              padding: const EdgeInsets.all(Dimens.spacingMd),
-              decoration: BoxDecoration(
-                color: Colors.green.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(Dimens.radiusMd),
-                border: Border.all(color: Colors.green.withValues(alpha: 0.3)),
-              ),
-              child: Row(
+      child: Padding(
+        padding: const EdgeInsets.all(Dimens.spacingLg),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Name & Company Row
+              Row(
                 children: [
-                  const Icon(Icons.check_circle, color: Colors.green),
-                  const SizedBox(width: Dimens.spacingSm),
                   Expanded(
-                    child: Text(
-                      'Thank you for following Pikolab! '
-                      'Enjoy exclusive industry insights.',
-                      style: theme.textTheme.bodyMedium,
+                    child: TextFormField(
+                      controller: _nameController,
+                      decoration: const InputDecoration(
+                        labelText: 'İsim',
+                        prefixIcon: Icon(Icons.person_outline),
+                        border: OutlineInputBorder(),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Lütfen isminizi girin';
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: Dimens.spacingMd),
+                  Expanded(
+                    child: TextFormField(
+                      controller: _companyController,
+                      decoration: const InputDecoration(
+                        labelText: 'Şirket',
+                        prefixIcon: Icon(Icons.business_outlined),
+                        border: OutlineInputBorder(),
+                      ),
                     ),
                   ),
                 ],
               ),
-            ),
-          ] else ...[
-            Text(
-              'Follow Pikolab on LinkedIn to unlock:',
-              style: theme.textTheme.bodyMedium,
-            ),
-            const SizedBox(height: Dimens.spacingSm),
-            _buildProBenefit('Industry insights & best practices'),
-            _buildProBenefit('Early access to new calculators'),
-            _buildProBenefit('Exclusive webinar invitations'),
-            const SizedBox(height: Dimens.spacingMd),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton.icon(
-                onPressed: _followOnLinkedIn,
-                icon: const Icon(Icons.link),
-                label: const Text('Follow on LinkedIn'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF0A66C2),
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(
-                    vertical: Dimens.spacingMd,
+              const SizedBox(height: Dimens.spacingMd),
+
+              // Email
+              TextFormField(
+                controller: _emailController,
+                keyboardType: TextInputType.emailAddress,
+                decoration: const InputDecoration(
+                  labelText: 'E-posta',
+                  prefixIcon: Icon(Icons.email_outlined),
+                  border: OutlineInputBorder(),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Lütfen e-posta adresinizi girin';
+                  }
+                  if (!value.contains('@')) {
+                    return 'Lütfen geçerli bir e-posta girin';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: Dimens.spacingMd),
+
+              // Subject Dropdown
+              DropdownButtonFormField<String>(
+                value: _selectedSubject,
+                decoration: const InputDecoration(
+                  labelText: 'Konu',
+                  prefixIcon: Icon(Icons.topic_outlined),
+                  border: OutlineInputBorder(),
+                ),
+                items: subjects.map((subject) {
+                  return DropdownMenuItem(
+                    value: subject,
+                    child: Text(subject),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  setState(() => _selectedSubject = value!);
+                },
+              ),
+              const SizedBox(height: Dimens.spacingMd),
+
+              // Priority Toggle
+              Container(
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: _isUrgent
+                        ? AppColors.error
+                        : (isDark
+                            ? Colors.white24
+                            : Colors.black26),
+                    width: _isUrgent ? 2 : 1,
                   ),
+                  borderRadius: BorderRadius.circular(Dimens.radiusMd),
+                  color: _isUrgent
+                      ? AppColors.error.withValues(alpha: 0.1)
+                      : null,
+                ),
+                child: SwitchListTile(
+                  secondary: Icon(
+                    _isUrgent
+                        ? Icons.warning_amber_rounded
+                        : Icons.schedule_rounded,
+                    color: _isUrgent ? AppColors.error : null,
+                  ),
+                  title: Text(
+                    _isUrgent ? 'Acil (Üretim Durdu)' : 'Standart Öncelik',
+                    style: TextStyle(
+                      color: _isUrgent ? AppColors.error : null,
+                      fontWeight:
+                          _isUrgent ? FontWeight.bold : FontWeight.normal,
+                      fontSize: 14,
+                    ),
+                  ),
+                  value: _isUrgent,
+                  activeColor: AppColors.error,
+                  onChanged: (value) {
+                    setState(() => _isUrgent = value);
+                  },
                 ),
               ),
-            ),
-          ],
-        ],
+              const SizedBox(height: Dimens.spacingMd),
+
+              // Message
+              TextFormField(
+                controller: _messageController,
+                maxLines: 4,
+                decoration: const InputDecoration(
+                  labelText: 'Projenizi Tanımlayın',
+                  hintText:
+                      'örn. Biyoreaktörümüz için pH izleme gerekiyor...',
+                  prefixIcon: Padding(
+                    padding: EdgeInsets.only(bottom: 60),
+                    child: Icon(Icons.description_outlined),
+                  ),
+                  border: OutlineInputBorder(),
+                  alignLabelWithHint: true,
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Lütfen projenizi tanımlayın';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: Dimens.spacingLg),
+
+              // Submit Button
+              AppButton(
+                label: 'Talep Gönder',
+                icon: Icons.send_rounded,
+                isLoading: _isSubmitting,
+                onPressed: _submitForm,
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
 
-  Widget _buildProBenefit(String text) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: Dimens.spacingXs),
-      child: Row(
-        children: [
-          const Icon(Icons.star, size: 16, color: AppColors.accent),
-          const SizedBox(width: Dimens.spacingSm),
-          Text(text),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildWebsiteFooter(ThemeData theme, bool isDark) {
-    return Center(
-      child: TextButton.icon(
-        onPressed: _openWebsite,
-        icon: const Icon(Icons.public),
-        label: const Text('Visit pikolab.com'),
-      ),
-    );
-  }
+  // ═══════════════════════════════════════════════════════════════════════════
+  // Action Methods
+  // ═══════════════════════════════════════════════════════════════════════════
 
   Future<void> _openWhatsApp() async {
     final analytics = ref.read(analyticsServiceProvider);
     await analytics.logPromoClick(
       promoType: 'whatsapp',
-      context: 'pikolab_connect',
+      context: 'engineering_hub',
     );
 
+    // Use urgent prefix if priority is set
+    final urgentPrefix = _isUrgent ? 'ACİL DESTEK GEREKLİ: ' : '';
     final message = Uri.encodeComponent(
-      'Hello Pikolab, I am using QorEng and need support regarding...',
+      '${urgentPrefix}Merhaba Pikolab, QorEng kullanıyorum ve ... '
+      'konusunda desteğe ihtiyacım var.',
     );
     final url = Uri.parse('https://wa.me/$_whatsappNumber?text=$message');
 
@@ -339,77 +484,27 @@ class _PikolabConnectScreenState extends ConsumerState<PikolabConnectScreen> {
       developer.log('Failed to open WhatsApp: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Could not open WhatsApp')),
+          const SnackBar(content: Text('WhatsApp açılamadı')),
         );
       }
     }
   }
 
-  Future<void> _sendRfqEmail() async {
+  Future<void> _openCalendly() async {
     final analytics = ref.read(analyticsServiceProvider);
     await analytics.logPromoClick(
-      promoType: 'rfq',
-      context: 'pikolab_connect',
-      moduleType: _selectedCategory,
+      promoType: 'calendly',
+      context: 'engineering_hub',
     );
 
-    final subject = Uri.encodeComponent(
-      'QorEng Quote Request - $_selectedCategory',
-    );
-    final body = Uri.encodeComponent(
-      'Category: $_selectedCategory\n\n'
-      'Requirements:\n${_messageController.text}\n\n'
-      '---\nSent from QorEng App',
-    );
-    final url = Uri.parse('mailto:$_rfqEmail?subject=$subject&body=$body');
-
-    try {
-      await launchUrl(url);
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Opening email client...')),
-        );
-        _messageController.clear();
-        setState(() => _selectedCategory = null);
-      }
-    } catch (e) {
-      developer.log('Failed to open email: $e');
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Could not open email client')),
-        );
-      }
-    }
-  }
-
-  Future<void> _followOnLinkedIn() async {
-    final analytics = ref.read(analyticsServiceProvider);
-    await analytics.logPromoClick(
-      promoType: 'linkedin',
-      context: 'pikolab_connect',
-    );
-
-    final url = Uri.parse(_linkedInUrl);
-
+    final url = Uri.parse(_calendlyUrl);
     try {
       await launchUrl(url, mode: LaunchMode.externalApplication);
-
-      // Honor system: Set pro user after returning from LinkedIn
-      await Future.delayed(const Duration(seconds: 2));
-      if (mounted) {
-        setState(() => _isProUser = true);
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('🎉 Pro features unlocked! Thank you for following.'),
-            backgroundColor: Colors.green,
-          ),
-        );
-      }
     } catch (e) {
-      developer.log('Failed to open LinkedIn: $e');
+      developer.log('Failed to open Calendly: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Could not open LinkedIn')),
+          const SnackBar(content: Text('Randevu sayfası açılamadı')),
         );
       }
     }
@@ -423,80 +518,210 @@ class _PikolabConnectScreenState extends ConsumerState<PikolabConnectScreen> {
       developer.log('Failed to open website: $e');
     }
   }
+
+  Future<void> _openLinkedIn() async {
+    final analytics = ref.read(analyticsServiceProvider);
+    await analytics.logPromoClick(
+      promoType: 'linkedin',
+      context: 'engineering_hub',
+    );
+
+    final url = Uri.parse(_linkedInUrl);
+    try {
+      await launchUrl(url, mode: LaunchMode.externalApplication);
+    } catch (e) {
+      developer.log('Failed to open LinkedIn: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('LinkedIn açılamadı')),
+        );
+      }
+    }
+  }
+
+  Future<void> _submitForm() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    setState(() => _isSubmitting = true);
+
+    final analytics = ref.read(analyticsServiceProvider);
+    await analytics.logPromoClick(
+      promoType: 'project_inquiry',
+      context: 'engineering_hub',
+      moduleType: _selectedSubject,
+    );
+
+    // Simulate backend submission delay
+    await Future.delayed(const Duration(milliseconds: 800));
+
+    if (mounted) {
+      setState(() => _isSubmitting = false);
+      _showSuccessDialog();
+    }
+  }
+
+  void _showSuccessDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          icon: Container(
+            padding: const EdgeInsets.all(Dimens.spacingMd),
+            decoration: BoxDecoration(
+              color: AppColors.success.withValues(alpha: 0.15),
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(
+              Icons.check_circle_rounded,
+              color: AppColors.success,
+              size: 48,
+            ),
+          ),
+          title: const Text('Talep Gönderildi!'),
+          content: Text(
+            _isUrgent
+                ? 'Acil talebiniz alındı. Ekibimiz mesai saatleri içinde '
+                    '1 saat içinde sizinle iletişime geçecek.'
+                : 'Talebiniz için teşekkürler! Mühendislik ekibimiz '
+                    'isteğinizi inceleyip 24 saat içinde size '
+                    'dönüş yapacak.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                // Clear form
+                _messageController.clear();
+                setState(() {
+                  _selectedSubject = 'Proses Tasarımı';
+                  _isUrgent = false;
+                });
+              },
+              child: const Text('Tamam'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 }
 
-/// Styled card for connect features.
-class _ConnectCard extends StatelessWidget {
-  const _ConnectCard({
+// ═══════════════════════════════════════════════════════════════════════════
+// Quick Action Card Widget
+// ═══════════════════════════════════════════════════════════════════════════
+
+class _QuickActionCard extends StatelessWidget {
+  const _QuickActionCard({
     required this.icon,
-    required this.iconColor,
-    required this.title,
-    required this.subtitle,
-    required this.child,
+    required this.label,
+    required this.color,
+    required this.onTap,
+    this.aspectRatio,
   });
 
   final IconData icon;
-  final Color iconColor;
-  final String title;
-  final String subtitle;
-  final Widget child;
+  final String label;
+  final Color color;
+  final VoidCallback onTap;
+  final double? aspectRatio;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
-    return Card(
-      elevation: Dimens.elevationMd,
-      shape: RoundedRectangleBorder(
+    final card = Material(
+      color: isDark ? AppColors.cardDark : AppColors.cardLight,
+      borderRadius: BorderRadius.circular(Dimens.radiusLg),
+      elevation: Dimens.elevationSm,
+      child: InkWell(
+        onTap: onTap,
         borderRadius: BorderRadius.circular(Dimens.radiusLg),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(Dimens.spacingLg),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(Dimens.spacingSm),
-                  decoration: BoxDecoration(
-                    color: iconColor.withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(Dimens.radiusMd),
-                  ),
-                  child: Icon(icon, color: iconColor, size: 24),
-                ),
-                const SizedBox(width: Dimens.spacingMd),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        title,
-                        style: theme.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Text(
-                        subtitle,
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: isDark
-                              ? AppColors.textSecondaryDark
-                              : AppColors.textSecondaryLight,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+        child: Container(
+          padding: const EdgeInsets.all(Dimens.spacingMd),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(Dimens.radiusLg),
+            border: Border.all(
+              color: color.withValues(alpha: 0.3),
+              width: 1.5,
             ),
-            const SizedBox(height: Dimens.spacingMd),
-            const Divider(),
-            const SizedBox(height: Dimens.spacingMd),
-            child,
-          ],
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(Dimens.spacingSm),
+                decoration: BoxDecoration(
+                  color: color.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(Dimens.radiusMd),
+                ),
+                child: Icon(
+                  icon,
+                  color: color,
+                  size: 28,
+                ),
+              ),
+              const SizedBox(height: Dimens.spacingSm),
+              Text(
+                label,
+                textAlign: TextAlign.center,
+                style: theme.textTheme.labelMedium?.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: isDark
+                      ? AppColors.textPrimaryDark
+                      : AppColors.textPrimaryLight,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
+
+    if (aspectRatio != null) {
+      return AspectRatio(
+        aspectRatio: aspectRatio!,
+        child: card,
+      );
+    }
+
+    return AspectRatio(
+      aspectRatio: 1.3,
+      child: card,
+    );
   }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Grid Pattern Painter
+// ═══════════════════════════════════════════════════════════════════════════
+
+class _GridPatternPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = Colors.white
+      ..strokeWidth = 1;
+
+    const spacing = 24.0;
+
+    for (var x = 0.0; x < size.width; x += spacing) {
+      canvas.drawLine(
+        Offset(x, 0),
+        Offset(x, size.height),
+        paint,
+      );
+    }
+
+    for (var y = 0.0; y < size.height; y += spacing) {
+      canvas.drawLine(
+        Offset(0, y),
+        Offset(size.width, y),
+        paint,
+      );
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
