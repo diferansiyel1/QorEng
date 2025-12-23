@@ -230,7 +230,18 @@ class _CreateSessionScreenState extends ConsumerState<CreateSessionScreen> {
                 },
               ),
 
-              const SizedBox(height: Dimens.spacingXl * 2),
+              const SizedBox(height: Dimens.spacingXl),
+
+              // Previous Sessions
+              _PreviousSessionsList(
+                onSessionSelected: (session) {
+                  // Set active session and navigate to summary
+                  ref.read(activeSessionProvider.notifier).setSession(session);
+                  context.go('/field-logger/summary');
+                },
+              ),
+
+              const SizedBox(height: Dimens.spacingXl),
             ],
           ),
         ),
@@ -412,6 +423,115 @@ class _ParameterRow extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+/// Widget showing previous sessions.
+class _PreviousSessionsList extends ConsumerWidget {
+  const _PreviousSessionsList({
+    required this.onSessionSelected,
+  });
+
+  final ValueChanged<LogSession> onSessionSelected;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final sessions = ref.watch(logSessionsProvider);
+
+    // Show only last 5 sessions
+    final recentSessions = sessions.take(5).toList();
+
+    if (recentSessions.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Son Oturumlar',
+          style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: Dimens.spacingSm),
+        ListView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: recentSessions.length,
+          itemBuilder: (context, index) {
+            final session = recentSessions[index];
+            final dateStr =
+                '${session.startTime.day}/${session.startTime.month}/${session.startTime.year}';
+            final timeStr =
+                '${session.startTime.hour.toString().padLeft(2, '0')}:${session.startTime.minute.toString().padLeft(2, '0')}';
+
+            return Container(
+              margin: const EdgeInsets.only(bottom: Dimens.spacingSm),
+              decoration: BoxDecoration(
+                color: isDark ? AppColors.cardDark : AppColors.cardLight,
+                borderRadius: BorderRadius.circular(Dimens.radiusMd),
+                border: Border.all(
+                  color: isDark
+                      ? AppColors.textSecondaryDark.withValues(alpha: 0.2)
+                      : AppColors.textSecondaryLight.withValues(alpha: 0.2),
+                ),
+              ),
+              child: ListTile(
+                dense: true,
+                leading: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: AppColors.accent.withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(Dimens.radiusSm),
+                  ),
+                  child: const Icon(
+                    Icons.history_rounded,
+                    color: AppColors.accent,
+                    size: 20,
+                  ),
+                ),
+                title: Text(
+                  session.title,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                subtitle: Text(
+                  '$dateStr $timeStr • ${session.entries.length} kayıt',
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: isDark
+                        ? AppColors.textSecondaryDark
+                        : AppColors.textSecondaryLight,
+                  ),
+                ),
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      icon: Icon(
+                        Icons.delete_outline,
+                        color: AppColors.error.withValues(alpha: 0.7),
+                        size: 20,
+                      ),
+                      onPressed: () {
+                        ref
+                            .read(logSessionsProvider.notifier)
+                            .deleteSession(session.id);
+                      },
+                    ),
+                    const Icon(Icons.chevron_right),
+                  ],
+                ),
+                onTap: () => onSessionSelected(session),
+              ),
+            );
+          },
+        ),
+      ],
     );
   }
 }

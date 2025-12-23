@@ -767,6 +767,13 @@ class _QuickAccessList extends ConsumerWidget {
         color: const Color(0xFF7C4DFF),
         route: '/chemical/beer-lambert',
       ),
+      (
+        title: strings.pipingMaster,
+        subtitle: strings.pipingMasterDesc,
+        icon: Icons.grid_goldenratio,
+        color: const Color(0xFF00838F),
+        route: '/piping/flange',
+      ),
     ];
 
     return SizedBox(

@@ -238,7 +238,7 @@ class _ActiveLoggingScreenState extends ConsumerState<ActiveLoggingScreen> {
             ),
           ),
 
-          // Entry count and timer
+          // Entry count, undo and timer
           Container(
             padding: const EdgeInsets.symmetric(
               horizontal: Dimens.spacingLg,
@@ -246,7 +246,6 @@ class _ActiveLoggingScreenState extends ConsumerState<ActiveLoggingScreen> {
             ),
             color: isDark ? AppColors.cardDark : AppColors.cardLight,
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
                   '${strings.entries}: ${session.entries.length}',
@@ -254,6 +253,21 @@ class _ActiveLoggingScreenState extends ConsumerState<ActiveLoggingScreen> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
+                const Spacer(),
+                // Undo last entry button
+                if (session.entries.isNotEmpty)
+                  IconButton(
+                    onPressed: () {
+                      HapticFeedback.mediumImpact();
+                      ref.read(activeSessionProvider.notifier).removeLastEntry();
+                    },
+                    icon: const Icon(Icons.undo_rounded),
+                    tooltip: 'Son kaydı sil',
+                    style: IconButton.styleFrom(
+                      foregroundColor: AppColors.error,
+                    ),
+                  ),
+                const SizedBox(width: Dimens.spacingSm),
                 Text(
                   _timeFormat.format(DateTime.now()),
                   style: theme.textTheme.bodyMedium?.copyWith(

@@ -168,6 +168,22 @@ class ActiveSession extends _$ActiveSession {
     }
   }
 
+  /// Remove the last entry from the active session.
+  void removeLastEntry() {
+    if (state != null && state!.entries.isNotEmpty) {
+      final newEntries = List<LogEntry>.from(state!.entries);
+      newEntries.removeLast();
+      state = LogSession(
+        id: state!.id,
+        title: state!.title,
+        startTime: state!.startTime,
+        endTime: state!.endTime,
+        parameters: state!.parameters,
+        entries: newEntries,
+      );
+    }
+  }
+
   /// Clear the active session.
   void clear() {
     state = null;

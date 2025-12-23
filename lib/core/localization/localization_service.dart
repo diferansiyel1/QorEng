@@ -354,6 +354,29 @@ abstract class AppStrings {
   String get entries;
   String get sessionSummary;
   String get exportCsv;
+
+  // Piping Master
+  String get pipingMaster;
+  String get pipingMasterDesc;
+  String get flangeSelector;
+  String get probeFitting;
+  String get selectParameters;
+  String get standard;
+  String get pressureClass;
+  String get nominalSize;
+  String get assemblyKit;
+  String get boltKit;
+  String get spannerSize;
+  String get holeDiameter;
+  String get sensorConfiguration;
+  String get sensorLength;
+  String get fittingType;
+  String get pipeDiameter;
+  String get calculationResults;
+  String get deadLength;
+  String get insertionDepth;
+  String get pipeRadius;
+  String get penetration;
 }
 
 /// Turkish strings implementation.
@@ -627,6 +650,29 @@ class TurkishStrings implements AppStrings {
   @override String get entries => 'Kayıtlar';
   @override String get sessionSummary => 'Oturum Özeti';
   @override String get exportCsv => 'CSV Dışa Aktar';
+
+  // Piping Master
+  @override String get pipingMaster => 'Boru Ustası';
+  @override String get pipingMasterDesc => 'Flanş ve sensör montajı';
+  @override String get flangeSelector => 'Flanş Seçici';
+  @override String get probeFitting => 'Prob Montaj Hesabı';
+  @override String get selectParameters => 'Parametre Seçin';
+  @override String get standard => 'Standart';
+  @override String get pressureClass => 'Basınç Sınıfı';
+  @override String get nominalSize => 'Nominal Çap';
+  @override String get assemblyKit => 'Montaj Kiti';
+  @override String get boltKit => 'Cıvata Kiti';
+  @override String get spannerSize => 'Anahtar Ağzı';
+  @override String get holeDiameter => 'Delik Çapı';
+  @override String get sensorConfiguration => 'Sensör Konfigürasyonu';
+  @override String get sensorLength => 'Sensör Boyu';
+  @override String get fittingType => 'Bağlantı Tipi';
+  @override String get pipeDiameter => 'Boru Çapı';
+  @override String get calculationResults => 'Hesaplama Sonuçları';
+  @override String get deadLength => 'Ölü Boy (Housing)';
+  @override String get insertionDepth => 'Daldırma Derinliği';
+  @override String get pipeRadius => 'Boru Yarıçapı';
+  @override String get penetration => 'Nüfuz Oranı';
 }
 
 /// English strings implementation.
@@ -900,4 +946,27 @@ class EnglishStrings implements AppStrings {
   @override String get entries => 'Entries';
   @override String get sessionSummary => 'Session Summary';
   @override String get exportCsv => 'Export CSV';
+
+  // Piping Master
+  @override String get pipingMaster => 'Piping Master';
+  @override String get pipingMasterDesc => 'Flange & sensor fittings';
+  @override String get flangeSelector => 'Flange Selector';
+  @override String get probeFitting => 'Probe Fitting Calculator';
+  @override String get selectParameters => 'Select Parameters';
+  @override String get standard => 'Standard';
+  @override String get pressureClass => 'Pressure Class';
+  @override String get nominalSize => 'Nominal Size';
+  @override String get assemblyKit => 'Assembly Kit';
+  @override String get boltKit => 'Bolt Kit';
+  @override String get spannerSize => 'Spanner Size';
+  @override String get holeDiameter => 'Hole Diameter';
+  @override String get sensorConfiguration => 'Sensor Configuration';
+  @override String get sensorLength => 'Sensor Length';
+  @override String get fittingType => 'Fitting Type';
+  @override String get pipeDiameter => 'Pipe Diameter';
+  @override String get calculationResults => 'Calculation Results';
+  @override String get deadLength => 'Dead Length (Housing)';
+  @override String get insertionDepth => 'Insertion Depth';
+  @override String get pipeRadius => 'Pipe Radius';
+  @override String get penetration => 'Penetration';
 }

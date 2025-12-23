@@ -1,8 +1,11 @@
+import 'dart:io';
+
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
 import 'package:engicore/core/constants/app_colors.dart';
@@ -60,11 +63,31 @@ class _SessionSummaryScreenState extends ConsumerState<SessionSummaryScreen> {
       buffer.writeln();
     }
 
-    // Share the CSV
-    await Share.share(
-      buffer.toString(),
-      subject: '${session.title} - Field Log Data',
-    );
+    // Write to temp file and share
+    try {
+      final tempDir = await getTemporaryDirectory();
+      final fileName = '${session.title.replaceAll(' ', '_')}_${_dateFormat.format(session.startTime)}.csv';
+      final file = File('${tempDir.path}/$fileName');
+      await file.writeAsString(buffer.toString());
+      
+      // Get screen size for iOS share position
+      final box = context.findRenderObject() as RenderBox?;
+      final sharePosition = box != null 
+          ? box.localToGlobal(Offset.zero) & box.size
+          : const Rect.fromLTWH(0, 0, 100, 100);
+      
+      await Share.shareXFiles(
+        [XFile(file.path)],
+        subject: '${session.title} - Field Log Data',
+        sharePositionOrigin: sharePosition,
+      );
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('CSV export failed: $e')),
+        );
+      }
+    }
   }
 
   Future<void> _exportPdf() async {
@@ -565,7 +588,11 @@ class _DataTable extends StatelessWidget {
                         width: 80,
                         child: Text(
                           timeFormat.format(entry.timestamp),
-                          style: theme.textTheme.bodySmall,
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: isDark
+                                ? AppColors.textPrimaryDark
+                                : AppColors.textPrimaryLight,
+                          ),
                         ),
                       ),
                       ...session.parameters.map((param) {
@@ -575,6 +602,9 @@ class _DataTable extends StatelessWidget {
                             value?.toStringAsFixed(2) ?? '—',
                             style: theme.textTheme.bodyMedium?.copyWith(
                               fontWeight: FontWeight.w500,
+                              color: isDark
+                                  ? AppColors.textPrimaryDark
+                                  : AppColors.textPrimaryLight,
                             ),
                           ),
                         );

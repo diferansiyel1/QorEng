@@ -205,7 +205,7 @@ final class ActiveSessionProvider
   }
 }
 
-String _$activeSessionHash() => r'59465361f972e369da02d80bea6e1c61de73d6a9';
+String _$activeSessionHash() => r'630ce332d32ef08c3203c1635f36a7e2cf53038e';
 
 /// Provider for the currently active logging session.
 /// Keep alive to prevent disposal during navigation.

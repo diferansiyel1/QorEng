@@ -29,6 +29,8 @@ import 'package:engicore/features/connect/presentation/screens/pikolab_connect_s
 import 'package:engicore/features/field_logger/presentation/screens/create_session_screen.dart';
 import 'package:engicore/features/field_logger/presentation/screens/active_logging_screen.dart';
 import 'package:engicore/features/field_logger/presentation/screens/session_summary_screen.dart';
+import 'package:engicore/features/piping/presentation/screens/flange_screen.dart';
+import 'package:engicore/features/piping/presentation/screens/fitting_screen.dart';
 import 'package:engicore/shared/widgets/app_shell.dart';
 
 /// Route paths for the application.
@@ -80,6 +82,11 @@ abstract final class AppRoutes {
   static const String fieldLogger = '/field-logger';
   static const String fieldLoggerActive = '/field-logger/active';
   static const String fieldLoggerSummary = '/field-logger/summary';
+
+  // Piping Master
+  static const String piping = '/piping';
+  static const String flangeSelector = '/piping/flange';
+  static const String probeFitting = '/piping/fitting';
 }
 
 /// Global navigation key for the router.
@@ -264,6 +271,15 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: AppRoutes.fieldLoggerSummary,
       builder: (context, state) => const SessionSummaryScreen(),
+    ),
+    // Piping Master routes
+    GoRoute(
+      path: AppRoutes.flangeSelector,
+      builder: (context, state) => const FlangeScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.probeFitting,
+      builder: (context, state) => const FittingScreen(),
     ),
   ],
 );
