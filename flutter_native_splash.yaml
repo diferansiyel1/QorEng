@@ -1,6 +1,6 @@
 flutter_native_splash:
-  # Solid black background for dark theme
-  color: "#000000"
+  # Deep Navy background matching AppColors.backgroundDark
+  color: "#0A0E14"
   
   # White logo centered on black background
   image: assets/images/splash_logo.png
@@ -8,7 +8,7 @@ flutter_native_splash:
   # Android 12+ specific settings
   android_12:
     image: assets/images/splash_logo.png
-    color: "#000000"
+    color: "#0A0E14"
   
   # iOS settings
   ios: true

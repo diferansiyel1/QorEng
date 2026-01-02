@@ -1,11 +1,11 @@
-import 'dart:convert';
 import 'dart:developer' as developer;
 
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+
+import 'package:engicore/core/services/encrypted_box_factory.dart';
 
 /// Background message handler - must be top-level function.
 @pragma('vm:entry-point')
@@ -13,15 +13,33 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   developer.log('Background message received: ${message.messageId}');
 }
 
+/// Result of a notification operation.
+sealed class NotificationResult {
+  const NotificationResult();
+}
+
+/// Successful notification operation.
+class NotificationSuccess extends NotificationResult {
+  const NotificationSuccess();
+}
+
+/// Failed notification operation.
+class NotificationFailure extends NotificationResult {
+  const NotificationFailure(this.message);
+
+  final String message;
+}
+
 /// Notification service for Firebase Cloud Messaging.
 ///
 /// Handles push notifications for marketing announcements and updates.
+/// Uses encrypted storage for notification persistence.
 class NotificationService {
   NotificationService();
 
   FirebaseMessaging? _messaging;
   FlutterLocalNotificationsPlugin? _localNotifications;
-  Box<Map>? _notificationsBox;
+  Box<Map<String, dynamic>>? _notificationsBox;
 
   /// Initialize the notification service.
   Future<void> initialize() async {
@@ -29,13 +47,15 @@ class NotificationService {
       _messaging = FirebaseMessaging.instance;
 
       // Set up background handler
-      FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+      FirebaseMessaging.onBackgroundMessage(
+        _firebaseMessagingBackgroundHandler,
+      );
 
       // Request permissions (iOS & Android 13+)
       await _requestPermission();
 
-      // Get and log FCM token
-      await _getAndLogToken();
+      // Get FCM token (no logging for security)
+      await _getToken();
 
       // Initialize local notifications for foreground display
       await _initializeLocalNotifications();
@@ -46,8 +66,10 @@ class NotificationService {
       // Auto-subscribe to all_users topic
       await subscribeToTopic('all_users');
 
-      // Open notifications storage box
-      _notificationsBox = await Hive.openBox<Map>('notifications');
+      // Open encrypted notifications storage box
+      _notificationsBox = await EncryptedBoxFactory.openEncryptedBox<Map<String, dynamic>>(
+        'notifications',
+      );
 
       developer.log('NotificationService initialized successfully');
     } catch (e, s) {
@@ -81,27 +103,28 @@ class NotificationService {
     }
   }
 
-  /// Get and log FCM token for testing.
-  Future<String?> _getAndLogToken() async {
+  /// Get FCM token securely (no logging).
+  Future<String?> _getToken() async {
     if (_messaging == null) return null;
 
     try {
-      final token = await _messaging!.getToken();
-      developer.log('═══════════════════════════════════════════════');
-      developer.log('FCM TOKEN: $token');
-      developer.log('═══════════════════════════════════════════════');
-      return token;
+      return await _messaging!.getToken();
     } catch (e) {
       developer.log('Failed to get FCM token: $e');
       return null;
     }
   }
 
+  /// Get the current FCM token.
+  Future<String?> getToken() => _getToken();
+
   /// Initialize local notifications for foreground display.
   Future<void> _initializeLocalNotifications() async {
     _localNotifications = FlutterLocalNotificationsPlugin();
 
-    const androidSettings = AndroidInitializationSettings('@mipmap/ic_launcher');
+    const androidSettings = AndroidInitializationSettings(
+      '@mipmap/ic_launcher',
+    );
     const iosSettings = DarwinInitializationSettings(
       requestAlertPermission: true,
       requestBadgePermission: true,
@@ -122,7 +145,6 @@ class NotificationService {
   /// Handle notification tap.
   void _onNotificationTapped(NotificationResponse response) {
     developer.log('Notification tapped: ${response.payload}');
-    // TODO: Navigate to specific screen based on payload
   }
 
   /// Set up message handlers for foreground and opened app.
@@ -150,15 +172,14 @@ class NotificationService {
 
   /// Handle when app opened from notification.
   void _handleMessageOpenedApp(RemoteMessage message) {
-    developer.log('App opened from notification: ${message.data}');
-    // TODO: Navigate based on message data
+    developer.log('App opened from notification');
   }
 
   /// Check for initial message when app launches.
   Future<void> _checkInitialMessage() async {
     final message = await _messaging?.getInitialMessage();
     if (message != null) {
-      developer.log('Initial message: ${message.data}');
+      developer.log('Initial message received');
     }
   }
 
@@ -215,7 +236,6 @@ class NotificationService {
       notification.title,
       notification.body,
       details,
-      payload: jsonEncode(message.data),
     );
   }
 
@@ -239,53 +259,96 @@ class NotificationService {
     }
   }
 
+  /// Check if notification box is available.
+  bool get _isBoxAvailable =>
+      _notificationsBox != null && _notificationsBox!.isOpen;
+
   /// Save notification to local storage.
-  Future<void> _saveNotification(RemoteMessage message) async {
-    if (_notificationsBox == null) return;
+  /// Only persists essential fields: title, body, timestamp, read.
+  Future<NotificationResult> _saveNotification(RemoteMessage message) async {
+    if (!_isBoxAvailable) {
+      developer.log('Notifications box unavailable');
+      return const NotificationFailure('Storage unavailable');
+    }
 
-    final notification = {
-      'id': message.messageId,
-      'title': message.notification?.title ?? '',
-      'body': message.notification?.body ?? '',
-      'data': message.data,
-      'timestamp': DateTime.now().toIso8601String(),
-      'read': false,
-    };
+    try {
+      // Only persist essential, safe fields
+      final notification = {
+        'title': message.notification?.title ?? '',
+        'body': message.notification?.body ?? '',
+        'timestamp': DateTime.now().toIso8601String(),
+        'read': false,
+      };
 
-    await _notificationsBox!.add(notification);
-    developer.log('Notification saved locally');
+      await _notificationsBox!.add(notification);
+      return const NotificationSuccess();
+    } catch (e) {
+      developer.log('Failed to save notification: $e');
+      return NotificationFailure(e.toString());
+    }
   }
 
   /// Get all stored notifications.
   List<Map<dynamic, dynamic>> getStoredNotifications() {
-    if (_notificationsBox == null) return [];
-    return _notificationsBox!.values.toList().reversed.toList();
+    if (!_isBoxAvailable) return [];
+
+    try {
+      return _notificationsBox!.values.toList().reversed.toList();
+    } catch (e) {
+      developer.log('Failed to get stored notifications: $e');
+      return [];
+    }
   }
 
   /// Get unread notification count.
   int getUnreadCount() {
-    if (_notificationsBox == null) return 0;
-    return _notificationsBox!.values
-        .where((n) => n['read'] != true)
-        .length;
+    if (!_isBoxAvailable) return 0;
+
+    try {
+      return _notificationsBox!.values
+          .where((n) => n['read'] != true)
+          .length;
+    } catch (e) {
+      developer.log('Failed to get unread count: $e');
+      return 0;
+    }
   }
 
   /// Mark all notifications as read.
-  Future<void> markAllAsRead() async {
-    if (_notificationsBox == null) return;
+  /// Returns success/failure for UI feedback.
+  Future<NotificationResult> markAllAsRead() async {
+    if (!_isBoxAvailable) {
+      return const NotificationFailure('Storage unavailable');
+    }
 
-    for (int i = 0; i < _notificationsBox!.length; i++) {
-      final notification = _notificationsBox!.getAt(i);
-      if (notification != null) {
-        notification['read'] = true;
-        await _notificationsBox!.putAt(i, notification);
+    try {
+      for (int i = 0; i < _notificationsBox!.length; i++) {
+        final notification = _notificationsBox!.getAt(i);
+        if (notification != null) {
+          notification['read'] = true;
+          await _notificationsBox!.putAt(i, notification);
+        }
       }
+      return const NotificationSuccess();
+    } catch (e) {
+      developer.log('Failed to mark notifications as read: $e');
+      return NotificationFailure(e.toString());
     }
   }
 
   /// Clear all notifications.
-  Future<void> clearAll() async {
-    await _notificationsBox?.clear();
+  Future<NotificationResult> clearAll() async {
+    if (!_isBoxAvailable) {
+      return const NotificationFailure('Storage unavailable');
+    }
+
+    try {
+      await _notificationsBox!.clear();
+      return const NotificationSuccess();
+    } catch (e) {
+      developer.log('Failed to clear notifications: $e');
+      return NotificationFailure(e.toString());
+    }
   }
 }
 
@@ -315,9 +378,13 @@ class InterestTracker {
   static const String _boxName = 'interest_tracking';
   static Box<int>? _box;
 
-  /// Initialize tracker.
+  /// Initialize tracker with encrypted storage.
   static Future<void> initialize() async {
-    _box = await Hive.openBox<int>(_boxName);
+    try {
+      _box = await EncryptedBoxFactory.openEncryptedBox<int>(_boxName);
+    } catch (e) {
+      developer.log('Failed to initialize interest tracker: $e');
+    }
   }
 
   /// Track a screen visit for smart topic subscription.
@@ -327,18 +394,20 @@ class InterestTracker {
   ) async {
     if (_box == null) return;
 
-    final key = 'visit_$screenName';
-    final currentCount = _box!.get(key, defaultValue: 0) ?? 0;
-    final newCount = currentCount + 1;
-    await _box!.put(key, newCount);
+    try {
+      final key = 'visit_$screenName';
+      final currentCount = _box!.get(key, defaultValue: 0) ?? 0;
+      final newCount = currentCount + 1;
+      await _box!.put(key, newCount);
 
-    developer.log('$screenName visited $newCount times');
-
-    // Smart targeting: subscribe to interest topic after 3 visits
-    if (newCount == 3) {
-      final topic = 'interest_${screenName.toLowerCase()}';
-      await notificationService.subscribeToTopic(topic);
-      developer.log('Auto-subscribed to topic: $topic based on interest');
+      // Smart targeting: subscribe to interest topic after 3 visits
+      if (newCount == 3) {
+        final topic = 'interest_${screenName.toLowerCase()}';
+        await notificationService.subscribeToTopic(topic);
+        developer.log('Auto-subscribed to topic: $topic based on interest');
+      }
+    } catch (e) {
+      developer.log('Failed to track screen visit: $e');
     }
   }
 }

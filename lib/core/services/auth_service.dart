@@ -2,8 +2,11 @@ import 'dart:developer' as developer;
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
+import 'package:engicore/core/models/auth_result.dart';
 import 'package:engicore/core/models/user_model.dart';
 
 /// Features that require authentication.
@@ -16,15 +19,22 @@ enum ProtectedFeature {
 /// Authentication service for QorEng.
 ///
 /// Supports guest mode for calculations and auth for premium features.
+/// Handles both web and mobile Google Sign-In flows.
 class AuthService {
   AuthService({
     FirebaseAuth? auth,
     FirebaseFirestore? firestore,
+    GoogleSignIn? googleSignIn,
   })  : _auth = auth,
-        _firestore = firestore;
+        _firestore = firestore,
+        _googleSignIn = googleSignIn ??
+            GoogleSignIn(
+              scopes: ['email', 'profile'],
+            );
 
   final FirebaseAuth? _auth;
   final FirebaseFirestore? _firestore;
+  final GoogleSignIn _googleSignIn;
 
   /// Current user stream.
   Stream<QorEngUser?> get userStream {
@@ -58,34 +68,99 @@ class AuthService {
   }
 
   /// Sign in with Google.
-  Future<QorEngUser?> signInWithGoogle() async {
+  ///
+  /// Uses platform-specific flow:
+  /// - Web: signInWithPopup
+  /// - Mobile: google_sign_in package
+  ///
+  /// Returns [AuthSuccess] with user on success, [AuthFailure] on error.
+  Future<AuthResult> signInWithGoogle() async {
     if (_auth == null) {
       developer.log('Firebase not configured, skipping Google sign-in');
-      return null;
+      return const AuthFailure(
+        'Firebase not configured',
+        AuthFailureReason.firebaseNotConfigured,
+      );
     }
 
     try {
-      final GoogleAuthProvider googleProvider = GoogleAuthProvider();
-      googleProvider.addScope('email');
-      googleProvider.addScope('profile');
+      UserCredential credential;
 
-      final UserCredential credential =
-          await _auth.signInWithPopup(googleProvider);
+      if (kIsWeb) {
+        // Web: Use popup flow
+        final GoogleAuthProvider googleProvider = GoogleAuthProvider();
+        googleProvider.addScope('email');
+        googleProvider.addScope('profile');
+        credential = await _auth.signInWithPopup(googleProvider);
+      } else {
+        // Mobile: Use google_sign_in package
+        final GoogleSignInAccount? account = await _googleSignIn.signIn();
+
+        if (account == null) {
+          return const AuthFailure(
+            'Sign-in cancelled',
+            AuthFailureReason.cancelled,
+          );
+        }
+
+        // Get authentication details
+        final GoogleSignInAuthentication googleAuth =
+            await account.authentication;
+
+        // Create Firebase credential
+        final OAuthCredential oauthCredential = GoogleAuthProvider.credential(
+          accessToken: googleAuth.accessToken,
+          idToken: googleAuth.idToken,
+        );
+
+        credential = await _auth.signInWithCredential(oauthCredential);
+      }
 
       if (credential.user != null) {
         final user = _createUserFromAuth(credential.user!);
         await _saveUserToFirestore(user);
         developer.log('Google sign-in successful: ${user.email}');
-        return user;
+        return AuthSuccess(user);
       }
+
+      return const AuthFailure(
+        'Sign-in failed: no user returned',
+        AuthFailureReason.unknown,
+      );
+    } on FirebaseAuthException catch (e) {
+      developer.log('Firebase auth error: ${e.code}');
+      return AuthFailure(
+        _getFirebaseErrorMessage(e.code),
+        AuthFailureReason.invalidCredentials,
+      );
     } catch (e, s) {
       developer.log(
         'Google sign-in failed',
         error: e,
         stackTrace: s,
       );
+      return AuthFailure(
+        e.toString(),
+        AuthFailureReason.networkError,
+      );
     }
-    return null;
+  }
+
+  /// Attempt Google sign-in with graceful fallback to guest mode.
+  ///
+  /// Returns the authenticated user on success, or guest user on failure.
+  Future<QorEngUser> signInWithGoogleOrGuest() async {
+    final result = await signInWithGoogle();
+
+    switch (result) {
+      case AuthSuccess(:final user):
+        return user;
+      case AuthFailure(:final message, :final reason):
+        developer.log(
+          'Sign-in failed ($reason): $message, falling back to guest',
+        );
+        return await signInAnonymously() ?? QorEngUser.guest;
+    }
   }
 
   /// Sign in anonymously (guest mode with Firebase tracking).
@@ -114,9 +189,13 @@ class AuthService {
     return QorEngUser.guest;
   }
 
-  /// Sign out.
+  /// Sign out from all providers.
   Future<void> signOut() async {
     try {
+      // Sign out from Google if signed in
+      if (!kIsWeb && await _googleSignIn.isSignedIn()) {
+        await _googleSignIn.signOut();
+      }
       await _auth?.signOut();
       developer.log('User signed out');
     } catch (e, s) {
@@ -160,6 +239,21 @@ class AuthService {
       developer.log('Pro user status updated: $isPro');
     } catch (e) {
       developer.log('Failed to update pro status: $e');
+    }
+  }
+
+  String _getFirebaseErrorMessage(String code) {
+    switch (code) {
+      case 'account-exists-with-different-credential':
+        return 'An account already exists with a different sign-in method';
+      case 'invalid-credential':
+        return 'Invalid credentials provided';
+      case 'user-disabled':
+        return 'This account has been disabled';
+      case 'network-request-failed':
+        return 'Network error. Please check your connection';
+      default:
+        return 'Authentication failed. Please try again';
     }
   }
 
@@ -240,4 +334,3 @@ final isProUserProvider = Provider<bool>((ref) {
     error: (_, __) => false,
   );
 });
-

@@ -7,12 +7,44 @@ import 'package:engicore/core/constants/dimens.dart';
 import 'package:engicore/core/localization/localization_service.dart';
 import 'package:engicore/core/router/app_router.dart';
 import 'package:engicore/core/services/notification_service.dart';
+import 'package:engicore/core/services/preferences_service.dart';
+import 'package:engicore/core/theme/theme_provider.dart';
 import 'package:engicore/features/history/domain/repositories/history_repository.dart';
 import 'package:engicore/features/home/presentation/widgets/tool_search_delegate.dart';
+import 'package:engicore/shared/widgets/disclaimer_dialog.dart';
 
 /// Dashboard (Cockpit) home screen.
-class DashboardScreen extends ConsumerWidget {
+class DashboardScreen extends ConsumerStatefulWidget {
   const DashboardScreen({super.key});
+
+  @override
+  ConsumerState<DashboardScreen> createState() => _DashboardScreenState();
+}
+
+class _DashboardScreenState extends ConsumerState<DashboardScreen> {
+  @override
+  void initState() {
+    super.initState();
+    _checkDisclaimerStatus();
+  }
+
+  /// Check if disclaimer has been accepted; if not, show dialog after 2 seconds.
+  Future<void> _checkDisclaimerStatus() async {
+    final isAccepted = await PreferencesService.isDisclaimerAccepted();
+    if (!isAccepted && mounted) {
+      await Future.delayed(const Duration(seconds: 10));
+      if (mounted) {
+        final result = await showDialog<bool>(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => const DisclaimerDialog(),
+        );
+        if (result == true) {
+          await PreferencesService.setDisclaimerAccepted();
+        }
+      }
+    }
+  }
 
   String _getGreeting(AppStrings strings) {
     final hour = DateTime.now().hour;
@@ -43,7 +75,7 @@ class DashboardScreen extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final recentRecords = ref.watch(historyRecordsProvider);
@@ -149,6 +181,7 @@ class DashboardScreen extends ConsumerWidget {
   }
 }
 
+
 /// Empty recent activity placeholder.
 class _EmptyRecentActivity extends ConsumerWidget {
   const _EmptyRecentActivity({
@@ -228,10 +261,100 @@ class _DashboardHeader extends ConsumerWidget {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (context) => _NotificationsSheet(notifications: notifications),
-    ).then((_) {
-      notificationService.markAllAsRead();
-      ref.read(unreadNotificationCountProvider.notifier).reset();
+    ).then((_) async {
+      final result = await notificationService.markAllAsRead();
+
+      // Handle result with pattern matching
+      switch (result) {
+        case NotificationSuccess():
+          ref.read(unreadNotificationCountProvider.notifier).reset();
+          break;
+        case NotificationFailure(:final message):
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Notifications error: $message'),
+                backgroundColor: Colors.red.shade700,
+                behavior: SnackBarBehavior.floating,
+              ),
+            );
+          }
+          break;
+      }
     });
+  }
+
+  /// Returns appropriate icon for current theme mode.
+  IconData _getThemeIcon(ThemeMode? mode) {
+    return switch (mode) {
+      ThemeMode.light => Icons.light_mode_rounded,
+      ThemeMode.system => Icons.brightness_auto_rounded,
+      _ => Icons.dark_mode_rounded,
+    };
+  }
+
+  /// Shows theme selection dialog.
+  void _showThemeDialog(BuildContext context, WidgetRef ref) {
+    final currentMode =
+        ref.read(themeModeProvider).value ?? ThemeMode.dark;
+
+    showDialog(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: Row(
+            children: [
+              Icon(Icons.palette_rounded, color: AppColors.accent),
+              const SizedBox(width: Dimens.spacingSm),
+              const Text('Tema Seçimi'),
+            ],
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _ThemeOption(
+                title: 'Koyu Tema',
+                subtitle: 'OLED ekranlar için optimize',
+                icon: Icons.dark_mode_rounded,
+                isSelected: currentMode == ThemeMode.dark,
+                onTap: () {
+                  ref
+                      .read(themeModeProvider.notifier)
+                      .setTheme(ThemeMode.dark);
+                  Navigator.pop(dialogContext);
+                },
+              ),
+              const SizedBox(height: Dimens.spacingSm),
+              _ThemeOption(
+                title: 'Açık Tema',
+                subtitle: 'Parlak ortamlar için',
+                icon: Icons.light_mode_rounded,
+                isSelected: currentMode == ThemeMode.light,
+                onTap: () {
+                  ref
+                      .read(themeModeProvider.notifier)
+                      .setTheme(ThemeMode.light);
+                  Navigator.pop(dialogContext);
+                },
+              ),
+              const SizedBox(height: Dimens.spacingSm),
+              _ThemeOption(
+                title: 'Otomatik',
+                subtitle: 'Sistem ayarına göre',
+                icon: Icons.brightness_auto_rounded,
+                isSelected: currentMode == ThemeMode.system,
+                onTap: () {
+                  ref
+                      .read(themeModeProvider.notifier)
+                      .setTheme(ThemeMode.system);
+                  Navigator.pop(dialogContext);
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -343,6 +466,18 @@ class _DashboardHeader extends ConsumerWidget {
               tooltip: ref.watch(localeProvider) == AppLocale.tr
                   ? 'Switch to English'
                   : 'Türkçe\'ye geç',
+              padding: const EdgeInsets.all(8),
+              constraints: const BoxConstraints(),
+            ),
+
+            // Theme Toggle
+            IconButton(
+              onPressed: () => _showThemeDialog(context, ref),
+              icon: Icon(
+                _getThemeIcon(ref.watch(themeModeProvider).value),
+                size: 22,
+              ),
+              tooltip: 'Tema Değiştir',
               padding: const EdgeInsets.all(8),
               constraints: const BoxConstraints(),
             ),
@@ -527,23 +662,35 @@ class _ModulesGrid extends ConsumerWidget {
       ),
     ];
 
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        mainAxisSpacing: Dimens.spacingMd,
-        crossAxisSpacing: Dimens.spacingMd,
-        childAspectRatio: 0.85,
-      ),
-      itemCount: modules.length,
-      itemBuilder: (context, index) {
-        final module = modules[index];
-        return _ModuleCard(
-          title: module.title,
-          icon: module.icon,
-          color: module.color,
-          onTap: () => context.go(module.route),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // Responsive: 1 column for very small, 2 for normal, 4 for wide screens
+        final crossAxisCount = constraints.maxWidth < 300
+            ? 1
+            : constraints.maxWidth > 600
+                ? 4
+                : 2;
+        final aspectRatio = crossAxisCount == 1 ? 2.5 : 0.95;
+        
+        return GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: crossAxisCount,
+            mainAxisSpacing: Dimens.spacingMd,
+            crossAxisSpacing: Dimens.spacingMd,
+            childAspectRatio: aspectRatio,
+          ),
+          itemCount: modules.length,
+          itemBuilder: (context, index) {
+            final module = modules[index];
+            return _ModuleCard(
+              title: module.title,
+              icon: module.icon,
+              color: module.color,
+              onTap: () => context.go(module.route),
+            );
+          },
         );
       },
     );
@@ -662,60 +809,67 @@ class _ModuleCard extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(Dimens.radiusLg),
-        child: Container(
-          padding: const EdgeInsets.all(Dimens.spacingMd),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(Dimens.radiusLg),
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                color.withValues(alpha: 0.2),
-                color.withValues(alpha: 0.08),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(Dimens.radiusLg),
+          child: Container(
+            padding: const EdgeInsets.all(Dimens.spacingSm),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(Dimens.radiusLg),
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  color.withValues(alpha: 0.2),
+                  color.withValues(alpha: 0.08),
+                ],
+              ),
+              border: Border.all(
+                color: color.withValues(alpha: 0.3),
+                width: 1,
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                // Icon container - compact size
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: color.withValues(alpha: 0.25),
+                    borderRadius: BorderRadius.circular(Dimens.radiusMd),
+                    boxShadow: [
+                      BoxShadow(
+                        color: color.withValues(alpha: 0.2),
+                        blurRadius: 6,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Icon(
+                    icon,
+                    color: color,
+                    size: 24,
+                  ),
+                ),
+
+                // Title with overflow protection
+                Flexible(
+                  child: Text(
+                    title,
+                    style: theme.textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: isDark
+                          ? AppColors.textPrimaryDark
+                          : AppColors.textPrimaryLight,
+                      letterSpacing: -0.2,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
               ],
             ),
-            border: Border.all(
-              color: color.withValues(alpha: 0.3),
-              width: 1,
-            ),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              // Icon container
-              Container(
-                padding: const EdgeInsets.all(Dimens.spacingSm),
-                decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.25),
-                  borderRadius: BorderRadius.circular(Dimens.radiusMd),
-                  boxShadow: [
-                    BoxShadow(
-                      color: color.withValues(alpha: 0.2),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: Icon(
-                  icon,
-                  color: color,
-                  size: Dimens.iconLg,
-                ),
-              ),
-
-              // Title with high contrast
-              Text(
-                title,
-                style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: isDark
-                      ? AppColors.textPrimaryDark
-                      : AppColors.textPrimaryLight,
-                  letterSpacing: -0.2,
-                ),
-              ),
-            ],
           ),
         ),
       ),
@@ -854,8 +1008,8 @@ class _QuickAccessCard extends StatelessWidget {
                 size: 18,
               ),
             ),
-            const SizedBox(width: 10),
-            Flexible(
+            const SizedBox(width: 8),
+            Expanded(
               child: Text(
                 title,
                 style: theme.textTheme.bodySmall?.copyWith(
@@ -864,7 +1018,7 @@ class _QuickAccessCard extends StatelessWidget {
                       ? AppColors.textPrimaryDark
                       : AppColors.textPrimaryLight,
                 ),
-                maxLines: 1,
+                maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
             ),
@@ -1212,5 +1366,90 @@ class _NotificationsSheet extends StatelessWidget {
     } catch (_) {
       return '';
     }
+  }
+}
+
+/// Theme option tile for theme selection dialog.
+class _ThemeOption extends StatelessWidget {
+  const _ThemeOption({
+    required this.title,
+    required this.subtitle,
+    required this.icon,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  final String title;
+  final String subtitle;
+  final IconData icon;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    return Material(
+      color: isSelected
+          ? AppColors.accent.withValues(alpha: 0.15)
+          : Colors.transparent,
+      borderRadius: BorderRadius.circular(Dimens.radiusMd),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(Dimens.radiusMd),
+        child: Container(
+          padding: const EdgeInsets.all(Dimens.spacingMd),
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: isSelected
+                  ? AppColors.accent
+                  : (isDark ? Colors.white24 : Colors.black12),
+              width: isSelected ? 2 : 1,
+            ),
+            borderRadius: BorderRadius.circular(Dimens.radiusMd),
+          ),
+          child: Row(
+            children: [
+              Icon(
+                icon,
+                color: isSelected ? AppColors.accent : null,
+                size: 24,
+              ),
+              const SizedBox(width: Dimens.spacingMd),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: theme.textTheme.titleSmall?.copyWith(
+                        fontWeight:
+                            isSelected ? FontWeight.bold : FontWeight.w500,
+                        color: isSelected ? AppColors.accent : null,
+                      ),
+                    ),
+                    Text(
+                      subtitle,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: isDark
+                            ? AppColors.textSecondaryDark
+                            : AppColors.textSecondaryLight,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              if (isSelected)
+                const Icon(
+                  Icons.check_circle_rounded,
+                  color: AppColors.accent,
+                  size: 20,
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }

@@ -143,7 +143,7 @@ final class LogSessionsProvider
   }
 }
 
-String _$logSessionsHash() => r'df78f7b505762b4720eb7ed3087590aac488d0f2';
+String _$logSessionsHash() => r'b0005794e2449bb90e06de8adc758a4757a42ae6';
 
 /// Provider for the list of log sessions.
 
@@ -205,7 +205,7 @@ final class ActiveSessionProvider
   }
 }
 
-String _$activeSessionHash() => r'630ce332d32ef08c3203c1635f36a7e2cf53038e';
+String _$activeSessionHash() => r'e38f65a24386fc9d36dd936323d16719b0a4f92d';
 
 /// Provider for the currently active logging session.
 /// Keep alive to prevent disposal during navigation.

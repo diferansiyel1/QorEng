@@ -26,9 +26,8 @@ class PikolabConnectScreen extends ConsumerStatefulWidget {
 }
 
 class _PikolabConnectScreenState extends ConsumerState<PikolabConnectScreen> {
-  // Contact Information
   static const String _whatsappNumber = '+905436639797';
-  static const String _rfqEmail = 'sales@pikolab.com';
+  static const String _contactEmail = 'info@pikolab.com';
   static const String _linkedInUrl =
       'https://www.linkedin.com/company/pikolab-engineering';
   static const String _websiteUrl = 'https://www.pikolab.com';
@@ -551,13 +550,95 @@ class _PikolabConnectScreenState extends ConsumerState<PikolabConnectScreen> {
       moduleType: _selectedSubject,
     );
 
-    // Simulate backend submission delay
-    await Future.delayed(const Duration(milliseconds: 800));
+    // Build email subject with priority indicator
+    final subject = _isUrgent
+        ? '[ACİL TALEP] QorEng - $_selectedSubject'
+        : '[Normal Talep] QorEng - $_selectedSubject';
 
-    if (mounted) {
-      setState(() => _isSubmitting = false);
-      _showSuccessDialog();
+    // Build email body with form data
+    final body = '''
+Yeni Proje Talebi - QorEng Uygulaması
+======================================
+
+Gönderen: ${_nameController.text}
+E-posta: ${_emailController.text}
+Şirket: ${_companyController.text.isEmpty ? 'Belirtilmedi' : _companyController.text}
+Konu: $_selectedSubject
+Öncelik: ${_isUrgent ? 'ACİL (Üretim Durdu)' : 'Standart'}
+
+Mesaj:
+${_messageController.text}
+
+--------------------------------------
+Bu talep QorEng mobil uygulaması üzerinden gönderilmiştir.
+''';
+
+    // Create mailto URI
+    final mailtoUri = Uri(
+      scheme: 'mailto',
+      path: _contactEmail,
+      query: _encodeQueryParameters({
+        'subject': subject,
+        'body': body,
+      }),
+    );
+
+    try {
+      final canLaunch = await canLaunchUrl(mailtoUri);
+      if (canLaunch) {
+        final launched = await launchUrl(mailtoUri);
+        if (mounted) {
+          setState(() => _isSubmitting = false);
+          if (launched) {
+            _showSuccessDialog();
+          } else {
+            _showEmailErrorSnackbar('Mail uygulaması açılamadı');
+          }
+        }
+      } else {
+        developer.log('Cannot launch mailto: URL');
+        if (mounted) {
+          setState(() => _isSubmitting = false);
+          _showEmailErrorSnackbar(
+            'Mail uygulaması bulunamadı. Lütfen $_contactEmail adresine manuel olarak ulaşın.',
+          );
+        }
+      }
+    } catch (e, s) {
+      developer.log(
+        'Failed to send email',
+        error: e,
+        stackTrace: s,
+      );
+      if (mounted) {
+        setState(() => _isSubmitting = false);
+        _showEmailErrorSnackbar('Mail gönderilemedi: $e');
+      }
     }
+  }
+
+  /// Helper to encode mailto query parameters.
+  String? _encodeQueryParameters(Map<String, String> params) {
+    return params.entries
+        .map((e) =>
+            '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
+        .join('&');
+  }
+
+  /// Show error snackbar for email failures.
+  void _showEmailErrorSnackbar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: AppColors.error,
+        behavior: SnackBarBehavior.floating,
+        action: SnackBarAction(
+          label: 'WhatsApp',
+          textColor: Colors.white,
+          onPressed: _openWhatsApp,
+        ),
+      ),
+    );
   }
 
   void _showSuccessDialog() {

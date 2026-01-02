@@ -377,6 +377,13 @@ abstract class AppStrings {
   String get insertionDepth;
   String get pipeRadius;
   String get penetration;
+
+  // Disclaimer Dialog
+  String get disclaimerTitle;
+  String get disclaimerText;
+  String get agreeButton;
+  String get followButton;
+  String get startButton;
 }
 
 /// Turkish strings implementation.
@@ -673,6 +680,13 @@ class TurkishStrings implements AppStrings {
   @override String get insertionDepth => 'Daldırma Derinliği';
   @override String get pipeRadius => 'Boru Yarıçapı';
   @override String get penetration => 'Nüfuz Oranı';
+
+  // Disclaimer Dialog
+  @override String get disclaimerTitle => 'Yasal Sorumluluk Reddi';
+  @override String get disclaimerText => "Bu uygulama, 'OLDUĞU GİBİ' sunulmaktadır ve açık veya zımni hiçbir garanti vermez. Bu uygulamanın kullanımı tamamen kullanıcının kendi riski altındadır. Hiçbir koşulda geliştirici; bu yazılımın kullanımından veya kullanılamamasından kaynaklanan (ihmal dahil olmak üzere) kâr kaybı, iş kesintisi, veri kaybı, ekipman hasarı veya kişisel yaralanma gibi herhangi bir doğrudan, özel, arızi veya dolaylı zarardan sorumlu tutulamaz. Kullanıcı, elde edilen sonuçların doğruluğunu bağımsız yöntemlerle teyit etmeden uygulamaya dayalı herhangi bir mühendislik kararı almayacağını kabul eder.";
+  @override String get agreeButton => 'Okudum ve onaylıyorum';
+  @override String get followButton => "Pikolab'ı LinkedIn'de Takip Et";
+  @override String get startButton => 'Uygulamayı Başlat';
 }
 
 /// English strings implementation.
@@ -969,4 +983,11 @@ class EnglishStrings implements AppStrings {
   @override String get insertionDepth => 'Insertion Depth';
   @override String get pipeRadius => 'Pipe Radius';
   @override String get penetration => 'Penetration';
+
+  // Disclaimer Dialog
+  @override String get disclaimerTitle => 'Important Disclaimer';
+  @override String get disclaimerText => "This application is provided 'AS IS', without warranty of any kind, express or implied. Use of this application is entirely at the user's own risk. In no event shall the developer be liable for any direct, special, incidental, or consequential damages, including but not limited to loss of profit, business interruption, loss of data, equipment damage, or personal injury, arising out of the use or inability to use this software (including negligence). The user agrees not to make any engineering decisions based on the application without verifying the accuracy of the obtained results through independent methods.";
+  @override String get agreeButton => 'I have read and agree';
+  @override String get followButton => 'Follow Pikolab on LinkedIn';
+  @override String get startButton => 'Start Using App';
 }

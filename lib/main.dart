@@ -8,8 +8,10 @@ import 'package:hive_flutter/hive_flutter.dart';
 
 import 'package:engicore/core/localization/localization_service.dart';
 import 'package:engicore/core/router/app_router.dart';
+import 'package:engicore/core/services/encrypted_box_factory.dart';
 import 'package:engicore/core/services/notification_service.dart';
 import 'package:engicore/core/theme/app_theme.dart';
+import 'package:engicore/core/theme/theme_provider.dart';
 import 'package:engicore/features/history/domain/repositories/history_repository.dart';
 import 'package:engicore/features/field_logger/domain/repositories/field_logger_repository.dart';
 
@@ -23,12 +25,19 @@ void main() async {
   // Initialize Hive for local persistence
   await Hive.initFlutter();
 
+  // Initialize encryption key for secure storage
+  await EncryptedBoxFactory.initialize();
+
   // Initialize localization service
   await LocalizationService.initialize();
 
-  // Open Hive boxes
-  final historyBox = await Hive.openBox<String>(HistoryRepository.boxName);
-  final fieldLoggerBox = await Hive.openBox<String>(FieldLoggerRepository.boxName);
+  // Open encrypted Hive boxes for secure data storage
+  final historyBox = await EncryptedBoxFactory.openEncryptedBox<String>(
+    HistoryRepository.boxName,
+  );
+  final fieldLoggerBox = await EncryptedBoxFactory.openEncryptedBox<String>(
+    FieldLoggerRepository.boxName,
+  );
 
   // Initialize Firebase (optional - app works without it)
   try {
@@ -46,9 +55,9 @@ void main() async {
   runApp(
     ProviderScope(
       overrides: [
-        // Override the historyBox provider with the actual box
+        // Override the historyBox provider with the actual encrypted box
         historyBoxProvider.overrideWithValue(historyBox),
-        // Override the fieldLoggerBox provider with the actual box
+        // Override the fieldLoggerBox provider with the actual encrypted box
         fieldLoggerBoxProvider.overrideWithValue(fieldLoggerBox),
       ],
       child: const QorEngApp(),
@@ -58,19 +67,23 @@ void main() async {
 
 /// Root application widget.
 ///
-/// Configures Material 3 theming with dark mode as default
-/// (optimized for OLED screens in low-light factory environments).
-class QorEngApp extends StatelessWidget {
+/// Configures Material 3 theming with user-selectable theme mode
+/// (Dark, Light, or System/Auto).
+class QorEngApp extends ConsumerWidget {
   const QorEngApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    // Watch the theme mode from provider
+    final themeModeAsync = ref.watch(themeModeProvider);
+    final themeMode = themeModeAsync.value ?? ThemeMode.dark;
+
     return MaterialApp.router(
       title: 'QorEng',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.dark,
+      themeMode: themeMode,
       // Turkish is the default locale
       locale: const Locale('tr', 'TR'),
       supportedLocales: const [

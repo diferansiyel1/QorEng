@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer' as developer;
 
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -7,9 +8,28 @@ import 'package:engicore/features/field_logger/domain/entities/log_session.dart'
 
 part 'field_logger_repository.g.dart';
 
+/// Result of a repository operation.
+sealed class FieldLoggerResult<T> {
+  const FieldLoggerResult();
+}
+
+/// Successful repository operation.
+class FieldLoggerSuccess<T> extends FieldLoggerResult<T> {
+  const FieldLoggerSuccess([this.data]);
+
+  final T? data;
+}
+
+/// Failed repository operation.
+class FieldLoggerFailure<T> extends FieldLoggerResult<T> {
+  const FieldLoggerFailure(this.message);
+
+  final String message;
+}
+
 /// Repository for managing field logger session persistence.
 ///
-/// Uses Hive for local storage of logging sessions.
+/// Uses encrypted Hive for local storage of logging sessions.
 class FieldLoggerRepository {
   FieldLoggerRepository(this._box);
 
@@ -18,9 +38,21 @@ class FieldLoggerRepository {
   static const String boxName = 'field_logger_box';
 
   /// Save a logging session.
-  Future<void> saveSession(LogSession session) async {
-    final json = jsonEncode(session.toJson());
-    await _box.put(session.id, json);
+  /// Returns success/failure for UI feedback.
+  Future<FieldLoggerResult<void>> saveSession(LogSession session) async {
+    try {
+      final json = jsonEncode(session.toJson());
+      await _box.put(session.id, json);
+      return const FieldLoggerSuccess();
+    } catch (e, s) {
+      developer.log(
+        'Failed to save logging session',
+        name: 'FieldLoggerRepository',
+        error: e,
+        stackTrace: s,
+      );
+      return FieldLoggerFailure(e.toString());
+    }
   }
 
   /// Get a session by ID.
@@ -30,14 +62,21 @@ class FieldLoggerRepository {
     try {
       final map = jsonDecode(json) as Map<String, dynamic>;
       return LogSession.fromJson(map);
-    } catch (_) {
+    } catch (e) {
+      developer.log(
+        'Corrupted session at key $id',
+        name: 'FieldLoggerRepository',
+        error: e,
+      );
       return null;
     }
   }
 
   /// Get all sessions sorted by newest first.
+  /// Logs and skips corrupted records.
   List<LogSession> getAllSessions() {
     final sessions = <LogSession>[];
+    final corruptedKeys = <dynamic>[];
 
     for (final key in _box.keys) {
       final json = _box.get(key);
@@ -45,10 +84,24 @@ class FieldLoggerRepository {
         try {
           final map = jsonDecode(json) as Map<String, dynamic>;
           sessions.add(LogSession.fromJson(map));
-        } catch (_) {
-          // Skip malformed records
+        } catch (e) {
+          developer.log(
+            'Corrupted session at key $key, skipping',
+            name: 'FieldLoggerRepository',
+            error: e,
+          );
+          corruptedKeys.add(key);
         }
       }
+    }
+
+    // Log summary of corrupted records for monitoring
+    if (corruptedKeys.isNotEmpty) {
+      developer.log(
+        'Found ${corruptedKeys.length} corrupted sessions in field logger',
+        name: 'FieldLoggerRepository',
+        level: 900,
+      );
     }
 
     // Sort by newest first
@@ -57,13 +110,38 @@ class FieldLoggerRepository {
   }
 
   /// Delete a session by ID.
-  Future<void> deleteSession(String id) async {
-    await _box.delete(id);
+  /// Returns success/failure for UI feedback.
+  Future<FieldLoggerResult<void>> deleteSession(String id) async {
+    try {
+      await _box.delete(id);
+      return const FieldLoggerSuccess();
+    } catch (e, s) {
+      developer.log(
+        'Failed to delete session $id',
+        name: 'FieldLoggerRepository',
+        error: e,
+        stackTrace: s,
+      );
+      return FieldLoggerFailure(e.toString());
+    }
   }
 
   /// Clear all sessions.
-  Future<void> clearAll() async {
-    await _box.clear();
+  /// Returns success/failure with count for UI feedback.
+  Future<FieldLoggerResult<int>> clearAll() async {
+    try {
+      final count = _box.length;
+      await _box.clear();
+      return FieldLoggerSuccess(count);
+    } catch (e, s) {
+      developer.log(
+        'Failed to clear sessions',
+        name: 'FieldLoggerRepository',
+        error: e,
+        stackTrace: s,
+      );
+      return FieldLoggerFailure(e.toString());
+    }
   }
 
   /// Get the number of sessions.
@@ -95,35 +173,56 @@ class LogSessions extends _$LogSessions {
   }
 
   /// Add a new session and refresh the list.
-  Future<void> addSession(LogSession session) async {
+  Future<bool> addSession(LogSession session) async {
     final repo = ref.read(fieldLoggerRepositoryProvider);
-    await repo.saveSession(session);
-    try {
-      state = repo.getAllSessions();
-    } catch (_) {
-      // Provider may have been disposed during async operation
+    final result = await repo.saveSession(session);
+
+    switch (result) {
+      case FieldLoggerSuccess():
+        try {
+          state = repo.getAllSessions();
+        } catch (_) {
+          // Provider may have been disposed during async operation
+        }
+        return true;
+      case FieldLoggerFailure():
+        return false;
     }
   }
 
   /// Update an existing session.
-  Future<void> updateSession(LogSession session) async {
+  Future<bool> updateSession(LogSession session) async {
     final repo = ref.read(fieldLoggerRepositoryProvider);
-    await repo.saveSession(session);
-    try {
-      state = repo.getAllSessions();
-    } catch (_) {
-      // Provider may have been disposed during async operation
+    final result = await repo.saveSession(session);
+
+    switch (result) {
+      case FieldLoggerSuccess():
+        try {
+          state = repo.getAllSessions();
+        } catch (_) {
+          // Provider may have been disposed during async operation
+        }
+        return true;
+      case FieldLoggerFailure():
+        return false;
     }
   }
 
   /// Delete a session and refresh the list.
-  Future<void> deleteSession(String id) async {
+  Future<bool> deleteSession(String id) async {
     final repo = ref.read(fieldLoggerRepositoryProvider);
-    await repo.deleteSession(id);
-    try {
-      state = repo.getAllSessions();
-    } catch (_) {
-      // Provider may have been disposed during async operation
+    final result = await repo.deleteSession(id);
+
+    switch (result) {
+      case FieldLoggerSuccess():
+        try {
+          state = repo.getAllSessions();
+        } catch (_) {
+          // Provider may have been disposed during async operation
+        }
+        return true;
+      case FieldLoggerFailure():
+        return false;
     }
   }
 }
@@ -157,15 +256,23 @@ class ActiveSession extends _$ActiveSession {
   }
 
   /// End the active session.
-  Future<void> endSession() async {
+  Future<bool> endSession() async {
     if (state != null) {
       state!.endSession();
       // Save to repository
       final repo = ref.read(fieldLoggerRepositoryProvider);
-      await repo.saveSession(state!);
-      // Refresh sessions list
-      ref.invalidate(logSessionsProvider);
+      final result = await repo.saveSession(state!);
+
+      switch (result) {
+        case FieldLoggerSuccess():
+          // Refresh sessions list
+          ref.invalidate(logSessionsProvider);
+          return true;
+        case FieldLoggerFailure():
+          return false;
+      }
     }
+    return true;
   }
 
   /// Remove the last entry from the active session.
