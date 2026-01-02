@@ -7,6 +7,7 @@ import 'package:engicore/shared/widgets/app_button.dart';
 import 'package:engicore/shared/widgets/calculation_page.dart';
 import 'package:engicore/shared/widgets/engineering_input_field.dart';
 import 'package:engicore/shared/widgets/export_pdf_button.dart';
+import 'package:engicore/shared/widgets/invalid_input_card.dart';
 import 'package:engicore/shared/widgets/result_card.dart';
 
 /// Power calculator screen.
@@ -31,6 +32,7 @@ class _PowerScreenState extends State<PowerScreen> {
 
   PowerResult? _result;
   PowerMode _mode = PowerMode.fromVoltageAndCurrent;
+  bool _hasInvalidInput = false;
 
   @override
   void dispose() {
@@ -45,37 +47,75 @@ class _PowerScreenState extends State<PowerScreen> {
     final current = double.tryParse(_currentController.text);
     final resistance = double.tryParse(_resistanceController.text);
 
+    PowerResult? result;
+
+    switch (_mode) {
+      case PowerMode.fromVoltageAndCurrent:
+        if (voltage != null && current != null) {
+          result = PowerCalculator.fromVoltageAndCurrent(
+            voltage: voltage,
+            voltageUnit: _voltageUnit,
+            current: current,
+            currentUnit: _currentUnit,
+          );
+        }
+      case PowerMode.fromCurrentAndResistance:
+        if (current != null && resistance != null) {
+          result = PowerCalculator.fromCurrentAndResistance(
+            current: current,
+            currentUnit: _currentUnit,
+            resistance: resistance,
+            resistanceUnit: _resistanceUnit,
+          );
+        }
+      case PowerMode.fromVoltageAndResistance:
+        if (voltage != null && resistance != null) {
+          result = PowerCalculator.fromVoltageAndResistance(
+            voltage: voltage,
+            voltageUnit: _voltageUnit,
+            resistance: resistance,
+            resistanceUnit: _resistanceUnit,
+          );
+        }
+    }
+
     setState(() {
-      switch (_mode) {
-        case PowerMode.fromVoltageAndCurrent:
-          if (voltage != null && current != null) {
-            _result = PowerCalculator.fromVoltageAndCurrent(
-              voltage: voltage,
-              voltageUnit: _voltageUnit,
-              current: current,
-              currentUnit: _currentUnit,
-            );
-          }
-        case PowerMode.fromCurrentAndResistance:
-          if (current != null && resistance != null) {
-            _result = PowerCalculator.fromCurrentAndResistance(
-              current: current,
-              currentUnit: _currentUnit,
-              resistance: resistance,
-              resistanceUnit: _resistanceUnit,
-            );
-          }
-        case PowerMode.fromVoltageAndResistance:
-          if (voltage != null && resistance != null) {
-            _result = PowerCalculator.fromVoltageAndResistance(
-              voltage: voltage,
-              voltageUnit: _voltageUnit,
-              resistance: resistance,
-              resistanceUnit: _resistanceUnit,
-            );
-          }
-      }
+      _result = result;
+      _hasInvalidInput = result == null &&
+          _hasValidInputsForMode(voltage, current, resistance);
     });
+
+    // Show SnackBar for invalid input (division by zero, negative values)
+    if (_hasInvalidInput && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Row(
+            children: [
+              Icon(Icons.warning_amber, color: Colors.white),
+              SizedBox(width: 8),
+              Expanded(
+                child: Text('Invalid Input: Resistance cannot be zero or negative'),
+              ),
+            ],
+          ),
+          backgroundColor: AppColors.warning,
+          behavior: SnackBarBehavior.floating,
+          duration: Duration(seconds: 3),
+        ),
+      );
+    }
+  }
+
+  /// Check if user has entered all required inputs for the current mode.
+  bool _hasValidInputsForMode(double? voltage, double? current, double? resistance) {
+    switch (_mode) {
+      case PowerMode.fromVoltageAndCurrent:
+        return voltage != null && current != null;
+      case PowerMode.fromCurrentAndResistance:
+        return current != null && resistance != null;
+      case PowerMode.fromVoltageAndResistance:
+        return voltage != null && resistance != null;
+    }
   }
 
   void _clear() {
@@ -84,6 +124,7 @@ class _PowerScreenState extends State<PowerScreen> {
       _currentController.clear();
       _resistanceController.clear();
       _result = null;
+      _hasInvalidInput = false;
     });
   }
 
@@ -181,7 +222,11 @@ class _PowerScreenState extends State<PowerScreen> {
             results: _buildResultsMap(),
             color: AppColors.electricalAccent,
           ),
-        ] else
+        ] else if (_hasInvalidInput)
+          const InvalidInputCard(
+            message: 'Cannot divide by zero. Please enter a non-zero resistance.',
+          )
+        else
           const Center(
             child: Text(
               'Enter values and tap Calculate',

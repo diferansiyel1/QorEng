@@ -124,10 +124,10 @@ class _ReynoldsScreenState extends ConsumerState<ReynoldsScreen> {
               const SizedBox(height: Dimens.spacingMd),
 
               EngineeringInputField<String>(
-                label: 'Fluid Density (ρ)',
+                label: 'Fluid Density (rho)',
                 controller: _densityController,
                 hint: 'Default: 1000 (Water)',
-                suffixText: 'kg/m³',
+                suffixText: 'kg/m3',
                 onChanged: (_) => _updateCalculation(),
               ),
               const SizedBox(height: Dimens.spacingMd),
@@ -151,10 +151,10 @@ class _ReynoldsScreenState extends ConsumerState<ReynoldsScreen> {
               const SizedBox(height: Dimens.spacingMd),
 
               EngineeringInputField<String>(
-                label: 'Dynamic Viscosity (μ)',
+                label: 'Dynamic Viscosity (mu)',
                 controller: _viscosityController,
                 hint: 'Default: 0.001 (Water 20°C)',
-                suffixText: 'Pa·s',
+                suffixText: 'Pa.s',
                 onChanged: (_) => _updateCalculation(),
               ),
               const SizedBox(height: Dimens.spacingMd),
@@ -190,10 +190,10 @@ class _ReynoldsScreenState extends ConsumerState<ReynoldsScreen> {
                 ExportPdfButton(
                   title: 'Reynolds Number Calculation',
                   inputs: {
-                    'Fluid Density (ρ)': '${_densityController.text} kg/m³',
+                    'Fluid Density (rho)': '${_densityController.text} kg/m3',
                     'Flow Velocity (V)': '${_velocityController.text} m/s',
                     'Pipe Diameter (D)': '${_diameterController.text} mm',
-                    'Dynamic Viscosity (μ)': '${_viscosityController.text} Pa·s',
+                    'Dynamic Viscosity (mu)': '${_viscosityController.text} Pa.s',
                   },
                   results: {
                     'Reynolds Number': result.reynoldsNumber.toStringAsFixed(0),

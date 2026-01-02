@@ -69,25 +69,27 @@ abstract final class OhmsLawCalculator {
   /// Calculate current given voltage and resistance.
   ///
   /// I = V / R
-  static OhmsLawResult calculateCurrent({
+  ///
+  /// Returns `null` if resistance is zero (division by zero) or if
+  /// any input is negative (physically impossible).
+  static OhmsLawResult? calculateCurrent({
     required double voltage,
     required VoltageUnit voltageUnit,
     required double resistance,
     required ResistanceUnit resistanceUnit,
   }) {
+    // Validate inputs - must be non-negative
+    if (voltage < 0 || resistance < 0) {
+      return null;
+    }
+
     // Convert to base units
     final vBase = UnitConverter.voltageToBase(voltage, voltageUnit);
     final rBase = UnitConverter.resistanceToBase(resistance, resistanceUnit);
 
     // Guard against division by zero
     if (rBase == 0) {
-      return OhmsLawResult(
-        voltage: vBase,
-        current: double.infinity,
-        resistance: rBase,
-        mode: OhmsLawMode.current,
-        formula: 'I = $voltage ${voltageUnit.symbol} / 0 = ∞',
-      );
+      return null;
     }
 
     // Calculate current in base unit (A)
@@ -105,25 +107,27 @@ abstract final class OhmsLawCalculator {
   /// Calculate resistance given voltage and current.
   ///
   /// R = V / I
-  static OhmsLawResult calculateResistance({
+  ///
+  /// Returns `null` if current is zero (division by zero) or if
+  /// any input is negative (physically impossible).
+  static OhmsLawResult? calculateResistance({
     required double voltage,
     required VoltageUnit voltageUnit,
     required double current,
     required CurrentUnit currentUnit,
   }) {
+    // Validate inputs - must be non-negative
+    if (voltage < 0 || current < 0) {
+      return null;
+    }
+
     // Convert to base units
     final vBase = UnitConverter.voltageToBase(voltage, voltageUnit);
     final iBase = UnitConverter.currentToBase(current, currentUnit);
 
     // Guard against division by zero
     if (iBase == 0) {
-      return OhmsLawResult(
-        voltage: vBase,
-        current: iBase,
-        resistance: double.infinity,
-        mode: OhmsLawMode.resistance,
-        formula: 'R = $voltage ${voltageUnit.symbol} / 0 = ∞',
-      );
+      return null;
     }
 
     // Calculate resistance in base unit (Ω)

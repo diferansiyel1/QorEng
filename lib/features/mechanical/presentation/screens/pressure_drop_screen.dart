@@ -157,10 +157,10 @@ class _PressureDropScreenState extends ConsumerState<PressureDropScreen> {
               const SizedBox(height: Dimens.spacingMd),
 
               EngineeringInputField<String>(
-                label: 'Fluid Density (ρ)',
+                label: 'Fluid Density (rho)',
                 controller: _densityController,
                 hint: 'Default: 1000 (Water)',
-                suffixText: 'kg/m³',
+                suffixText: 'kg/m3',
                 onChanged: (_) => _updateCalculation(),
               ),
               const SizedBox(height: Dimens.spacingMd),
@@ -220,7 +220,7 @@ class _PressureDropScreenState extends ConsumerState<PressureDropScreen> {
                     'Pipe Length': '${_lengthController.text} m',
                     'Pipe Diameter': '${_diameterController.text} mm',
                     'Flow Velocity': '${_velocityController.text} m/s',
-                    'Fluid Density': '${_densityController.text} kg/m³',
+                    'Fluid Density': '${_densityController.text} kg/m3',
                     'Friction Factor': _frictionController.text,
                   },
                   results: {

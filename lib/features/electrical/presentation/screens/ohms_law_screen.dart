@@ -7,6 +7,7 @@ import 'package:engicore/shared/widgets/app_button.dart';
 import 'package:engicore/shared/widgets/calculation_page.dart';
 import 'package:engicore/shared/widgets/engineering_input_field.dart';
 import 'package:engicore/shared/widgets/export_pdf_button.dart';
+import 'package:engicore/shared/widgets/invalid_input_card.dart';
 import 'package:engicore/shared/widgets/result_card.dart';
 
 /// Ohm's Law calculator screen.
@@ -21,7 +22,6 @@ class OhmsLawScreen extends StatefulWidget {
 }
 
 class _OhmsLawScreenState extends State<OhmsLawScreen> {
-  final _formKey = GlobalKey<FormState>();
   final _voltageController = TextEditingController();
   final _currentController = TextEditingController();
   final _resistanceController = TextEditingController();
@@ -32,6 +32,7 @@ class _OhmsLawScreenState extends State<OhmsLawScreen> {
 
   OhmsLawResult? _result;
   OhmsLawMode _mode = OhmsLawMode.voltage;
+  bool _hasInvalidInput = false;
 
   @override
   void dispose() {
@@ -46,37 +47,75 @@ class _OhmsLawScreenState extends State<OhmsLawScreen> {
     final current = double.tryParse(_currentController.text);
     final resistance = double.tryParse(_resistanceController.text);
 
+    OhmsLawResult? result;
+
+    switch (_mode) {
+      case OhmsLawMode.voltage:
+        if (current != null && resistance != null) {
+          result = OhmsLawCalculator.calculateVoltage(
+            current: current,
+            currentUnit: _currentUnit,
+            resistance: resistance,
+            resistanceUnit: _resistanceUnit,
+          );
+        }
+      case OhmsLawMode.current:
+        if (voltage != null && resistance != null) {
+          result = OhmsLawCalculator.calculateCurrent(
+            voltage: voltage,
+            voltageUnit: _voltageUnit,
+            resistance: resistance,
+            resistanceUnit: _resistanceUnit,
+          );
+        }
+      case OhmsLawMode.resistance:
+        if (voltage != null && current != null) {
+          result = OhmsLawCalculator.calculateResistance(
+            voltage: voltage,
+            voltageUnit: _voltageUnit,
+            current: current,
+            currentUnit: _currentUnit,
+          );
+        }
+    }
+
     setState(() {
-      switch (_mode) {
-        case OhmsLawMode.voltage:
-          if (current != null && resistance != null) {
-            _result = OhmsLawCalculator.calculateVoltage(
-              current: current,
-              currentUnit: _currentUnit,
-              resistance: resistance,
-              resistanceUnit: _resistanceUnit,
-            );
-          }
-        case OhmsLawMode.current:
-          if (voltage != null && resistance != null) {
-            _result = OhmsLawCalculator.calculateCurrent(
-              voltage: voltage,
-              voltageUnit: _voltageUnit,
-              resistance: resistance,
-              resistanceUnit: _resistanceUnit,
-            );
-          }
-        case OhmsLawMode.resistance:
-          if (voltage != null && current != null) {
-            _result = OhmsLawCalculator.calculateResistance(
-              voltage: voltage,
-              voltageUnit: _voltageUnit,
-              current: current,
-              currentUnit: _currentUnit,
-            );
-          }
-      }
+      _result = result;
+      _hasInvalidInput = result == null &&
+          _hasValidInputsForMode(voltage, current, resistance);
     });
+
+    // Show SnackBar for invalid input (division by zero, negative values)
+    if (_hasInvalidInput && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Row(
+            children: [
+              Icon(Icons.warning_amber, color: Colors.white),
+              SizedBox(width: 8),
+              Expanded(
+                child: Text('Invalid Input: Check parameters (e.g., avoid zero denominator)'),
+              ),
+            ],
+          ),
+          backgroundColor: AppColors.warning,
+          behavior: SnackBarBehavior.floating,
+          duration: Duration(seconds: 3),
+        ),
+      );
+    }
+  }
+
+  /// Check if user has entered all required inputs for the current mode.
+  bool _hasValidInputsForMode(double? voltage, double? current, double? resistance) {
+    switch (_mode) {
+      case OhmsLawMode.voltage:
+        return current != null && resistance != null;
+      case OhmsLawMode.current:
+        return voltage != null && resistance != null;
+      case OhmsLawMode.resistance:
+        return voltage != null && current != null;
+    }
   }
 
   void _clear() {
@@ -85,6 +124,7 @@ class _OhmsLawScreenState extends State<OhmsLawScreen> {
       _currentController.clear();
       _resistanceController.clear();
       _result = null;
+      _hasInvalidInput = false;
     });
   }
 
@@ -202,7 +242,11 @@ class _OhmsLawScreenState extends State<OhmsLawScreen> {
             results: _buildResultsMap(),
             color: AppColors.electricalAccent,
           ),
-        ] else
+        ] else if (_hasInvalidInput)
+          const InvalidInputCard(
+            message: 'Cannot divide by zero. Please enter a non-zero value.',
+          )
+        else
           const Center(
             child: Text(
               'Enter values and tap Calculate',

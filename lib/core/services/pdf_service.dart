@@ -362,7 +362,7 @@ class PdfService {
           // Main footer text - centered
           pw.Center(
             child: pw.Text(
-              'Pikolab Ar&Ge tarafindan gelistirilmistir',
+              'Developed by Pikolab R&D',
               style: const pw.TextStyle(
                 fontSize: 9,
                 color: PdfColors.grey600,
@@ -390,6 +390,19 @@ class PdfService {
                 fontWeight: pw.FontWeight.bold,
                 color: PdfBrandColors.teal,
               ),
+            ),
+          ),
+          pw.SizedBox(height: 8),
+          // Disclaimer
+          pw.Center(
+            child: pw.Text(
+              'DISCLAIMER: The user is solely responsible for verifying and confirming all calculations. '
+              'The developers cannot be held liable for any damages or losses arising from the use of this software.',
+              style: const pw.TextStyle(
+                fontSize: 6,
+                color: PdfColors.grey500,
+              ),
+              textAlign: pw.TextAlign.center,
             ),
           ),
         ],

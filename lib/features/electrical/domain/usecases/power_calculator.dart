@@ -95,25 +95,27 @@ abstract final class PowerCalculator {
   /// Calculate power from voltage and resistance.
   ///
   /// P = V² / R
-  static PowerResult fromVoltageAndResistance({
+  ///
+  /// Returns `null` if resistance is zero (division by zero) or if
+  /// any input is negative (physically impossible).
+  static PowerResult? fromVoltageAndResistance({
     required double voltage,
     required VoltageUnit voltageUnit,
     required double resistance,
     required ResistanceUnit resistanceUnit,
   }) {
+    // Validate inputs - must be non-negative
+    if (voltage < 0 || resistance < 0) {
+      return null;
+    }
+
     // Convert to base units
     final vBase = UnitConverter.voltageToBase(voltage, voltageUnit);
     final rBase = UnitConverter.resistanceToBase(resistance, resistanceUnit);
 
     // Guard against division by zero
     if (rBase == 0) {
-      return PowerResult(
-        power: double.infinity,
-        mode: PowerMode.fromVoltageAndResistance,
-        formula: 'P = ($voltage ${voltageUnit.symbol})² / 0 = ∞',
-        voltage: vBase,
-        resistance: rBase,
-      );
+      return null;
     }
 
     // Calculate power in base unit (W)

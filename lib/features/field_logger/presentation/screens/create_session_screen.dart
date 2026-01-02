@@ -317,7 +317,7 @@ class _ParameterRow extends StatelessWidget {
     'ppm',
     '%',
     'mg/L',
-    'mPa·s',
+    'mPa.s',
   ];
 
   @override
