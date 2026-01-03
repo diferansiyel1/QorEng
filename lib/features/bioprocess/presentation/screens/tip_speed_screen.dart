@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:engicore/core/constants/app_colors.dart';
 import 'package:engicore/core/constants/dimens.dart';
+import 'package:engicore/core/localization/localization_service.dart';
 import 'package:engicore/features/bioprocess/domain/usecases/tip_speed_provider.dart';
 import 'package:engicore/features/history/domain/entities/calculation_record.dart';
 import 'package:engicore/features/history/domain/repositories/history_repository.dart';
@@ -69,10 +70,11 @@ class _TipSpeedScreenState extends ConsumerState<TipSpeedScreen> {
     final theme = Theme.of(context);
     final input = ref.watch(tipSpeedCalculatorProvider);
     final result = ref.watch(tipSpeedResultProvider);
+    final strings = ref.strings;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Impeller Tip Speed'),
+        title: Text(strings.impellerTipSpeed),
         centerTitle: true,
       ),
       body: SafeArea(
@@ -98,7 +100,7 @@ class _TipSpeedScreenState extends ConsumerState<TipSpeedScreen> {
                     const SizedBox(width: Dimens.spacingSm),
                     Expanded(
                       child: Text(
-                        'Calculate impeller tip speed to assess shear stress on cells.',
+                        strings.tipSpeedCalcDesc,
                         style: theme.textTheme.bodyMedium,
                       ),
                     ),
@@ -110,7 +112,7 @@ class _TipSpeedScreenState extends ConsumerState<TipSpeedScreen> {
 
               // Inputs Section
               Text(
-                'Inputs',
+                strings.inputs,
                 style: theme.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
@@ -121,6 +123,8 @@ class _TipSpeedScreenState extends ConsumerState<TipSpeedScreen> {
               _DiameterInput(
                 controller: _diameterController,
                 selectedUnit: input.diameterUnit,
+                labelText: strings.impellerDiameter,
+                hintText: strings.enterDiameterHint,
                 onUnitChanged: (unit) {
                   ref
                       .read(tipSpeedCalculatorProvider.notifier)
@@ -133,9 +137,9 @@ class _TipSpeedScreenState extends ConsumerState<TipSpeedScreen> {
 
               // RPM Input
               EngineeringInputField<String>(
-                label: 'Agitation Speed (N)',
+                label: strings.agitationSpeed,
                 controller: _rpmController,
-                hint: 'Enter RPM',
+                hint: strings.enterRpm,
                 suffixText: 'RPM',
                 onChanged: (_) => _updateCalculation(),
               ),
@@ -144,13 +148,13 @@ class _TipSpeedScreenState extends ConsumerState<TipSpeedScreen> {
 
               // Action Buttons
               AppButton(
-                label: 'Calculate',
+                label: strings.calculate,
                 icon: Icons.calculate,
                 onPressed: _calculateAndSave,
               ),
               const SizedBox(height: Dimens.spacingSm),
               AppButton(
-                label: 'Clear',
+                label: strings.clear,
                 icon: Icons.refresh,
                 onPressed: _clear,
                 variant: AppButtonVariant.secondary,
@@ -160,7 +164,7 @@ class _TipSpeedScreenState extends ConsumerState<TipSpeedScreen> {
 
               // Results Section
               Text(
-                'Results',
+                strings.results,
                 style: theme.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
@@ -169,27 +173,46 @@ class _TipSpeedScreenState extends ConsumerState<TipSpeedScreen> {
 
               // Animated Result Card
               if (result != null) ...[
-                _AnimatedResultCard(result: result),
+                _AnimatedResultCard(
+                  result: result,
+                  strings: strings,
+                ),
                 const SizedBox(height: Dimens.spacingMd),
                 ExportPdfButton(
-                  title: 'Impeller Tip Speed Calculation',
+                  title: strings.impellerTipSpeed,
                   inputs: {
-                    'Impeller Diameter': '${_diameterController.text} ${input.diameterUnit.symbol}',
-                    'Agitation Speed': '${_rpmController.text} RPM',
+                    strings.impellerDiameter: '${_diameterController.text} ${input.diameterUnit.symbol}',
+                    strings.agitationSpeed: '${_rpmController.text} RPM',
                   },
                   results: {
-                    'Tip Speed': '${result.tipSpeed.toStringAsFixed(3)} m/s',
-                    'Status': result.status.label,
+                    strings.tipSpeedLabel: '${result.tipSpeed.toStringAsFixed(3)} m/s',
+                    strings.statusLabel: _getLocalizedStatusLabel(result.status, strings),
                   },
                   color: AppColors.bioprocessAccent,
                 ),
               ] else
-                const _EmptyResultCard(),
+                _EmptyResultCard(hintText: strings.enterDiameterRpmHint),
             ],
           ),
         ),
       ),
     );
+  }
+
+  String _getLocalizedStatusLabel(TipSpeedStatus status, AppStrings strings) {
+    return switch (status) {
+      TipSpeedStatus.safe => strings.tipSpeedSafe,
+      TipSpeedStatus.caution => strings.tipSpeedCaution,
+      TipSpeedStatus.highShear => strings.tipSpeedHighShear,
+    };
+  }
+
+  String _getLocalizedStatusMessage(TipSpeedStatus status, AppStrings strings) {
+    return switch (status) {
+      TipSpeedStatus.safe => strings.tipSpeedSafeMsg,
+      TipSpeedStatus.caution => strings.tipSpeedCautionMsg,
+      TipSpeedStatus.highShear => strings.tipSpeedHighShearMsg,
+    };
   }
 }
 
@@ -198,12 +221,16 @@ class _DiameterInput extends StatelessWidget {
   const _DiameterInput({
     required this.controller,
     required this.selectedUnit,
+    required this.labelText,
+    required this.hintText,
     required this.onUnitChanged,
     required this.onChanged,
   });
 
   final TextEditingController controller;
   final DiameterUnit selectedUnit;
+  final String labelText;
+  final String hintText;
   final ValueChanged<DiameterUnit> onUnitChanged;
   final ValueChanged<String> onChanged;
 
@@ -216,7 +243,7 @@ class _DiameterInput extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Impeller Diameter (D)',
+          labelText,
           style: theme.textTheme.labelLarge?.copyWith(
             fontWeight: FontWeight.w600,
           ),
@@ -236,9 +263,9 @@ class _DiameterInput extends StatelessWidget {
                 style: theme.textTheme.bodyLarge?.copyWith(
                   fontWeight: FontWeight.w500,
                 ),
-                decoration: const InputDecoration(
-                  hintText: 'Enter diameter',
-                  contentPadding: EdgeInsets.symmetric(
+                decoration: InputDecoration(
+                  hintText: hintText,
+                  contentPadding: const EdgeInsets.symmetric(
                     horizontal: Dimens.spacingMd,
                     vertical: Dimens.spacingMd,
                   ),
@@ -294,9 +321,13 @@ class _DiameterInput extends StatelessWidget {
 
 /// Animated result card with color transition based on status.
 class _AnimatedResultCard extends StatelessWidget {
-  const _AnimatedResultCard({required this.result});
+  const _AnimatedResultCard({
+    required this.result,
+    required this.strings,
+  });
 
   final TipSpeedResult result;
+  final AppStrings strings;
 
   Color get _statusColor {
     return switch (result.status) {
@@ -311,6 +342,22 @@ class _AnimatedResultCard extends StatelessWidget {
       TipSpeedStatus.safe => Icons.check_circle,
       TipSpeedStatus.caution => Icons.warning_amber,
       TipSpeedStatus.highShear => Icons.dangerous,
+    };
+  }
+
+  String _getLocalizedLabel() {
+    return switch (result.status) {
+      TipSpeedStatus.safe => strings.tipSpeedSafe,
+      TipSpeedStatus.caution => strings.tipSpeedCaution,
+      TipSpeedStatus.highShear => strings.tipSpeedHighShear,
+    };
+  }
+
+  String _getLocalizedMessage() {
+    return switch (result.status) {
+      TipSpeedStatus.safe => strings.tipSpeedSafeMsg,
+      TipSpeedStatus.caution => strings.tipSpeedCautionMsg,
+      TipSpeedStatus.highShear => strings.tipSpeedHighShearMsg,
     };
   }
 
@@ -384,7 +431,7 @@ class _AnimatedResultCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(Dimens.radiusFull),
             ),
             child: Text(
-              result.status.label,
+              _getLocalizedLabel(),
               style: theme.textTheme.labelLarge?.copyWith(
                 color: _statusColor,
                 fontWeight: FontWeight.bold,
@@ -395,7 +442,7 @@ class _AnimatedResultCard extends StatelessWidget {
 
           // Status Message
           Text(
-            result.status.message,
+            _getLocalizedMessage(),
             style: theme.textTheme.bodyLarge?.copyWith(
               fontWeight: FontWeight.w500,
             ),
@@ -426,7 +473,9 @@ class _AnimatedResultCard extends StatelessWidget {
 
 /// Empty result placeholder card.
 class _EmptyResultCard extends StatelessWidget {
-  const _EmptyResultCard();
+  const _EmptyResultCard({required this.hintText});
+
+  final String hintText;
 
   @override
   Widget build(BuildContext context) {
@@ -455,7 +504,7 @@ class _EmptyResultCard extends StatelessWidget {
           ),
           const SizedBox(height: Dimens.spacingMd),
           Text(
-            'Enter diameter and RPM to calculate tip speed',
+            hintText,
             style: theme.textTheme.bodyMedium?.copyWith(
               fontStyle: FontStyle.italic,
               color: isDark

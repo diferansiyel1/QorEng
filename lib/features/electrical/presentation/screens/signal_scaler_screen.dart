@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:engicore/core/constants/app_colors.dart';
 import 'package:engicore/core/constants/dimens.dart';
+import 'package:engicore/core/localization/localization_service.dart';
 import 'package:engicore/features/electrical/domain/usecases/signal_scaler_logic.dart';
 import 'package:engicore/features/history/domain/entities/calculation_record.dart';
 import 'package:engicore/features/history/domain/repositories/history_repository.dart';
@@ -95,10 +96,11 @@ class _SignalScalerScreenState extends ConsumerState<SignalScalerScreen> {
     final theme = Theme.of(context);
     final input = ref.watch(signalScalerCalculatorProvider);
     final result = ref.watch(signalScalerResultProvider);
+    final strings = ref.strings;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Signal Scaler'),
+        title: Text(strings.signalScaler),
         centerTitle: true,
       ),
       body: SafeArea(
@@ -257,13 +259,13 @@ class _SignalScalerScreenState extends ConsumerState<SignalScalerScreen> {
 
               // Actions
               AppButton(
-                label: 'Calculate',
+                label: strings.calculate,
                 icon: Icons.calculate,
                 onPressed: _calculateAndSave,
               ),
               const SizedBox(height: Dimens.spacingSm),
               AppButton(
-                label: 'Clear',
+                label: strings.clear,
                 icon: Icons.refresh,
                 onPressed: _clear,
                 variant: AppButtonVariant.secondary,

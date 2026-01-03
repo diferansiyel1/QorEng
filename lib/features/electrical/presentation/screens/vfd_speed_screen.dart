@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:engicore/core/constants/app_colors.dart';
 import 'package:engicore/core/constants/dimens.dart';
+import 'package:engicore/core/localization/localization_service.dart';
 import 'package:engicore/features/electrical/domain/usecases/vfd_speed_logic.dart';
 import 'package:engicore/features/history/domain/entities/calculation_record.dart';
 import 'package:engicore/features/history/domain/repositories/history_repository.dart';
@@ -67,10 +68,11 @@ class _VfdSpeedScreenState extends ConsumerState<VfdSpeedScreen> {
     final theme = Theme.of(context);
     final input = ref.watch(vfdSpeedCalculatorProvider);
     final result = ref.watch(vfdSpeedResultProvider);
+    final strings = ref.strings;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('VFD Motor Speed'),
+        title: Text(strings.vfdSpeed),
         centerTitle: true,
       ),
       body: SafeArea(
@@ -108,7 +110,7 @@ class _VfdSpeedScreenState extends ConsumerState<VfdSpeedScreen> {
 
               // Inputs
               Text(
-                'Inputs',
+                strings.inputs,
                 style: theme.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
@@ -146,13 +148,13 @@ class _VfdSpeedScreenState extends ConsumerState<VfdSpeedScreen> {
 
               // Actions
               AppButton(
-                label: 'Calculate',
+                label: strings.calculate,
                 icon: Icons.calculate,
                 onPressed: _calculateAndSave,
               ),
               const SizedBox(height: Dimens.spacingSm),
               AppButton(
-                label: 'Clear',
+                label: strings.clear,
                 icon: Icons.refresh,
                 onPressed: _clear,
                 variant: AppButtonVariant.secondary,
@@ -162,7 +164,7 @@ class _VfdSpeedScreenState extends ConsumerState<VfdSpeedScreen> {
 
               // Results
               Text(
-                'Results',
+                strings.results,
                 style: theme.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),

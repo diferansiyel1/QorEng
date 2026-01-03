@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:engicore/core/constants/app_colors.dart';
 import 'package:engicore/core/constants/dimens.dart';
+import 'package:engicore/core/localization/localization_service.dart';
 import 'package:engicore/features/history/domain/entities/calculation_record.dart';
 import 'package:engicore/features/history/domain/repositories/history_repository.dart';
 import 'package:engicore/features/mechanical/domain/usecases/reynolds_logic.dart';
@@ -75,10 +76,11 @@ class _ReynoldsScreenState extends ConsumerState<ReynoldsScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final result = ref.watch(reynoldsResultProvider);
+    final strings = ref.strings;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Reynolds Number'),
+        title: Text(strings.reynoldsNumber),
         centerTitle: true,
       ),
       body: SafeArea(
@@ -116,7 +118,7 @@ class _ReynoldsScreenState extends ConsumerState<ReynoldsScreen> {
 
               // Inputs
               Text(
-                'Inputs',
+                strings.inputs,
                 style: theme.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
@@ -161,13 +163,13 @@ class _ReynoldsScreenState extends ConsumerState<ReynoldsScreen> {
 
               // Actions
               AppButton(
-                label: 'Calculate',
+                label: strings.calculate,
                 icon: Icons.calculate,
                 onPressed: _calculateAndSave,
               ),
               const SizedBox(height: Dimens.spacingSm),
               AppButton(
-                label: 'Clear',
+                label: strings.clear,
                 icon: Icons.refresh,
                 onPressed: _clear,
                 variant: AppButtonVariant.secondary,
@@ -177,7 +179,7 @@ class _ReynoldsScreenState extends ConsumerState<ReynoldsScreen> {
 
               // Results
               Text(
-                'Results',
+                strings.results,
                 style: theme.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:engicore/core/constants/app_colors.dart';
 import 'package:engicore/core/constants/dimens.dart';
+import 'package:engicore/core/localization/localization_service.dart';
 import 'package:engicore/features/history/domain/entities/calculation_record.dart';
 import 'package:engicore/features/history/domain/repositories/history_repository.dart';
 import 'package:engicore/features/mechanical/domain/usecases/viscosity_logic.dart';

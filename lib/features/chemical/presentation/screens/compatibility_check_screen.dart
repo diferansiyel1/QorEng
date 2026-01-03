@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:engicore/core/constants/app_colors.dart';
 import 'package:engicore/core/constants/dimens.dart';
+import 'package:engicore/core/localization/localization_service.dart';
 import 'package:engicore/features/chemical/domain/entities/chemical.dart';
 import 'package:engicore/features/chemical/presentation/providers/chem_providers.dart';
 
@@ -58,15 +59,17 @@ class _CompatibilityCheckScreenState
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
+    final strings = ref.strings;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('ChemGuard'),
+        title: Text(strings.chemGuard),
         centerTitle: true,
       ),
       body: chemicalsAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, stack) => Center(
-          child: Text('Failed to load chemicals: $error'),
+          child: Text('${strings.failedToLoadChemicals}: $error'),
         ),
         data: (chemicals) => SingleChildScrollView(
           padding: const EdgeInsets.all(Dimens.spacingMd),
@@ -75,11 +78,12 @@ class _CompatibilityCheckScreenState
             children: [
               // Chemical Selection Card
               _SelectionCard(
-                title: 'Select Chemical',
+                title: strings.selectChemical,
                 icon: Icons.science,
                 child: _ChemicalDropdown(
                   chemicals: chemicals,
                   selectedChemical: selectedChemical,
+                  hintText: strings.chooseChemicalHint,
                   onChanged: (chemical) {
                     ref.read(selectedChemicalProvider.notifier).select(chemical);
                   },
@@ -89,10 +93,11 @@ class _CompatibilityCheckScreenState
 
               // Material Selection Card
               _SelectionCard(
-                title: 'Select Material',
+                title: strings.selectMaterialLabel,
                 icon: Icons.construction,
                 child: _MaterialDropdown(
                   selectedMaterial: selectedMaterial,
+                  hintText: strings.chooseMaterialHint,
                   onChanged: (material) {
                     ref.read(selectedMaterialProvider.notifier).select(material);
                   },
@@ -107,6 +112,7 @@ class _CompatibilityCheckScreenState
                   selectedChemical,
                   selectedMaterial,
                   isDark,
+                  strings,
                 ),
             ],
           ),
@@ -120,10 +126,11 @@ class _CompatibilityCheckScreenState
     Chemical chemical,
     String material,
     bool isDark,
+    AppStrings strings,
   ) {
     final rating = chemical.getRating(material);
     final color = Chemical.getMaterialColor(rating);
-    final description = Chemical.getRatingDescription(rating);
+    final description = _getLocalizedRatingDescription(rating, strings);
 
     // Trigger shake animation for 'D' rating
     if (rating?.toUpperCase() == 'D') {
@@ -188,40 +195,40 @@ class _CompatibilityCheckScreenState
 
               // Chemical Info
               _InfoRow(
-                label: 'Chemical',
+                label: strings.chemicalLabel,
                 value: chemical.name,
               ),
               _InfoRow(
-                label: 'Material',
+                label: strings.materialLabel,
                 value: material,
               ),
               const Divider(height: Dimens.spacingLg),
 
               // Properties Section
               Text(
-                'Physical Properties',
+                strings.physicalProperties,
                 style: Theme.of(context).textTheme.titleSmall?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
               ),
               const SizedBox(height: Dimens.spacingSm),
               _InfoRow(
-                label: 'Boiling Point',
+                label: strings.boilingPoint,
                 value: chemical.boilingPoint,
                 icon: Icons.thermostat,
               ),
               _InfoRow(
-                label: 'Flash Point',
+                label: strings.flashPointLabel,
                 value: chemical.flashPoint,
                 icon: Icons.local_fire_department,
               ),
               _InfoRow(
-                label: 'Category',
+                label: strings.categoryLabel,
                 value: chemical.category,
                 icon: Icons.category,
               ),
               _InfoRow(
-                label: 'CAS Number',
+                label: strings.casNumberLabel,
                 value: chemical.casNumber,
                 icon: Icons.numbers,
               ),
@@ -230,6 +237,21 @@ class _CompatibilityCheckScreenState
         ),
       ),
     );
+  }
+
+  String _getLocalizedRatingDescription(String? rating, AppStrings strings) {
+    switch (rating?.toUpperCase()) {
+      case 'A':
+        return strings.ratingExcellent;
+      case 'B':
+        return strings.ratingGood;
+      case 'C':
+        return strings.ratingFair;
+      case 'D':
+        return strings.ratingNotRecommended;
+      default:
+        return strings.ratingUnknown;
+    }
   }
 }
 
@@ -280,11 +302,13 @@ class _ChemicalDropdown extends StatelessWidget {
   const _ChemicalDropdown({
     required this.chemicals,
     required this.selectedChemical,
+    required this.hintText,
     required this.onChanged,
   });
 
   final List<Chemical> chemicals;
   final Chemical? selectedChemical;
+  final String hintText;
   final ValueChanged<Chemical?> onChanged;
 
   @override
@@ -292,10 +316,10 @@ class _ChemicalDropdown extends StatelessWidget {
     return DropdownButtonFormField<Chemical>(
       value: selectedChemical,
       isExpanded: true,
-      decoration: const InputDecoration(
-        hintText: 'Choose a chemical...',
-        border: OutlineInputBorder(),
-        contentPadding: EdgeInsets.symmetric(
+      decoration: InputDecoration(
+        hintText: hintText,
+        border: const OutlineInputBorder(),
+        contentPadding: const EdgeInsets.symmetric(
           horizontal: Dimens.spacingMd,
           vertical: Dimens.spacingSm,
         ),
@@ -340,10 +364,12 @@ class _ChemicalDropdown extends StatelessWidget {
 class _MaterialDropdown extends StatelessWidget {
   const _MaterialDropdown({
     required this.selectedMaterial,
+    required this.hintText,
     required this.onChanged,
   });
 
   final String? selectedMaterial;
+  final String hintText;
   final ValueChanged<String?> onChanged;
 
   @override
@@ -351,10 +377,10 @@ class _MaterialDropdown extends StatelessWidget {
     return DropdownButtonFormField<String>(
       value: selectedMaterial,
       isExpanded: true,
-      decoration: const InputDecoration(
-        hintText: 'Choose a material...',
-        border: OutlineInputBorder(),
-        contentPadding: EdgeInsets.symmetric(
+      decoration: InputDecoration(
+        hintText: hintText,
+        border: const OutlineInputBorder(),
+        contentPadding: const EdgeInsets.symmetric(
           horizontal: Dimens.spacingMd,
           vertical: Dimens.spacingSm,
         ),

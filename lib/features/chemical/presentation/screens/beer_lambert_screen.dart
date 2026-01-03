@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:engicore/core/constants/app_colors.dart';
 import 'package:engicore/core/constants/dimens.dart';
+import 'package:engicore/core/localization/localization_service.dart';
 import 'package:engicore/features/chemical/domain/usecases/beer_lambert_logic.dart';
 import 'package:engicore/features/history/domain/entities/calculation_record.dart';
 import 'package:engicore/features/history/domain/repositories/history_repository.dart';
@@ -112,10 +113,11 @@ class _BeerLambertScreenState extends ConsumerState<BeerLambertScreen> {
     final theme = Theme.of(context);
     final input = ref.watch(beerLambertCalculatorProvider);
     final result = ref.watch(beerLambertResultProvider);
+    final strings = ref.strings;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Beer-Lambert Solver'),
+        title: Text(strings.beerLambert),
         centerTitle: true,
         actions: [
           IconButton(
@@ -215,13 +217,13 @@ class _BeerLambertScreenState extends ConsumerState<BeerLambertScreen> {
 
               // Actions
               AppButton(
-                label: 'Calculate',
+                label: strings.calculate,
                 icon: Icons.calculate,
                 onPressed: _calculateAndSave,
               ),
               const SizedBox(height: Dimens.spacingSm),
               AppButton(
-                label: 'Clear',
+                label: strings.clear,
                 icon: Icons.refresh,
                 onPressed: _clear,
                 variant: AppButtonVariant.secondary,

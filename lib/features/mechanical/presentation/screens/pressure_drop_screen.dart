@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:engicore/core/constants/app_colors.dart';
 import 'package:engicore/core/constants/dimens.dart';
+import 'package:engicore/core/localization/localization_service.dart';
 import 'package:engicore/features/history/domain/entities/calculation_record.dart';
 import 'package:engicore/features/history/domain/repositories/history_repository.dart';
 import 'package:engicore/features/mechanical/domain/usecases/pressure_drop_logic.dart';
@@ -81,10 +82,11 @@ class _PressureDropScreenState extends ConsumerState<PressureDropScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final result = ref.watch(pressureDropResultProvider);
+    final strings = ref.strings;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Pipe Pressure Drop'),
+        title: Text(strings.pressureDrop),
         centerTitle: true,
       ),
       body: SafeArea(
@@ -122,7 +124,7 @@ class _PressureDropScreenState extends ConsumerState<PressureDropScreen> {
 
               // Inputs
               Text(
-                'Inputs',
+                strings.inputs,
                 style: theme.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
@@ -176,13 +178,13 @@ class _PressureDropScreenState extends ConsumerState<PressureDropScreen> {
 
               // Actions
               AppButton(
-                label: 'Calculate',
+                label: strings.calculate,
                 icon: Icons.calculate,
                 onPressed: _calculateAndSave,
               ),
               const SizedBox(height: Dimens.spacingSm),
               AppButton(
-                label: 'Clear',
+                label: strings.clear,
                 icon: Icons.refresh,
                 onPressed: _clear,
                 variant: AppButtonVariant.secondary,
@@ -192,7 +194,7 @@ class _PressureDropScreenState extends ConsumerState<PressureDropScreen> {
 
               // Results
               Text(
-                'Results',
+                strings.results,
                 style: theme.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),

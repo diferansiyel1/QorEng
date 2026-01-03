@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:engicore/core/constants/app_colors.dart';
 import 'package:engicore/core/constants/dimens.dart';
+import 'package:engicore/core/localization/localization_service.dart';
 import 'package:engicore/features/history/domain/entities/calculation_record.dart';
 import 'package:engicore/features/history/domain/repositories/history_repository.dart';
 import 'package:engicore/features/mechanical/domain/usecases/flow_velocity_logic.dart';
@@ -66,10 +67,11 @@ class _FlowVelocityScreenState extends ConsumerState<FlowVelocityScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final result = ref.watch(flowVelocityResultProvider);
+    final strings = ref.strings;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Flow Velocity'),
+        title: Text(strings.flowVelocity),
         centerTitle: true,
       ),
       body: SafeArea(
@@ -107,7 +109,7 @@ class _FlowVelocityScreenState extends ConsumerState<FlowVelocityScreen> {
 
               // Inputs
               Text(
-                'Inputs',
+                strings.inputs,
                 style: theme.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
@@ -134,13 +136,13 @@ class _FlowVelocityScreenState extends ConsumerState<FlowVelocityScreen> {
 
               // Actions
               AppButton(
-                label: 'Calculate',
+                label: strings.calculate,
                 icon: Icons.calculate,
                 onPressed: _calculateAndSave,
               ),
               const SizedBox(height: Dimens.spacingSm),
               AppButton(
-                label: 'Clear',
+                label: strings.clear,
                 icon: Icons.refresh,
                 onPressed: _clear,
                 variant: AppButtonVariant.secondary,
@@ -150,7 +152,7 @@ class _FlowVelocityScreenState extends ConsumerState<FlowVelocityScreen> {
 
               // Results
               Text(
-                'Results',
+                strings.results,
                 style: theme.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),

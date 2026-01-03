@@ -384,6 +384,43 @@ abstract class AppStrings {
   String get agreeButton;
   String get followButton;
   String get startButton;
+
+  // ChemGuard Module
+  String get chemGuard;
+  String get selectChemical;
+  String get selectMaterialLabel;
+  String get chooseChemicalHint;
+  String get chooseMaterialHint;
+  String get physicalProperties;
+  String get boilingPoint;
+  String get flashPointLabel;
+  String get casNumberLabel;
+  String get categoryLabel;
+  String get chemicalLabel;
+  String get materialLabel;
+  String get ratingExcellent;
+  String get ratingGood;
+  String get ratingFair;
+  String get ratingNotRecommended;
+  String get ratingUnknown;
+  String get failedToLoadChemicals;
+
+  // Tip Speed Calculator
+  String get impellerTipSpeed;
+  String get tipSpeedCalcDesc;
+  String get agitationSpeed;
+  String get enterRpm;
+  String get impellerDiameter;
+  String get enterDiameterHint;
+  String get tipSpeedSafe;
+  String get tipSpeedCaution;
+  String get tipSpeedHighShear;
+  String get tipSpeedSafeMsg;
+  String get tipSpeedCautionMsg;
+  String get tipSpeedHighShearMsg;
+  String get enterDiameterRpmHint;
+  String get tipSpeedLabel;
+  String get statusLabel;
 }
 
 /// Turkish strings implementation.
@@ -687,6 +724,43 @@ class TurkishStrings implements AppStrings {
   @override String get agreeButton => 'Okudum ve onaylıyorum';
   @override String get followButton => "Pikolab'ı LinkedIn'de Takip Et";
   @override String get startButton => 'Uygulamayı Başlat';
+
+  // ChemGuard Module
+  @override String get chemGuard => 'ChemGuard';
+  @override String get selectChemical => 'Kimyasal Seç';
+  @override String get selectMaterialLabel => 'Malzeme Seç';
+  @override String get chooseChemicalHint => 'Kimyasal seçin...';
+  @override String get chooseMaterialHint => 'Malzeme seçin...';
+  @override String get physicalProperties => 'Fiziksel Özellikler';
+  @override String get boilingPoint => 'Kaynama Noktası';
+  @override String get flashPointLabel => 'Parlama Noktası';
+  @override String get casNumberLabel => 'CAS Numarası';
+  @override String get categoryLabel => 'Kategori';
+  @override String get chemicalLabel => 'Kimyasal';
+  @override String get materialLabel => 'Malzeme';
+  @override String get ratingExcellent => 'Mükemmel - Etki Yok';
+  @override String get ratingGood => 'İyi - Hafif Etki';
+  @override String get ratingFair => 'Orta - Orta Düzey Etki';
+  @override String get ratingNotRecommended => 'Önerilmez - Ciddi Etki';
+  @override String get ratingUnknown => 'Bilinmiyor';
+  @override String get failedToLoadChemicals => 'Kimyasallar yüklenemedi';
+
+  // Tip Speed Calculator
+  @override String get impellerTipSpeed => 'Pervane Uç Hızı';
+  @override String get tipSpeedCalcDesc => 'Hücrelerdeki kayma gerilimini değerlendirmek için pervane uç hızını hesaplayın.';
+  @override String get agitationSpeed => 'Karıştırma Hızı (N)';
+  @override String get enterRpm => 'RPM girin';
+  @override String get impellerDiameter => 'Pervane Çapı (D)';
+  @override String get enterDiameterHint => 'Çap girin';
+  @override String get tipSpeedSafe => 'Güvenli';
+  @override String get tipSpeedCaution => 'Dikkat';
+  @override String get tipSpeedHighShear => 'Yüksek Kayma';
+  @override String get tipSpeedSafeMsg => 'Memeli hücre kültürü için uygun';
+  @override String get tipSpeedCautionMsg => 'Bakteri/maya fermantasyonu için uygun';
+  @override String get tipSpeedHighShearMsg => 'Hücre hasarı riski!';
+  @override String get enterDiameterRpmHint => 'Uç hızını hesaplamak için çap ve RPM girin';
+  @override String get tipSpeedLabel => 'Uç Hızı';
+  @override String get statusLabel => 'Durum';
 }
 
 /// English strings implementation.
@@ -990,4 +1064,41 @@ class EnglishStrings implements AppStrings {
   @override String get agreeButton => 'I have read and agree';
   @override String get followButton => 'Follow Pikolab on LinkedIn';
   @override String get startButton => 'Start Using App';
+
+  // ChemGuard Module
+  @override String get chemGuard => 'ChemGuard';
+  @override String get selectChemical => 'Select Chemical';
+  @override String get selectMaterialLabel => 'Select Material';
+  @override String get chooseChemicalHint => 'Choose a chemical...';
+  @override String get chooseMaterialHint => 'Choose a material...';
+  @override String get physicalProperties => 'Physical Properties';
+  @override String get boilingPoint => 'Boiling Point';
+  @override String get flashPointLabel => 'Flash Point';
+  @override String get casNumberLabel => 'CAS Number';
+  @override String get categoryLabel => 'Category';
+  @override String get chemicalLabel => 'Chemical';
+  @override String get materialLabel => 'Material';
+  @override String get ratingExcellent => 'Excellent - No Effect';
+  @override String get ratingGood => 'Good - Minor Effect';
+  @override String get ratingFair => 'Fair - Moderate Effect';
+  @override String get ratingNotRecommended => 'Not Recommended - Severe Effect';
+  @override String get ratingUnknown => 'Unknown';
+  @override String get failedToLoadChemicals => 'Failed to load chemicals';
+
+  // Tip Speed Calculator
+  @override String get impellerTipSpeed => 'Impeller Tip Speed';
+  @override String get tipSpeedCalcDesc => 'Calculate impeller tip speed to assess shear stress on cells.';
+  @override String get agitationSpeed => 'Agitation Speed (N)';
+  @override String get enterRpm => 'Enter RPM';
+  @override String get impellerDiameter => 'Impeller Diameter (D)';
+  @override String get enterDiameterHint => 'Enter diameter';
+  @override String get tipSpeedSafe => 'Safe';
+  @override String get tipSpeedCaution => 'Caution';
+  @override String get tipSpeedHighShear => 'High Shear';
+  @override String get tipSpeedSafeMsg => 'Suitable for mammalian cell culture';
+  @override String get tipSpeedCautionMsg => 'Suitable for bacterial/yeast fermentation';
+  @override String get tipSpeedHighShearMsg => 'Risk of cell damage!';
+  @override String get enterDiameterRpmHint => 'Enter diameter and RPM to calculate tip speed';
+  @override String get tipSpeedLabel => 'Tip Speed';
+  @override String get statusLabel => 'Status';
 }
